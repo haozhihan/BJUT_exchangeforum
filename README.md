@@ -1,5 +1,4 @@
 # **Student Exchange Forum of BJUT**
----------------------
 ## **1.**  **About Group 16**
 ### **1.1  Group Members**
 
