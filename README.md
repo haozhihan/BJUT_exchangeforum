@@ -12,13 +12,10 @@ git clone https://csgitlab.ucd.ie/18206155/debugger.git
 
 * **Configure Python interpreter**
 
-<img src="/Users/harlanhansmac/Library/Application Support/typora-user-images/image-20200403101553294.png" alt="image-20200403101553294" style="zoom:25%;" />
-
-![image-20200403102352202](/Users/harlanhansmac/Library/Application Support/typora-user-images/image-20200403102352202.png)
-
-<img src="/Users/harlanhansmac/Library/Application Support/typora-user-images/image-20200403102458312.png" alt="image-20200403102458312" style="zoom:33%;" />
-
-<img src="/Users/harlanhansmac/Library/Application Support/typora-user-images/image-20200403102703550.png" alt="image-20200403102703550" style="zoom:33%;" />
+![1](https://tva1.sinaimg.cn/large/00831rSTly1gdhixxulqfj31560u0jwt.jpg)
+![2](https://tva1.sinaimg.cn/large/00831rSTly1gdhizov9fqj31te07mace.jpg)
+![3](https://tva1.sinaimg.cn/large/00831rSTly1gdhj0yt7f9j31a60u042j.jpg)
+![4](https://tva1.sinaimg.cn/large/00831rSTly1gdhj1j47dzj314r0u0jv7.jpg)
 
 > This is a brand new virtual environment and will not be affected by other environments in your computer.
 
@@ -31,10 +28,11 @@ pip install -r requirements.txt
 > * If the terminal prompts "Requirement already satisfied: ...", but we cannot find the package we originally installed when running.
 > * Then we need to clear the cache data of PyCharm and reinstall all the packages we need through the "requirements.txt" file.
 > * And How to Clear the Cache Data:
+> 
+> ![1](https://tva1.sinaimg.cn/large/00831rSTly1gdhj2pf9e4j30hc0x24nw.jpg)
 >
-> <img src="/Users/harlanhansmac/Library/Application Support/typora-user-images/image-20200403104309941.png" alt="image-20200403104309941" style="zoom:33%;" />
->
-> <img src="/Users/harlanhansmac/Library/Application Support/typora-user-images/image-20200403104419686.png" alt="image-20200403104419686" style="zoom:50%;" />
+> ![2](https://tva1.sinaimg.cn/large/00831rSTly1gdhj345g2yj30zo0cejsn.jpg)
+
 
 * **Finally, you need to run the file "flasky.py"**
 
