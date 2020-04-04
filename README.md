@@ -24,11 +24,12 @@ git clone https://csgitlab.ucd.ie/18206155/debugger.git
 ```shell
 pip install -r requirements.txt
 ```
-### Problem that may arise
+#### Problem that may arise
 * If the terminal prompts "Requirement already satisfied: ...", but we cannot find the package we originally installed when running.
 * **Then we need to clear the cache data of PyCharm and reinstall all the packages we need through the "requirements.txt" file.**
 * And How to Clear the Cache Data:
-![1](https://tva1.sinaimg.cn/large/00831rSTly1gdhj2pf9e4j30hc0x24nw.jpg)
+
+![1](https://tva1.sinaimg.cn/large/00831rSTly1gdhj2pf9e4j30hc0x24nw.jpg style="zoom:25%;")
 ![2](https://tva1.sinaimg.cn/large/00831rSTly1gdhj345g2yj30zo0cejsn.jpg)
 
 
