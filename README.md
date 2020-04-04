@@ -4,13 +4,13 @@ This project is a special forum for the communication of students, called Studen
 ## **2. Deployment**
 **Please use PyCharm as much as possible for the entire project, which can simplify the process of environment configuration.**
 
-* **Clone project to local** 
+### **Clone project to local** 
 
 ```shell
 git clone https://csgitlab.ucd.ie/18206155/debugger.git
 ```
 
-* **Configure Python interpreter**
+### **Configure Python interpreter**
 
 ![1](https://tva1.sinaimg.cn/large/00831rSTly1gdhixxulqfj31560u0jwt.jpg)
 ![2](https://tva1.sinaimg.cn/large/00831rSTly1gdhizov9fqj31te07mace.jpg)
@@ -19,22 +19,20 @@ git clone https://csgitlab.ucd.ie/18206155/debugger.git
 
 > This is a brand new virtual environment and will not be affected by other environments in your computer.
 
-* **Install all the packages we need in the new virtual environment**
+### **Install all the packages we need in the new virtual environment**
 
 ```shell
 pip install -r requirements.txt
 ```
-
-> * If the terminal prompts "Requirement already satisfied: ...", but we cannot find the package we originally installed when running.
-> * Then we need to clear the cache data of PyCharm and reinstall all the packages we need through the "requirements.txt" file.
-> * And How to Clear the Cache Data:
-> 
-> ![1](https://tva1.sinaimg.cn/large/00831rSTly1gdhj2pf9e4j30hc0x24nw.jpg)
->
-> ![2](https://tva1.sinaimg.cn/large/00831rSTly1gdhj345g2yj30zo0cejsn.jpg)
+### Problem that may arise
+* If the terminal prompts "Requirement already satisfied: ...", but we cannot find the package we originally installed when running.
+* **Then we need to clear the cache data of PyCharm and reinstall all the packages we need through the "requirements.txt" file.**
+* And How to Clear the Cache Data:
+![1](https://tva1.sinaimg.cn/large/00831rSTly1gdhj2pf9e4j30hc0x24nw.jpg)
+![2](https://tva1.sinaimg.cn/large/00831rSTly1gdhj345g2yj30zo0cejsn.jpg)
 
 
-* **Finally, you need to run the file "flasky.py"**
+### **Finally, you need to run the file "flasky.py"**
 
 ## **3.**  **About Group 16**
 ### **3.1 Group Name**
