@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+
+{% block head %}
+{{ super() }}
+     <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('static',filename='bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static',filename='signin.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static',filename='bg.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+<div class="onepage">
+        <div class = "onepage-bg" id = "onepagebg">
+            <nav calss="navbar navbar-inverse bg-light " role="navigation" style="background-color: rgba(245,245,245,0.7);">
+                <div class="container">
+                    <div class="navbar-header">
+                        <a href="/" class="navbar-brand">Student Exchange Forum of BJUT</a>
+                    </div>
+                    <div class="collapse navbar-collapse">
+
+                          <div class="nav navbar-nav navbar-right">
+                            <li>
+                                 <a href="/auth/register">
+                                 Sign up
+                                 </a>
+                             </li>
+                        </div>
+
+                        <div class="nav navbar-nav navbar-right">
+                            <li class="chose">
+                                <a  class="btn btn-warning ref-signup chose" >
+                                    Login
+                                </a>
+                            </li>
+                        </div>
+
+
+                    </div>
+                </div>
+            </nav>
+
+            <div class="container">
+
+                <form role="form" class="form-signin" method="post" style="margin: 100px auto;">
+                    <h2 class="form-signin-heading">Please sign in</h2>
+
+
+                    <label for="inputName" class="sr-only">Email address</label>
+                    <input type="text" id="inputName" class="form-control" placeholder="Student number" name="user" required autofocus>
+                    <label for="inputPassword" class="sr-only">Password</label>
+                    <input type="password" id="inputPassword" class="form-control" name="pwd" placeholder="Password" required>
+
+                    <div>
+                        <p>Forgot your password?
+                        <a href="/auth/reset">Click here to reset it</a>.</p>
+                    </div>
+{#                    Remember Me #}
+                    <div class="checkbox">
+                        <label>
+                            <input name="remember" type="checkbox" value="remember-me"> Remember me
+                        </label>
+                    </div>
+
+                    <button class="btn btn-lg btn-warning btn-block chose" id="submit" type="submit">Sign in</button>
+                </form>
+            </div>
+        </div>
+</div>
+
+{% endblock %}
