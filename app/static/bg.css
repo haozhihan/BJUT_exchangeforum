@@ -1,0 +1,17 @@
+.onepage{
+    height: 750px;
+}
+
+.onepage-bg{
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    background-position: center center;
+    background-size: cover;
+}
+#onepagebg{
+    background-image: url("Image/bg.jpeg");
+}
+
+
+
