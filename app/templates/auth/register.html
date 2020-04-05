@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+
+{% block head %}
+{{ super() }}
+     <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('static',filename='bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static',filename='signin.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static',filename='bg.css') }}" rel="stylesheet">
+
+{#    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>#}
+{#    <script>#}
+{#        $(function () {#}
+{##}
+{#        });#}
+{#    </script>#}
+
+{% endblock %}
+
+
+{% block body %}
+<div class="onepage">
+        <div class = "onepage-bg" id = "onepagebg">
+
+
+            <nav calss="navbar navbar-inverse bg-light " role="navigation" style="background-color: rgba(245,245,245,0.7);">
+                <div class="container">
+                    <div class="navbar-header">
+                        <a href="#" class="navbar-brand">Student Exchange Forum of BJUT</a>
+                    </div>
+                    <div class="collapse navbar-collapse">
+
+                        <div class="nav navbar-nav navbar-right">
+                             <li class="chose">
+                                 <a class="btn btn-warning ref-signup chose" >
+                                 Sign up
+                                 </a>
+                             </li>
+                        </div>
+
+                        <div class="nav navbar-nav navbar-right">
+                            <li>
+                                <a href="/auth/login">
+                                    Login
+                                </a>
+                            </li>
+                        </div>
+
+                    </div>
+                </div>
+            </nav>
+
+            <div class="container">
+                <form class="form-signin" method="post" style="margin: 100px auto;">
+                    <h1 class="form-signin-heading">Register</h1>
+
+                    {#                    前两个信息是用来验证的（学号，身份证号）#}
+                    {#                    您的学号#}
+                    <label for="BJUT_id" class="sr-only">Student number</label>
+                    <input name="BJUT_id" id="BJUT_id" type="text" class="form-control student-num" placeholder="BJUT Number">
+                    {#                    您的身份证号#}
+                    <label for="id_num" class="sr-only">ID card number</label>
+                    <input name="id_num" id="id_num" type="text" class="form-control" placeholder="Your ID number">
+
+
+                    <p class="help-block" style="padding: 0 10px;">The above information is only used to confirm you are the student of BJUT</p>
+
+                    {#                    您想要设置的用户名#}
+                    <label for="user_name" class="sr-only">User name</label>
+                    <input name="user_name" id="user_name" type="text" class="form-control" placeholder="User name">
+                    {#                    您的邮箱#}
+                    <label for="email" class="sr-only">Email</label>
+                    <input name="email" id="email" type="text" class="form-control" placeholder="Email">
+                    {#                    第一次密码#}
+                    <label for="password" class="sr-only">Password</label>
+                    <input name="pwd" id="password" type="password" class="form-control" placeholder="Password">
+                    {#                    第二次密码#}
+                    <label for="confirm_pwd" class="sr-only">Confirm password</label>
+                    <input name="confirm_pwd" id="confirm_pwd" type="password" class="form-control" placeholder="Confirm password">
+
+                    <button class="btn btn-lg btn-warning btn-block chose" id="submit" type="submit">Submit</button>
+                </form>
+            </div>
+
+
+        </div>
+</div>
+
+{% endblock %}
