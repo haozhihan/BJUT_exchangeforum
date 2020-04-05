@@ -29,7 +29,7 @@ pip install -r requirements.txt
 **In the process of using pip to download the package, we have various problems. You can refer to these following information.**
 1. If the terminal prompts "Requirement already satisfied: ..." but it cannot find the package we originally installed when running.
 * Solution: We need to clear the cache data of PyCharm and reinstall all the packages we need through the "requirements.txt" file.
-* And How to Clear the Cache Data:<https://jingyan.baidu.com/article/656db918b1e142a281249cc8.html>
+* And How to Clear the Cache Data: <https://jingyan.baidu.com/article/656db918b1e142a281249cc8.html>
 
 
 2. Internet speed is too slow resulting in download failure.
