@@ -42,8 +42,26 @@ pip install -r requirements.txt
 * Reference: <https://www.cnblogs.com/arvinls/p/6149417.html>
 
 
-### **Finally, you need to run the file "flasky.py"**
+### **Finally, you need to run these codes**
+* For Linux and macOS,
+```shell script
+export FLASK_APP=flasky.py
+flask run
+```
+* For Windows
+```shell script
+set FLASK_APP=flasky.py
+flask run
+```
+### Test
+* You can register an account by yourself and log in to your account.
+* Please pay attention to the student number must be **8 digits**，ID card number must be **10 to 18 digits**. 
+Moreover, you cannot register for the same student number repeatedly.
 
+### Presentation
+![1](https://tva1.sinaimg.cn/large/00831rSTly1gdj0t9zph2j31jm0u0mzg.jpg)
+![2](https://tva1.sinaimg.cn/large/00831rSTly1gdj0tzvuxyj31j80u04qp.jpg)
+![3](https://tva1.sinaimg.cn/large/00831rSTly1gdj0uj3nndj31j80u01kx.jpg)
 ## **3.**  **About Group 16**
 ### **3.1 Group Name**
 **Debugger**
