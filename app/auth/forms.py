@@ -12,11 +12,11 @@ from wtforms import ValidationError
 from ..models import User
 
 
-class LoginForm(FlaskForm):
-   student_id = StringField('user', validators=[DataRequired()])
-   password = PasswordField('Password', validators=[DataRequired()])
-   remember_me = BooleanField('Keep me logged in')
-   submit = SubmitField('Log In')
+# class LoginForm(FlaskForm):
+#    student_id = StringField('user', validators=[DataRequired()])
+#    password = PasswordField('Password', validators=[DataRequired()])
+#    remember_me = BooleanField('Keep me logged in')
+#    submit = SubmitField('Log In')
 
 
 # class RegistrationForm(FlaskForm):
