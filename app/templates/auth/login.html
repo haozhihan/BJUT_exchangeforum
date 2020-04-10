@@ -50,19 +50,15 @@
 
                     <label for="inputName" class="sr-only">Email address</label>
                     <input type="text" id="inputName" class="form-control" placeholder="Student number" name="user" required autofocus>
+
                     <label for="inputPassword" class="sr-only">Password</label>
-                    <input type="password" id="inputPassword" class="form-control" name="pwd" placeholder="Password" required>
+                    <input type="password" id="inputPassword" class="form-control" name="pwd" placeholder="Password" required autofocus>
 
                     <div>
                         <p>Forgot your password?
                         <a href="/auth/reset">Click here to reset it</a>.</p>
                     </div>
-{#                    Remember Me #}
-                    <div class="checkbox">
-                        <label>
-                            <input name="remember" type="checkbox" value="remember-me"> Remember me
-                        </label>
-                    </div>
+
 
                     <button class="btn btn-lg btn-warning btn-block chose" id="submit" type="submit">Sign in</button>
                 </form>

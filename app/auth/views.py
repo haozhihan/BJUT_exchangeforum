@@ -1,4 +1,4 @@
-# This file is to write the route and some response to the user in different conditions.
+# This file is to write the route and some response to the user in different conditions
 from flask import render_template, redirect, request, url_for, flash
 from flask_login import login_user, logout_user, login_required, \
     current_user
@@ -20,14 +20,6 @@ def before_request():
         return redirect(url_for('auth.unconfirmed'))
 
 
-#
-@auth.route('/unconfirmed')
-def unconfirmed():
-    if current_user.is_anonymous or current_user.confirmed:
-        return redirect(url_for('main.index'))
-    return render_template('auth/unconfirmed.html')
-
-
 # 登录路由
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
@@ -39,14 +31,12 @@ def login():
         password = request.form["pwd"]
         user = User.query.filter_by(student_id=student_id).first()
         if user is not None and user.verify_password(password):  # user.ROLE == form.ROLE.data:
-            login_user(user, bool(request.form['remember']))
-            next = request.args.get('next')  # 下面这4行没写
-            if next is None or not next.startswith('/'):#
-                next = url_for('main.index')#
+            login_user(user, True)
+            next = request.args.get('next')
+            if next is None or not next.startswith('/'):
+                next = url_for('main.index')
             return redirect(next)
         return '<h2>Invalid user or password.</h2>'
-
-    return render_template('auth/login1.html')#对于其他的请求来说
 
 
 # 登出路由
@@ -80,7 +70,63 @@ def register():
         #            'auth/email/confirm', user=user, token=token)
         # flash('A confirmation email has been sent to you by email.')
         return redirect(url_for('auth.login'))
-    return render_template('auth/register.html')#对于其他的请求来说
+
+
+# @auth.route('/change-password', methods=['GET', 'POST'])#1
+# @login_required
+# def change_password():
+#     if request.method == 'GET':
+#         return render_template('auth/change_password.html')#2
+#     if request.method == 'POST':
+#         old_password = request.form["old"]
+#         password = request.form["new1"]
+#         # password2 = request.form["new2"]
+#         # if(password != password2):这里需要test一下有没有这个验证
+#
+#         if current_user.verify_password(old_password):
+#             current_user.password = password
+#             db.session.add(current_user)
+#             db.session.commit()
+#             flash('Your password has been updated.')
+#             return redirect(url_for('main.index'))
+#         else:
+#             flash('Invalid password.')
+
+
+
+# 修改密码路由
+@auth.route('/change-password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        if current_user.verify_password(form.old_password.data):
+            current_user.password = form.password.data
+            db.session.add(current_user)
+            db.session.commit()
+            flash('Your password has been updated.')
+            return redirect(url_for('main.index'))
+        else:
+            flash('Invalid password.')
+    return render_template("auth/change_password.html", form=form)
+
+
+
+
+
+
+
+
+
+
+#
+@auth.route('/unconfirmed')
+def unconfirmed():
+    if current_user.is_anonymous or current_user.confirmed:
+        return redirect(url_for('main.index'))
+    return render_template('auth/unconfirmed.html')
+
+
 
 
 # 确认路由
@@ -108,21 +154,7 @@ def resend_confirmation():
     return redirect(url_for('main.index'))
 
 
-# 修改密码路由
-@auth.route('/change-password', methods=['GET', 'POST'])
-@login_required
-def change_password():
-    form = ChangePasswordForm()
-    if form.validate_on_submit():
-        if current_user.verify_password(form.old_password.data):
-            current_user.password = form.password.data
-            db.session.add(current_user)
-            db.session.commit()
-            flash('Your password has been updated.')
-            return redirect(url_for('main.index'))
-        else:
-            flash('Invalid password.')
-    return render_template("auth/change_password.html", form=form)
+
 
 
 # 重置路由
