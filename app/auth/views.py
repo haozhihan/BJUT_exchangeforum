@@ -16,7 +16,7 @@ def before_request():
     # 首先先判断该用户是否登录
     if current_user.is_authenticated:
         # 如果用户提供的登录凭据有效，调用models的ping()方法来刷新用户最后访问时间
-        current_user.ping()
+        # current_user.ping()
         if not current_user.confirmed \
                 and request.endpoint \
                 and request.blueprint != 'auth' \

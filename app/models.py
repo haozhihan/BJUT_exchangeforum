@@ -1,10 +1,10 @@
 # The purpose of this file is to build the relevant data and contacts of users and roles in the database,
-# as well as the permission settings of different users.
-from datetime import datetime
-import hashlib
+# as well as the permission settings of different users. Now we have finished building User and Role,
+# setting their relationship and giving permissions to different roles. What we haven't finished is
+# grouping different types of users such as organizations and students.
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-from flask import current_app, request
+from flask import current_app
 from flask_login import UserMixin, AnonymousUserMixin
 from . import db, login_manager
 
@@ -72,7 +72,6 @@ class Role(db.Model):
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
-    # 以下是关于用户的基本信息，用于注册、登录以及编辑个人主页
     ID_number = db.Column(db.Integer, unique=True, index=True)
     student_id = db.Column(db.Integer, unique=True, index=True)
     id = db.Column(db.Integer, primary_key=True)
@@ -81,17 +80,7 @@ class User(UserMixin, db.Model):
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     password_hash = db.Column(db.String(128))
     confirmed = db.Column(db.Boolean, default=False)
-    # 以下添加的信息是显示在用户个人主页的信息
-    grade = db.Column(db.String(4))
-    college = db.Column(db.String(64))
-    about_me = db.Column(db.Text())
-    # 以下两个变量用于刷新用户访问时间
-    member_since = db.Column(db.DateTime(), default=datetime.utcnow)
-    last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
-    # 用avatar_hash来储存生成头像时产生的MD5散列值
-    avatar_hash = db.Column(db.String(32))
 
-    # 通过特定的邮箱来识别管理员身份（待改进）
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
         if self.role is None:
@@ -99,9 +88,6 @@ class User(UserMixin, db.Model):
                 self.role = Role.query.filter_by(name='Administrator').first()
             if self.role is None:
                 self.role = Role.query.filter_by(default=True).first()
-        #
-        if self.email is not None and self.avatar_hash is None:
-            self.avatar_hash = self.gravatar_hash()
 
     @property
     def password(self):
@@ -134,7 +120,6 @@ class User(UserMixin, db.Model):
         s = Serializer(current_app.config['SECRET_KEY'], expiration)
         return s.dumps({'reset': self.id}).decode('utf-8')
 
-    # 该方法是用于帮助用户重置密码
     @staticmethod
     def reset_password(token, new_password):
         s = Serializer(current_app.config['SECRET_KEY'])
@@ -154,7 +139,6 @@ class User(UserMixin, db.Model):
         return s.dumps(
             {'change_email': self.id, 'new_email': new_email}).decode('utf-8')
 
-    # 该方法是用于帮助用户修改电子邮箱地址
     def change_email(self, token):
         s = Serializer(current_app.config['SECRET_KEY'])
         try:
@@ -169,8 +153,6 @@ class User(UserMixin, db.Model):
         if self.query.filter_by(email=new_email).first() is not None:
             return False
         self.email = new_email
-        #
-        self.avatar_hash = self.gravatar_hash()
         db.session.add(self)
         return True
 
@@ -179,26 +161,6 @@ class User(UserMixin, db.Model):
 
     def is_administrator(self):
         return self.can(Permission.ADMIN)
-
-    # 该方法可以刷新用户最后访问时间
-    def ping(self):
-        self.last_seen = datetime.utcnow()
-        db.session.add(self)
-        db.session.commit()
-
-    # 为了避免重复编写计算 Gravatar 散列值的逻辑
-    def gravatar_hash(self):
-        return hashlib.md5(self.email.lower().encode('utf-8')).hexdigest()
-
-    # 该方法可以使用储存散列值，或者依照gravatar_hash()重新计算散列值
-    def gravatar(self, size=100, default='identicon', rating='g'):
-        if request.is_secure:
-            url = 'https://secure.gravatar.com/avatar'
-        else:
-            url = 'https://www.gravatar.com/avatar'
-        hash = self.avatar_hash or self.gravatar_hash()
-        return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
-            url=url, hash=hash, size=size, default=default, rating=rating)
 
     def __repr__(self):
         return '<User %r>' % self.username
