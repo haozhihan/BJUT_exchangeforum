@@ -17,8 +17,8 @@ from ..models import User
 #    password = PasswordField('Password', validators=[DataRequired()])
 #    remember_me = BooleanField('Keep me logged in')
 #    submit = SubmitField('Log In')
-
-
+#
+#
 # class RegistrationForm(FlaskForm):
 #    student_id = StringField('Student ID', validators=[DataRequired()])
 #    ID_number = StringField('ID number', validators=[DataRequired(), Length(10, 18)])

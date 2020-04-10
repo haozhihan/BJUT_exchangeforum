@@ -10,14 +10,19 @@ from .forms import  ChangePasswordForm,\
     PasswordResetRequestForm, PasswordResetForm, ChangeEmailForm
 
 
+# This method is used to update the last access time of the logged in user
 @auth.before_app_request
 def before_request():
-    if current_user.is_authenticated \
-            and not current_user.confirmed \
-            and request.endpoint \
-            and request.blueprint != 'auth' \
-            and request.endpoint != 'static':
-        return redirect(url_for('auth.unconfirmed'))
+    # 首先先判断该用户是否登录
+    if current_user.is_authenticated:
+        # 如果用户提供的登录凭据有效，调用models的ping()方法来刷新用户最后访问时间
+        # current_user.ping()
+        if not current_user.confirmed \
+                and request.endpoint \
+                and request.blueprint != 'auth' \
+                and request.endpoint != 'static':
+            # 如果用户提供的登录凭据无效，返回auth.unconfirmed界面
+            return redirect(url_for('auth.unconfirmed'))
 
 
 # 登录路由
