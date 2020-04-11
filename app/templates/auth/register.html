@@ -1,22 +1,20 @@
 {% extends "base.html" %}
+
+
+
+
+
 {% block title %}Register{% endblock %}
+
+
+
+
 
 {% block head %}
 {{ super() }}
-     <!-- Bootstrap core CSS -->
-    <link href="{{ url_for('static',filename='bootstrap.min.css') }}" rel="stylesheet">
-
     <!-- Custom styles for this template -->
     <link href="{{ url_for('static',filename='signin.css') }}" rel="stylesheet">
     <link href="{{ url_for('static',filename='bg.css') }}" rel="stylesheet">
-
-{#    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>#}
-{#    <script>#}
-{#        $(function () {#}
-{##}
-{#        });#}
-{#    </script>#}
-
 {% endblock %}
 
 

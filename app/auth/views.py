@@ -41,7 +41,7 @@ def login():
             if next is None or not next.startswith('/'):
                 next = url_for('main.index')
             return redirect(next)
-        return '<h2>Invalid user or password.</h2>'
+        return '<h2>密码错误/用户名错误.</h2>'
 
 
 # 登出路由
@@ -77,54 +77,32 @@ def register():
         return redirect(url_for('auth.login'))
 
 
-# @auth.route('/change-password', methods=['GET', 'POST'])#1
-# @login_required
-# def change_password():
-#     if request.method == 'GET':
-#         return render_template('auth/change_password.html')#2
-#     if request.method == 'POST':
-#         old_password = request.form["old"]
-#         password = request.form["new1"]
-#         # password2 = request.form["new2"]
-#         # if(password != password2):这里需要test一下有没有这个验证
-#
-#         if current_user.verify_password(old_password):
-#             current_user.password = password
-#             db.session.add(current_user)
-#             db.session.commit()
-#             flash('Your password has been updated.')
-#             return redirect(url_for('main.index'))
-#         else:
-#             flash('Invalid password.')
-
-
-
-# 修改密码路由
 @auth.route('/change-password', methods=['GET', 'POST'])
 @login_required
 def change_password():
-    form = ChangePasswordForm()
-    if form.validate_on_submit():
-        if current_user.verify_password(form.old_password.data):
-            current_user.password = form.password.data
+    if request.method == 'GET':
+        return render_template('auth/change_password.html')
+    if request.method == 'POST':
+        old_password = request.form["old"]
+        password = request.form["new1"]
+
+        # password2 = request.form["new2"]
+        # if(password != password2):这里需要test一下有没有这个验证
+
+        if current_user.verify_password(old_password):
+            current_user.password = password
             db.session.add(current_user)
             db.session.commit()
             flash('Your password has been updated.')
             return redirect(url_for('main.index'))
         else:
-            flash('Invalid password.')
-    return render_template("auth/change_password.html", form=form)
+            # flash('Invalid password.')
+            return "<h2>修改失败</h2>"
 
 
 
 
 
-
-
-
-
-
-#
 @auth.route('/unconfirmed')
 def unconfirmed():
     if current_user.is_anonymous or current_user.confirmed:

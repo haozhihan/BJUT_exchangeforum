@@ -4,8 +4,7 @@
 
 {% block head %}
 {{ super() }}
-{#<link rel="shortcut icon" href="{{ url_for('static/Image', filename='ico.jpeg') }}" type="image/x-icon">#}
-{#<link rel="icon" href="{{ url_for('static/Image', filename='ico.jpeg') }}" type="image/x-icon">#}
+
 {% endblock %}
 
 {% block navbar %}
@@ -44,18 +43,24 @@
 </div>
 {% endblock %}
 
+
 {% block content %}
 <div class="container">
+<!--    flash消息显示区-->
     {% for message in get_flashed_messages() %}
-    <div class="alert alert-warning">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        {{ message }}
-    </div>
+            <div class="alert alert-warning">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ message }}
+            </div>
     {% endfor %}
 
-    {% block page_content %}{% endblock %}
+    {% block page_content %}
+<!--    其他模版文件中的东西-->
+    {% endblock %}
 </div>
 {% endblock %}
+
+
 
 {% block scripts %}
 {{ super() }}

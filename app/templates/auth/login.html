@@ -1,19 +1,24 @@
 {% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+
 {% block title %}Login{% endblock %}
+
 
 {% block head %}
 {{ super() }}
-     <!-- Bootstrap core CSS -->
-    <link href="{{ url_for('static',filename='bootstrap.min.css') }}" rel="stylesheet">
-
     <!-- Custom styles for this template -->
     <link href="{{ url_for('static',filename='signin.css') }}" rel="stylesheet">
     <link href="{{ url_for('static',filename='bg.css') }}" rel="stylesheet">
 {% endblock %}
 
+
+
+
 {% block body %}
 <div class="onepage">
         <div class = "onepage-bg" id = "onepagebg">
+
             <nav calss="navbar navbar-inverse bg-light " role="navigation" style="background-color: rgba(245,245,245,0.7);">
                 <div class="container">
                     <div class="navbar-header">
@@ -36,11 +41,10 @@
                                 </a>
                             </li>
                         </div>
-
-
                     </div>
                 </div>
             </nav>
+
 
             <div class="container">
 
