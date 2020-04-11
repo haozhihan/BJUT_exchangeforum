@@ -8,14 +8,14 @@
 
 
 
-
-
 {% block head %}
 {{ super() }}
     <!-- Custom styles for this template -->
     <link href="{{ url_for('static',filename='signin.css') }}" rel="stylesheet">
     <link href="{{ url_for('static',filename='bg.css') }}" rel="stylesheet">
 {% endblock %}
+
+
 
 
 {% block body %}
@@ -54,29 +54,35 @@
                 <form class="form-signin" method="post" style="margin: 75px auto 0 auto;">
                     <h1 class="form-signin-heading">Register</h1>
 
-                    {#                    前两个信息是用来验证的（学号，身份证号）#}
-                    {#                    您的学号#}
+<!--                    {#                    前两个信息是用来验证的（学号，身份证号）#}-->
+<!--                    {#                    您的学号#}-->
                     <label for="BJUT_id" class="sr-only">Student number</label>
                     <input name="BJUT_id" id="BJUT_id" type="text" class="form-control student-num" placeholder="BJUT Number">
-                    {#                    您的身份证号#}
+                    <p id="stuid"></p>
+<!--                    {#                    您的身份证号#}-->
                     <label for="id_num" class="sr-only">ID card number</label>
                     <input name="id_num" id="id_num" type="text" class="form-control" placeholder="Your ID number">
-
+                    <p id="id"></p>
 
                     <p class="help-block" style="padding: 0 10px;">The above information is only used to confirm you are the student of BJUT</p>
 
-                    {#                    您想要设置的用户名#}
+<!--                    {#                    您想要设置的用户名#}-->
                     <label for="user_name" class="sr-only">User name</label>
                     <input name="user_name" id="user_name" type="text" class="form-control" placeholder="User name">
-                    {#                    您的邮箱#}
+
+<!--                    {#                    您的邮箱#}-->
                     <label for="email" class="sr-only">Email</label>
                     <input name="email" id="email" type="text" class="form-control" placeholder="Email">
-                    {#                    第一次密码#}
+                    <p id="emailp"></p>
+
+<!--                    {#                    第一次密码#}-->
                     <label for="password" class="sr-only">Password</label>
                     <input name="pwd" id="password" type="password" class="form-control" placeholder="Password">
-                    {#                    第二次密码#}
+
+<!--                    {#                    第二次密码#}-->
                     <label for="confirm_pwd" class="sr-only">Confirm password</label>
                     <input name="confirm_pwd" id="confirm_pwd" type="password" class="form-control" placeholder="Confirm password">
+                    <p id="pwd"></p>
 
                     <button class="btn btn-lg btn-warning btn-block chose" id="submit" type="submit">Submit</button>
                 </form>
@@ -85,5 +91,63 @@
 
         </div>
 </div>
+
+
+<script>
+        // 学号
+        var stuID = document.getElementById('BJUT_id');
+        var info = document.getElementById('stuid');
+        stuID.onblur = function () {
+            var stuid = this.value;
+            var reg = /^\d{8}$/;
+            // 不符合规则的话
+            if(!reg.test(stuid)){
+                info.innerHTML = '请输入8位数字的学号';
+                info.className = 'text-danger';
+                return;
+            }
+        }
+        // 身份证号
+        var ID = document.getElementById('id_num');
+        var IDinfo = document.getElementById('id');
+        ID.onblur = function () {
+            var id = this.value;
+            var reg = /^\d{10,18}$ /;
+            // 不符合规则的话
+            if(!reg.test(id)){
+                IDinfo.innerHTML = '请输入10到18位之间的ID';
+                IDinfo.className = 'text-danger';
+                return;
+            }
+        }
+        //邮箱
+        var email = document.getElementById('email');
+        var ep = document.getElementById('emailp');
+        email.onblur = function () {
+            var e = this.value;
+            var reg = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
+            // 不符合规则的话
+            if(!reg.test(e)){
+                ep.innerHTML = '请输入正确格式的email';
+                ep.className = 'text-danger';
+                return;
+            }
+        }
+        // 确认密码相同
+        var pw1 = document.getElementById('password');
+        var pw2 = document.getElementById('confirm_pwd');
+        var pwdp = document.getElementById('pwd');
+        pw2.onblur = function () {
+            var pwd1 = pw1.value;
+            var pwd2 = this.value;
+
+            // 不符合规则的话
+            if( pwd1 != pwd2 ){
+                pwdp.innerHTML = '请与第一次输入的密码一致';
+                pwdp.className = 'text-danger';
+                return;
+            }
+        }
+</script>
 
 {% endblock %}
