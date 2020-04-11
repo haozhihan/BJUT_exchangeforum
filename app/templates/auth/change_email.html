@@ -1,73 +1,20 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
-{% block title %}Flasky - Change Email Address{% endblock %}
-
+{% block title %}Profile{% endblock %}
 
 {% block head %}
 {{ super() }}
-
-
     <!-- Custom styles for this template -->
-    <link href="{{ url_for('static',filename='information.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static',filename='profile.css') }}" rel="stylesheet">
 
 {% endblock %}
 
-
-
-
-
-
-
-<!--{% block page_content %}-->
-<!--<div class="page-header">-->
-<!--    <h1>Change Your Email Address</h1>-->
-<!--</div>-->
-<!--<div class="col-md-4">-->
-<!--    {{ wtf.quick_form(form) }}-->
-<!--</div>-->
-
-
-
-
+{% block page_content %}
 
 <div class="container">
-	<div class="row clearfix">
-		<div class="col-md-2 column">
-		</div>
-		<div class="col-md-8 column">
-
-			<h2 class="text-left">Account and Password</h2>
-
-			<div class="tabbable" id="tabs-456499">
-				<ul class="nav nav-tabs">
-					<li class="active">
-					<a href="#panel-1" data-toggle="tab">Password </a>
-					</li>
-					<li>
-					 <a href="#panel-2" data-toggle="tab">Email</a>
-					</li>
-				</ul>
-				<div class="tab-content">
-					<div class="tab-pane active" id="panel-1">
-						<div class="pwd">
-                            {{ wtf.quick_form(form ) }}
-                        </div>
-                    </div>
-					<div class="tab-pane" id="panel-2">
-						<div class="email">
-
-                        </div>
-                    </div>
-			</div>
-		<div class="col-md-2 column">
-		</div>
-	</div>
-<!--<div class="page-header">-->
-<!--    <h1>Change Your Email Address</h1>-->
-<!--</div>-->
-<!--<div class="col-md-4">-->
-<!--    {{ wtf.quick_form(form) }}-->
-<!--</div>-->
+    <div class="bg-profile">
+    </div>
+</div>
 
 {% endblock %}
