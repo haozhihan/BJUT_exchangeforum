@@ -1,15 +1,23 @@
 from flask import render_template, request, flash, redirect, url_for
 from . import main
-from ..models import User, db, Role
+from ..models import User, db, Role, Permission, Post
 from flask_login import login_required, current_user
-from .forms import EditProfileForm
+from .forms import EditProfileForm, PostForm
 # view functions for index page
 # unfinished
 
 
-@main.route('/')
+@main.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    form = PostForm()
+    if current_user.can(Permission.WRITE) and form.validate_on_submit():
+        post = Post(body=form.body.data,
+                    author=current_user._get_current_object())
+        db.session.add(post)
+        db.session.commit()
+        return redirect(url_for('.index'))
+    posts = Post.query.order_by(Post.timestamp.desc()).all()
+    return render_template('index.html', form=form, posts=posts)
 
 
 @main.route('/user/<username>')
@@ -35,4 +43,4 @@ def edit_profile():
     form.college.data = current_user.college
     form.grade.data = current_user.grade
     form.about_me.data = current_user.about_me
-    return render_template('edit_profile.html', form=form)
+    return render_template('edit_profile1.html', form=form)
