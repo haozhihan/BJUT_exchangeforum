@@ -111,28 +111,6 @@ def register():
 
 
 
-
-
-    # if request.method == 'GET':
-    #     return render_template('auth/register.html')#对于get请求
-    # if request.method == 'POST':
-    #     # 读取前端的数据
-    #     user = User(email=request.form["email"],
-    #                 ID_number=request.form["id_num"],
-    #                 student_id=request.form["BJUT_id"],
-    #                 username=request.form["user_name"],
-    #                 password=request.form["confirm_pwd"])
-    #
-    #     db.session.add(user)
-    #     db.session.commit()
-    #
-    #     # 目前关于email还在开发 先注释掉了
-    #     # token = user.generate_confirmation_token()
-    #     # send_email(user.email, 'Confirm Your Account',
-    #     #            'auth/email/confirm', user=user, token=token)
-    #     # flash('A confirmation email has been sent to you by email.')
-    #     return redirect(url_for('auth.login'))
-
 @auth.route('/change-password', methods=['GET', 'POST'])
 @login_required
 def change_password():

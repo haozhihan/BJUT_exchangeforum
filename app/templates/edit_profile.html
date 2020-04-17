@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Flasky - Edit Profile{% endblock %}
+
+
+
+{% block head %}
+{{ super() }}
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static',filename='profile.css') }}" rel="stylesheet">
+
+{% endblock %}
+
+
+{% block page_content %}
+
+
+
+<div class="container">
+    <div class="bg-profile">
+    </div>
+    <div class="container col-sm-12 info">
+        <div class="col-sm-5 photo-box">
+            <img>
+        </div>
+        <div class="col-sm-7">
+            <ul class="list-group">
+                <li class="list-group-item info-box">
+                    <h3>User name</h3>
+                </li>
+                <li class="list-group-item info-box">
+                    这里是个性签名
+                </li>
+                <li class="list-group-item info-box detail">
+                    <div class="col-sm-2 title">E-mail</div>
+                    <div class="col-sm-10">email used for sign up</div>
+                </li>
+                <li class="list-group-item info-box detail">
+                    <div class="col-sm-2 title">grade</div>
+                    <div class="col-sm-10">2</div>
+                </li>
+                <li class="list-group-item info-box detail">
+                    <div class="col-sm-2 title">collage</div>
+                    <div class="col-sm-10">BJUT-Dublin International Collage</div>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+</div>
+
+
+
+{#<div class="page-header">#}
+{#    <h1>Edit Your Profile</h1>#}
+{#</div>#}
+{#<div class="col-md-4">#}
+{#    {{ wtf.quick_form(form) }}#}
+{#</div>#}
+{% endblock %}

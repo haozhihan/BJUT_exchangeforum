@@ -1,13 +1,51 @@
 /*
 用于修改用户主页的样式
  */
+body {
+    background-color: #f2f2f2;
+}
+
 .bg-profile {
     background-image: url("Image/bg-profile.jpg");
     background-position: center -245px;
-    height: 200px;
     background-repeat: no-repeat;
+    height: 300px;
 }
 
 .navbar {
     margin-bottom: 0;
+}
+
+.photo-box {
+    height: 125px;
+    width: 125px;
+    background-color: #fff;
+    border: 1px solid #666868;
+    border-radius: 4px;
+    margin: 30px 15px 0 30px;
+    box-shadow: 0 0 10px 2px rgba(0,0,0,.4);
+}
+
+.list-group .info-box {
+    border-style: none;
+    background-color: rgba(0,0,0,0);
+}
+
+.list-group .detail {
+    margin: 10px auto;
+}
+.list-group .title {
+    font-weight: 600;
+    padding-left: 0;
+}
+
+.container .info {
+    background-color: #fff;
+    box-shadow: 0 0 10px 2px rgba(58, 58, 58, 0.4);
+    border-radius: 4px;
+    height: 270px;
+}
+
+.btn-group .btn{
+
 }
