@@ -42,7 +42,7 @@
                         <div class="nav navbar-nav navbar-right">
                              <li class="chose">
                                  <a class="btn btn-warning ref-signup chose" >
-                                 Sign up
+                                     Register
                                  </a>
                              </li>
                         </div>
@@ -60,6 +60,19 @@
             </nav>
 
             <div class="container">
+
+                <!--    flash消息显示区-->
+                {% for message in get_flashed_messages() %}
+                    <div class="col-sm-2">
+                    </div>
+                    <div class="col-sm-8 alert alert-warning">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        {{ message }}
+                    </div>
+                    <div class="col-sm-2">
+                    </div>
+                {% endfor %}
+
                 <form class="form-signin" method="post" style="margin: 75px auto 0 auto;">
                     <h1 class="form-signin-heading">Register</h1>
 
@@ -78,7 +91,7 @@
 <!--                    {#                    您想要设置的用户名#}-->
                     <label for="user_name" class="sr-only">User name</label>
                     <input name="user_name" id="user_name" type="text" class="form-control" placeholder="User name">
-
+                    <p id="user"></p>
 <!--                    {#                    您的邮箱#}-->
                     <label for="email" class="sr-only">Email</label>
                     <input name="email" id="email" type="text" class="form-control" placeholder="Email">
@@ -93,7 +106,7 @@
                     <input name="confirm_pwd" id="confirm_pwd" type="password" class="form-control" placeholder="Confirm password">
                     <p id="pwd"></p>
 
-                    <button class="btn btn-lg btn-warning btn-block chose" id="submit" type="submit">Submit</button>
+                    <button class="btn btn-lg btn-warning btn-block chose" disabled="disabled" id="submit" type="submit">Submit</button>
                 </form>
             </div>
 
@@ -101,11 +114,26 @@
         </div>
 </div>
 
-
+{#注册时验证信息格式是否符合标准的脚本#}
 <script>
         // 学号
         var stuID = document.getElementById('BJUT_id');
         var info = document.getElementById('stuid');
+        //身份证号
+        var ID = document.getElementById('id_num');
+        var IDinfo = document.getElementById('id');
+        //用户名
+        var user = document.getElementById('user_name');
+        var userinfo = document.getElementById('user');
+        //邮箱
+        var email = document.getElementById('email');
+        var ep = document.getElementById('emailp');
+        //密码
+        var pw1 = document.getElementById('password');
+        var pw2 = document.getElementById('confirm_pwd');
+        var pwdp = document.getElementById('pwd');
+
+        //学号
         stuID.onblur = function () {
             var stuid = this.value;
             var reg = /^\d{8}$/;
@@ -113,25 +141,79 @@
             if(!reg.test(stuid)){
                 info.innerHTML = '请输入8位数字的学号';
                 info.className = 'text-danger';
-                return;
+                document.getElementById("submit").disabled=true;
+            }
+            else{
+                info.innerHTML = '';
+                info.className = 'text-success';
+            }
+            {#当所有都满足条件#}
+            if(pwdp.className == 'text-success'){
+                if(ep.className == 'text-success'){
+                    if(IDinfo.className == 'text-success'){
+                        if(info.className == 'text-success') {
+                            if(userinfo.className == 'text-success'){
+                                document.getElementById("submit").disabled = false;
+                            }
+                        }
+                    }
+                }
             }
         }
         // 身份证号
-        var ID = document.getElementById('id_num');
-        var IDinfo = document.getElementById('id');
         ID.onblur = function () {
             var id = this.value;
-            var reg = /^\d{10,18}$ /;
+            var reg = /^[1-9]([0-9]{16}|[0-9]{13})[xX0-9]$/;
             // 不符合规则的话
             if(!reg.test(id)){
-                IDinfo.innerHTML = '请输入10到18位之间的ID';
+                IDinfo.innerHTML = '请输入15位或18位的ID';
                 IDinfo.className = 'text-danger';
-                return;
+                document.getElementById("submit").disabled=true;
+            }
+            else{
+                IDinfo.innerHTML = '';
+                IDinfo.className = 'text-success';
+            }
+            {#当所有都满足条件#}
+            if(pwdp.className == 'text-success'){
+                if(ep.className == 'text-success'){
+                    if(IDinfo.className == 'text-success'){
+                        if(info.className == 'text-success') {
+                            if(userinfo.className == 'text-success'){
+                                document.getElementById("submit").disabled = false;
+                            }
+                        }
+                    }
+                }
             }
         }
+        //用户名
+        user.onblur = function () {
+            var e = this.value;
+            if(e == ''){
+                userinfo.innerHTML = '用户名不能为空';
+                userinfo.className = 'text-danger';
+                document.getElementById("submit").disabled=true;
+            }
+            else{
+                userinfo.innerHTML = '';
+                userinfo.className = 'text-success';
+            }
+            {#当所有都满足条件#}
+            if(pwdp.className == 'text-success'){
+                if(ep.className == 'text-success'){
+                    if(IDinfo.className == 'text-success'){
+                        if(info.className == 'text-success') {
+                            if(userinfo.className == 'text-success'){
+                                document.getElementById("submit").disabled = false;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
         //邮箱
-        var email = document.getElementById('email');
-        var ep = document.getElementById('emailp');
         email.onblur = function () {
             var e = this.value;
             var reg = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
@@ -139,24 +221,53 @@
             if(!reg.test(e)){
                 ep.innerHTML = '请输入正确格式的email';
                 ep.className = 'text-danger';
-                return;
+                document.getElementById("submit").disabled=true;
+            }
+            else{
+                ep.innerHTML = '';
+                ep.className = 'text-success';
+            }
+            {#当所有都满足条件#}
+            if(pwdp.className == 'text-success'){
+                if(ep.className == 'text-success'){
+                    if(IDinfo.className == 'text-success'){
+                        if(info.className == 'text-success') {
+                            if(userinfo.className == 'text-success'){
+                                document.getElementById("submit").disabled = false;
+                            }
+                        }
+                    }
+                }
             }
         }
         // 确认密码相同
-        var pw1 = document.getElementById('password');
-        var pw2 = document.getElementById('confirm_pwd');
-        var pwdp = document.getElementById('pwd');
         pw2.onblur = function () {
             var pwd1 = pw1.value;
             var pwd2 = this.value;
-
             // 不符合规则的话
             if( pwd1 != pwd2 ){
                 pwdp.innerHTML = '请与第一次输入的密码一致';
                 pwdp.className = 'text-danger';
-                return;
+                document.getElementById("submit").disabled=true;
+            }
+            else{
+                pwdp.innerHTML = '';
+                pwdp.className = 'text-success';
+            }
+            {#当所有都满足条件#}
+            if(pwdp.className == 'text-success'){
+                if(ep.className == 'text-success'){
+                    if(IDinfo.className == 'text-success'){
+                        if(info.className == 'text-success') {
+                            if(userinfo.className == 'text-success'){
+                                document.getElementById("submit").disabled = false;
+                            }
+                        }
+                    }
+                }
             }
         }
+
 </script>
 
 {% endblock %}

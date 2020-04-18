@@ -28,7 +28,6 @@ def before_request():
 # 登录路由
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
-    #新版 使用request.form
     if request.method == 'GET':
         return render_template('auth/login.html')
     if request.method == 'POST':
@@ -38,14 +37,17 @@ def login():
         student_id= request.form["user"]
         password = request.form["pwd"]
         user = User.query.filter_by(student_id=student_id).first()
+        if user is None:
+            return render_template('auth/login.html', err ='您的学号还没有注册')
+        elif user.verify_password(password) is False :
+            return render_template('auth/login.html', err='用户名或密码错误')
         if user is not None and user.verify_password(password):
             login_user(user, True)
             next = request.args.get('next')
             if next is None or not next.startswith('/'):
                 next = url_for('main.index')
             return redirect(next)
-        err = '用户名或密码错误'
-        return render_template('auth/login.html', err = err)
+        return render_template('auth/login.html')
 
 
 # 登出路由
@@ -61,20 +63,42 @@ def logout():
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'GET':
-        return render_template('auth/register.html')#对于get请求
+        return render_template('auth/register.html')
     if request.method == 'POST':
         # 读取前端的学号数据
-        isstudent1 = Students.query.filter_by(student_id = request.form["BJUT_id"]).first()#学号
-        if isstudent1 is not None and isstudent1.id_number == request.form["id_num"]:
-            if isstudent1.confirmed == False:
+        isstudent = Students.query.filter_by(student_id = request.form["BJUT_id"]).first()#学号
+        if isstudent is None:
+            flash("很抱歉，您不是BJUT的学生无法注册此账户")
+            return render_template('auth/register.html')
+        if isstudent.id_number != request.form["id_num"]:
+            flash("您的学号与身份证号不匹配，无法注册此账户")
+            return render_template('auth/register.html')
+        if isstudent is not None and isstudent.id_number == request.form["id_num"]:
+            if isstudent.confirmed == True:
+                flash("您的学号已被注册，您无法注册第二个SOFB账户")
+                return render_template('auth/register.html')
+            else:
                 # 读取前端的数据
+                student_id = request.form["BJUT_id"]
+                ID_number = request.form["id_num"]
+
+
+                # emailfind = User.query.filter_by(email=request.form["email"]).first()
+                # if emailfind is not None:
+                #     flash("")
+                #########################xiedao zheli
+                # email = request.form["email"]
+                # username = request.form["user_name"]
+                # password = request.form["confirm_pwd"]
+
+
                 user = User(email=request.form["email"],
                             ID_number=request.form["id_num"],
                             student_id=request.form["BJUT_id"],
                             username=request.form["user_name"],
                             password=request.form["confirm_pwd"])
                 # isstudent1.confirmed = True
-                db.session.add(isstudent1) 
+                db.session.add(isstudent)
                 db.session.add(user)
                 db.session.commit()
                 #注册时发送邮箱认证
@@ -83,8 +107,6 @@ def register():
                            'mail/confirm', user=user, token=token)
                 flash('A confirmation email has been sent to you by email.',category='info')
                 return redirect(url_for('auth.login'))
-            else:
-                return "<h2>你的学号已被注册</h2>"
         else:
             return "<h2>你不是BJUT的学生</h2>"
 
