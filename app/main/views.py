@@ -1,8 +1,11 @@
-from flask import render_template, request, flash, redirect, url_for
+from flask import render_template, request, flash, redirect, url_for, current_app
 from . import main
-from ..models import User, db, Role, Permission, Post
+from ..models import User, Role, Permission, Post
 from flask_login import login_required, current_user
 from .forms import EditProfileForm, PostForm
+from .. import db
+from ..decorators import admin_required
+
 # view functions for index page
 # unfinished
 
@@ -16,14 +19,20 @@ def index():
         db.session.add(post)
         db.session.commit()
         return redirect(url_for('.index'))
-    posts = Post.query.order_by(Post.timestamp.desc()).all()
-    return render_template('index.html', form=form, posts=posts)
+    page = request.args.get('page', 1, type=int)
+    pagination = Post.query.order_by(Post.timestamp.desc()).paginate(
+        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+        error_out=False)
+    posts = pagination.items
+    return render_template('index.html', form=form, posts=posts,
+                           pagination=pagination)
 
 
 @main.route('/user/<username>')
 def user(username):
-    users = User.query.filter_by(username=username).first_or_404
-    return render_template('user.html', user=users)
+    user = User.query.filter_by(username=username).first_or_404()
+    posts = user.posts.order_by(Post.timestamp.desc()).all()
+    return render_template('user.html', user=user, posts=posts)
 
 
 @main.route('/edit-profile', methods=['GET', 'POST'])
