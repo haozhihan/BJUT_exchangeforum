@@ -60,8 +60,6 @@ def register():
         return render_template('auth/register.html')#对于get请求
     if request.method == 'POST':
         # 读取前端的数据
-
-
         isstudent1 = Students.query.filter_by(student_id = request.form["BJUT_id"]).first()#学号
         # isstudent2 = Students.query.filter_by(id_number = user.ID_number).first()#身份证号
 
@@ -89,25 +87,6 @@ def register():
                 return "<h2>n你的学号已被注册</h2>"
         else:
             return "<h2>你不是BJUT的学生</h2>"
-#     if request.method == 'GET':
-#         return render_template('auth/register.html')#对于get请求
-#     if request.method == 'POST':
-#         # 读取前端的数据
-#         user = User(email=request.form["email"],
-#                     ID_number=request.form["id_num"],
-#                     student_id=request.form["BJUT_id"],
-#                     username=request.form["user_name"],
-#                     password=request.form["confirm_pwd"])
-#
-#         db.session.add(user)
-#         db.session.commit()
-#
-#         # 目前关于email还在开发 先注释掉了
-#         # token = user.generate_confirmation_token()
-#         # send_email(user.email, 'Confirm Your Account',
-#         #            'auth/email/confirm', user=user, token=token)
-#         # flash('A confirmation email has been sent to you by email.')
-#         return redirect(url_for('auth.login'))
 
 
 
@@ -174,26 +153,26 @@ def resend_confirmation():
 
 
 
-# 重置路由
+# 忘记密码时，发送邮件。
 @auth.route('/reset', methods=['GET', 'POST'])
 def password_reset_request():
-    if not current_user.is_anonymous:
-        return redirect(url_for('main.index'))
+    # if not current_user.is_anonymous:
+    #     return redirect(url_for('main.index'))
     form = PasswordResetRequestForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data.lower()).first()
         if user:
             token = user.generate_reset_token()
             send_email(user.email, 'Reset Your Password',
-                       'auth/email/reset_password',
+                       'mail/reset_pwd',
                        user=user, token=token)
         flash('An email with instructions to reset your password has been '
               'sent to you.')
-        return redirect(url_for('auth.login'))
+        # return redirect(url_for('auth.login'))
     return render_template('auth/reset_password.html', form=form)
 
 
-# 重置密码路由
+# 发送的邮件里面的连接生成的修改密码的网页。
 @auth.route('/reset/<token>', methods=['GET', 'POST'])
 def password_reset(token):
     if not current_user.is_anonymous:
@@ -207,6 +186,9 @@ def password_reset(token):
         else:
             return redirect(url_for('main.index'))
     return render_template('auth/reset_password.html', form=form)
+
+
+
 
 
 # 重置邮箱路由
