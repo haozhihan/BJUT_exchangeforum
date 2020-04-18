@@ -52,4 +52,4 @@ def edit_profile():
     form.college.data = current_user.college
     form.grade.data = current_user.grade
     form.about_me.data = current_user.about_me
-    return render_template('edit_profile1.html', form=form)
+    return render_template('edit_profile.html', form=form)
