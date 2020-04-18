@@ -175,8 +175,8 @@ def password_reset_request():
 # 发送的邮件里面的连接生成的修改密码的网页。
 @auth.route('/reset/<token>', methods=['GET', 'POST'])
 def password_reset(token):
-    if not current_user.is_anonymous:
-        return redirect(url_for('main.index'))
+    # if not current_user.is_anonymous:
+    #     return redirect(url_for('main.index'))
     form = PasswordResetForm()
     if form.validate_on_submit():
         if User.reset_password(token, form.password.data):
