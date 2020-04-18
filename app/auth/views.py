@@ -38,9 +38,11 @@ def login():
         password = request.form["pwd"]
         user = User.query.filter_by(student_id=student_id).first()
         if user is None:
-            return render_template('auth/login.html', err ='您的学号还没有注册')
+            flash("您的学号还没有注册")
+            return render_template('auth/login.html')
         elif user.verify_password(password) is False :
-            return render_template('auth/login.html', err='用户名或密码错误')
+            flash("用户名或密码错误")
+            return render_template('auth/login.html')
         if user is not None and user.verify_password(password):
             login_user(user, True)
             next = request.args.get('next')
@@ -78,26 +80,20 @@ def register():
                 flash("您的学号已被注册，您无法注册第二个SOFB账户")
                 return render_template('auth/register.html')
             else:
-                # 读取前端的数据
-                student_id = request.form["BJUT_id"]
-                ID_number = request.form["id_num"]
-
-
-                # emailfind = User.query.filter_by(email=request.form["email"]).first()
-                # if emailfind is not None:
-                #     flash("")
-                #########################xiedao zheli
-                # email = request.form["email"]
-                # username = request.form["user_name"]
-                # password = request.form["confirm_pwd"]
-
-
+                emailfind = User.query.filter_by(email=request.form["email"]).first()
+                if emailfind is not None:
+                    flash("您的邮箱已被注册，请更换您的邮箱")
+                    return render_template('auth/register.html')
+                usernamefind = User.query.filter_by(username=request.form["user_name"]).first()
+                if usernamefind is not None:
+                    flash("您的用户名已被注册，请更换您的用户名")
+                    return render_template('auth/register.html')
                 user = User(email=request.form["email"],
                             ID_number=request.form["id_num"],
                             student_id=request.form["BJUT_id"],
                             username=request.form["user_name"],
                             password=request.form["confirm_pwd"])
-                # isstudent1.confirmed = True
+                isstudent.confirmed = True
                 db.session.add(isstudent)
                 db.session.add(user)
                 db.session.commit()
@@ -107,9 +103,7 @@ def register():
                            'mail/confirm', user=user, token=token)
                 flash('A confirmation email has been sent to you by email.',category='info')
                 return redirect(url_for('auth.login'))
-        else:
-            return "<h2>你不是BJUT的学生</h2>"
-
+        return render_template('auth/register.html')
 
 
 @auth.route('/change-password', methods=['GET', 'POST'])
