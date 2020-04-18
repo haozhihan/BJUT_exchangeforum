@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
+{#{% import "bootstrap/wtf.html" as wtf %}#}
 
 
 {% block title %}Login{% endblock %}
@@ -7,6 +7,12 @@
 
 {% block head %}
 {{ super() }}
+    <!-- 新 Bootstrap 核心 CSS 文件 -->
+    <link href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <!-- Custom styles for this template -->
     <link href="{{ url_for('static',filename='signin.css') }}" rel="stylesheet">
     <link href="{{ url_for('static',filename='bg.css') }}" rel="stylesheet">
@@ -21,12 +27,21 @@
 
             <nav calss="navbar navbar-inverse bg-light " role="navigation" style="background-color: rgba(245,245,245,0.7);">
                 <div class="container">
+{#                    头部#}
                     <div class="navbar-header">
+                        <button type="button" class="navbar-toggle btn-warning" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
                         <a href="/" class="navbar-brand">Student Exchange Forum of BJUT</a>
                     </div>
+
+{#                    尾部#}
                     <div class="collapse navbar-collapse">
 
-                          <div class="nav navbar-nav navbar-right">
+                        <div class="nav navbar-nav navbar-right">
                             <li>
                                  <a href="/auth/register">
                                  Sign up
@@ -42,6 +57,7 @@
                             </li>
                         </div>
                     </div>
+
                 </div>
             </nav>
 
@@ -53,11 +69,11 @@
 
                     <label for="inputName" class="sr-only">Email address</label>
                     <input type="text" id="inputName" class="form-control" placeholder="Student number" name="user" required autofocus>
-                    <p id="p1"></p>
+                    <p id="p1">       </p>
 
                     <label for="inputPassword" class="sr-only">Password</label>
                     <input type="password" id="inputPassword" class="form-control" name="pwd" placeholder="Password" required autofocus>
-                    <p id="p2"></p>
+                    <p id="p2" class="text-danger">{{ error }}</p>
 
                     <div>
                         <p>Forgot your password?
@@ -77,15 +93,50 @@
         stuID.onblur = function () {
             var stuid = this.value;
             var reg = /^\d{8}$/;
-            //邮箱的 /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
-
             // 不符合规则的话
             if(!reg.test(stuid)){
                 info.innerHTML = '请输入8位数字的学号';
                 info.className = 'text-danger';
-                return;
+            }
+            else{
+                info.innerHTML = '学号符合规则';
+                info.className = 'text-success';
             }
         }
+
+        {#$("#submit").click(function(){#}
+        {#      $.ajax({#}
+        {#           url: "/auth/login",#}
+        {#           type: "post",#}
+        {#           data: {'stuID':$("#inputName").val(),'password':$("#inputPassword").val()},#}
+        {#           dataType: 'json',#}
+        {#           'success': function(data){#}
+        {#               a = JSON.stringify(data)#}
+        {#               if (a == 'error'){#}
+        {#                   window.location.href = "http://www.baidu.com";#}
+        {#               }#}
+                        {#if(data['code'] = 200){#}
+                        {#    alert(JSON.stringify(data));#}
+                            {#alert(JSON.stringify(data));#}
+                            {#alert(data['error'])#}
+                            {#var error = data['error'];#}
+                            {# $("#p2").html(error);#}
+                            {# $("#p2").show();#}
+                             {#window.location.href = "http://www.baidu.com";#}
+                        {# } else{#}
+                        {#    window.location.href = "https://www.bilibili.com/";#}
+                        {#     var error = data['error'];#}
+                        {#     $("#p2").html(error);#}
+                        {#     $("#p2").show();#}
+                        {# }#}
+        {#           },#}
+        {#           'fail': function (error) {#}
+        {#                consle.log(error)#}
+        {#           }#}
+        {#      })#}
+        {#  });#}
+
 </script>
+
 
 {% endblock %}

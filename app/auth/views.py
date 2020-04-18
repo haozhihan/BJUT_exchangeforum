@@ -1,5 +1,5 @@
 # This file is to write the route and some response to the user in different conditions
-from flask import render_template, redirect, request, url_for, flash
+from flask import render_template, redirect, request, url_for, flash, jsonify
 from flask_login import login_user, logout_user, login_required, \
     current_user
 from . import auth
@@ -32,16 +32,20 @@ def login():
     if request.method == 'GET':
         return render_template('auth/login.html')
     if request.method == 'POST':
+        #通过Ajax获取前端数据的方法
+        # stuID = request.form.get('stuID')
+        # pwd = request.form.get('password')
         student_id= request.form["user"]
         password = request.form["pwd"]
         user = User.query.filter_by(student_id=student_id).first()
-        if user is not None and user.verify_password(password):  # user.ROLE == form.ROLE.data:
+        if user is not None and user.verify_password(password):
             login_user(user, True)
             next = request.args.get('next')
             if next is None or not next.startswith('/'):
                 next = url_for('main.index')
             return redirect(next)
-        return '<h2>密码错误/用户名错误.</h2>'
+        err = '用户名或密码错误'
+        return render_template('auth/login.html', err = err)
 
 
 # 登出路由
