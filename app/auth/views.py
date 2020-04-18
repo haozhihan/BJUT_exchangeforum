@@ -59,32 +59,28 @@ def register():
     if request.method == 'GET':
         return render_template('auth/register.html')#对于get请求
     if request.method == 'POST':
-        # 读取前端的数据
+        # 读取前端的学号数据
         isstudent1 = Students.query.filter_by(student_id = request.form["BJUT_id"]).first()#学号
-        # isstudent2 = Students.query.filter_by(id_number = user.ID_number).first()#身份证号
-
         if isstudent1 is not None and isstudent1.id_number == request.form["id_num"]:
             if isstudent1.confirmed == False:
+                # 读取前端的数据
                 user = User(email=request.form["email"],
                             ID_number=request.form["id_num"],
                             student_id=request.form["BJUT_id"],
                             username=request.form["user_name"],
                             password=request.form["confirm_pwd"])
-
-                isstudent1.confirmed = True
+                # isstudent1.confirmed = True
                 db.session.add(isstudent1) 
                 db.session.add(user)
                 db.session.commit()
-
-
-                # 目前关于email还在开发 先注释掉了
-                # token = user.generate_confirmation_token()
-                # send_email(user.email, 'Confirm Your Account',
-                #            'auth/email/confirm', user=user, token=token)
-                # flash('A confirmation email has been sent to you by email.')
+                #注册时发送邮箱认证
+                token = user.generate_confirmation_token()
+                send_email(user.email, 'Confirm Your Account',
+                           'mail/confirm', user=user, token=token)
+                flash('A confirmation email has been sent to you by email.',category='info')
                 return redirect(url_for('auth.login'))
             else:
-                return "<h2>n你的学号已被注册</h2>"
+                return "<h2>你的学号已被注册</h2>"
         else:
             return "<h2>你不是BJUT的学生</h2>"
 
@@ -139,7 +135,7 @@ def confirm(token):
     return redirect(url_for('main.index'))
 
 
-# 确认并发送至邮箱路由
+# 再次发送邮箱
 @auth.route('/confirm')
 @login_required
 def resend_confirmation():
@@ -172,7 +168,7 @@ def password_reset_request():
     return render_template('auth/reset_password.html', form=form)
 
 
-# 发送的邮件里面的连接生成的修改密码的网页。
+# 邮件里面的连接生成的修改密码的网页。
 @auth.route('/reset/<token>', methods=['GET', 'POST'])
 def password_reset(token):
     # if not current_user.is_anonymous:

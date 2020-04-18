@@ -83,20 +83,26 @@ class User(UserMixin, db.Model):
     ID_number = db.Column(db.Integer, unique=True, index=True)
     student_id = db.Column(db.Integer, unique=True, index=True)
     id = db.Column(db.Integer, primary_key=True)
-    confirmed = db.Column(db.Boolean, default=True)
+    confirmed = db.Column(db.Boolean, default=False)
+
     email = db.Column(db.String(64), unique=True, index=True)
     username = db.Column(db.String(64), unique=True, index=True)
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     password_hash = db.Column(db.String(128))
+
     # 以下添加的信息是显示在用户个人主页的信息
     grade = db.Column(db.String(4))
     college = db.Column(db.String(64))
     about_me = db.Column(db.Text())
+
     # 以下两个变量用于刷新用户访问时间
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
+
     # 用avatar_hash来储存生成头像时产生的MD5散列值
     avatar_hash = db.Column(db.String(32))
+
+    # 发帖
     posts = db.relationship('Post', backref='author', lazy='dynamic')
 
     # 通过特定的邮箱来识别管理员身份（待改进）
@@ -159,8 +165,7 @@ class User(UserMixin, db.Model):
 
     def generate_email_change_token(self, new_email, expiration=3600):
         s = Serializer(current_app.config['SECRET_KEY'], expiration)
-        return s.dumps(
-            {'change_email': self.id, 'new_email': new_email}).decode('utf-8')
+        return s.dumps({'change_email': self.id, 'new_email': new_email}).decode('utf-8')
 
     # 该方法是用于帮助用户修改电子邮箱地址
     def change_email(self, token):

@@ -1,0 +1,13 @@
+Dear {{ user.username }},
+
+Welcome to Student Exchange Forum of BJUT!
+
+To confirm your account please click on the following link:
+
+{{ url_for('auth.confirm', token=token, _external=True) }}
+
+Sincerely,
+
+Student Exchange Forum of BJUT
+
+Note: replies to this email address are not monitored.
