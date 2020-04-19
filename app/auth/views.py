@@ -115,12 +115,9 @@ def change_password():
     if request.method == 'GET':
         return render_template('auth/change_password.html')
     if request.method == 'POST':
+        # 读取前端数据
         old_password = request.form["old"]
-        password = request.form["new1"]
-
-        # password2 = request.form["new2"]
-        # if(password != password2):这里需要test一下有没有这个验证
-
+        password = request.form["new2"]
         if current_user.verify_password(old_password):
             current_user.password = password
             db.session.add(current_user)
@@ -128,8 +125,8 @@ def change_password():
             flash('Your password has been updated.')
             return redirect(url_for('main.index'))
         else:
-            # flash('Invalid password.')
-            return "<h2>修改失败</h2>"
+            flash('Invalid password.')
+            return render_template('auth/change_password.html')
 
 
 
@@ -144,7 +141,7 @@ def unconfirmed():
 
 
 
-# 确认路由
+# 注册之后 确认邮箱的路由
 @auth.route('/confirm/<token>')
 @login_required
 def confirm(token):
@@ -164,7 +161,7 @@ def confirm(token):
 def resend_confirmation():
     token = current_user.generate_confirmation_token()
     send_email(current_user.email, 'Confirm Your Account',
-               'auth/email/confirm', user=current_user, token=token)
+               'mail/confirm', user=current_user, token=token)
     flash('A new confirmation email has been sent to you by email.')
     return redirect(url_for('main.index'))
 
@@ -175,8 +172,8 @@ def resend_confirmation():
 # 忘记密码时，发送邮件。
 @auth.route('/reset', methods=['GET', 'POST'])
 def password_reset_request():
-    # if not current_user.is_anonymous:
-    #     return redirect(url_for('main.index'))
+    if not current_user.is_anonymous:
+        return redirect(url_for('main.index'))
     form = PasswordResetRequestForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data.lower()).first()
@@ -194,8 +191,8 @@ def password_reset_request():
 # 邮件里面的连接生成的修改密码的网页。
 @auth.route('/reset/<token>', methods=['GET', 'POST'])
 def password_reset(token):
-    # if not current_user.is_anonymous:
-    #     return redirect(url_for('main.index'))
+    if not current_user.is_anonymous:
+        return redirect(url_for('main.index'))
     form = PasswordResetForm()
     if form.validate_on_submit():
         if User.reset_password(token, form.password.data):
@@ -210,7 +207,7 @@ def password_reset(token):
 
 
 
-# 重置邮箱路由
+# 修改邮箱的界面，需要发送邮件
 @auth.route('/change_email', methods=['GET', 'POST'])
 @login_required
 def change_email_request():
@@ -230,7 +227,7 @@ def change_email_request():
     return render_template("auth/change_email.html", form=form)
 
 
-# 修改邮箱
+# 修改邮箱时发送邮件带的网页
 @auth.route('/change_email/<token>')
 @login_required
 def change_email(token):
