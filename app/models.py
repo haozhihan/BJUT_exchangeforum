@@ -2,11 +2,14 @@
 # as well as the permission settings of different users.
 from datetime import datetime
 import hashlib
+from sqlalchemy import *
+from sqlalchemy.orm import *
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app, request
 from flask_login import UserMixin, AnonymousUserMixin
 from . import db, login_manager
+import sqlalchemy
 
 
 class Permission:
@@ -75,6 +78,18 @@ class Students(db.Model):
     student_id = db.Column(db.Integer, primary_key=True)
     id_number = db.Column(db.String(18))
     confirmed = db.Column(db.Boolean, default=False)
+    role_id = db.Column(db.Integer, default = 1, index=True)
+
+
+class Follow(db.Model):
+    follower_id = db.Column(db.Integer, db.ForeignKey('users.id'),
+                            primary_key=True)
+    followed_id = db.Column(db.Integer, db.ForeignKey('users.id'),
+                            primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    follower = db.relationship('User', foreign_keys=[follower_id], back_populates='following', lazy='joined')
+    followed = db.relationship('User', foreign_keys=[followed_id], back_populates='followers', lazy='joined')
 
 
 class User(UserMixin, db.Model):
@@ -104,6 +119,12 @@ class User(UserMixin, db.Model):
 
     # 发帖
     posts = db.relationship('Post', backref='author', lazy='dynamic')
+
+    #关注
+    following = db.relationship('Follow', foreign_keys=[Follow.follower_id], back_populates='follower',
+                                lazy='dynamic', cascade='all')
+    followers = db.relationship('Follow', foreign_keys=[Follow.followed_id], back_populates='followed',
+                                lazy='dynamic', cascade='all')
 
     # 通过特定的邮箱来识别管理员身份（待改进）
     def __init__(self, **kwargs):

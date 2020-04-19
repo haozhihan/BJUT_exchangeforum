@@ -88,11 +88,14 @@ def register():
                 if usernamefind is not None:
                     flash("您的用户名已被注册，请更换您的用户名")
                     return render_template('auth/register.html')
+                student = Students.query.filter_by(student_id=request.form["BJUT_id"]).first()
                 user = User(email=request.form["email"],
                             ID_number=request.form["id_num"],
                             student_id=request.form["BJUT_id"],
                             username=request.form["user_name"],
-                            password=request.form["confirm_pwd"])
+                            password=request.form["confirm_pwd"],
+                            role_id=student.role_id
+                            )
                 isstudent.confirmed = True
                 db.session.add(isstudent)
                 db.session.add(user)
@@ -101,7 +104,7 @@ def register():
                 token = user.generate_confirmation_token()
                 send_email(user.email, 'Confirm Your Account',
                            'mail/confirm', user=user, token=token)
-                flash('A confirmation email has been sent to you by email.',category='info')
+                flash('A confirmation email has been sent to you by email.', category='info')
                 return redirect(url_for('auth.login'))
         return render_template('auth/register.html')
 
