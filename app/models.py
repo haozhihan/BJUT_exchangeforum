@@ -9,6 +9,8 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app, request
 from flask_login import UserMixin, AnonymousUserMixin
 from . import db, login_manager
+from markdown import markdown
+import bleach
 import sqlalchemy
 
 
@@ -74,11 +76,11 @@ class Role(db.Model):
 
 
 class Students(db.Model):
-    __tablename__='students'
+    __tablename__ = 'students'
     student_id = db.Column(db.Integer, primary_key=True)
     id_number = db.Column(db.String(18))
     confirmed = db.Column(db.Boolean, default=False)
-    role_id = db.Column(db.Integer, default = 1, index=True)
+    role_id = db.Column(db.Integer, default=1, index=True)
 
 
 class Follow(db.Model):
@@ -120,11 +122,19 @@ class User(UserMixin, db.Model):
     # 发帖
     posts = db.relationship('Post', backref='author', lazy='dynamic')
 
-    #关注
+    # 关注
     following = db.relationship('Follow', foreign_keys=[Follow.follower_id], back_populates='follower',
                                 lazy='dynamic', cascade='all')
     followers = db.relationship('Follow', foreign_keys=[Follow.followed_id], back_populates='followed',
                                 lazy='dynamic', cascade='all')
+
+    @staticmethod
+    def add_self_follows():
+        for user in User.query.all():
+            if not user.is_following(user):
+                user.follow(user)
+                db.session.add(user)
+                db.session.commit()
 
     # 通过特定的邮箱来识别管理员身份（待改进）
     def __init__(self, **kwargs):
@@ -137,6 +147,7 @@ class User(UserMixin, db.Model):
         #
         if self.email is not None and self.avatar_hash is None:
             self.avatar_hash = self.gravatar_hash()
+        self.follow(self)
 
     @property
     def password(self):
@@ -234,6 +245,33 @@ class User(UserMixin, db.Model):
         return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
             url=url, hash=hash, size=size, default=default, rating=rating)
 
+    def follow(self, user):
+        if not self.is_following(user):
+            f = Follow(follower=self, followed=user)
+            db.session.add(f)
+
+    def unfollow(self, user):
+        f = self.following.filter_by(followed_id=user.id).first()
+        if f:
+            db.session.delete(f)
+
+    def is_following(self, user):
+        if user.id is None:
+            return False
+        return self.following.filter_by(
+            followed_id=user.id).first() is not None
+
+    def is_followed_by(self, user):
+        if user.id is None:
+            return False
+        return self.followers.filter_by(
+            follower_id=user.id).first() is not None
+
+    @property
+    def followed_posts(self):
+        return Post.query.join(Follow, Follow.followed_id == Post.author_id) \
+            .filter(Follow.follower_id == self.id)
+
     def __repr__(self):
         return '<User %r>' % self.username
 
@@ -258,5 +296,18 @@ class Post(db.Model):
     __tablename__ = 'posts'
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text)
+    # body_html = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+#     @staticmethod
+#     def on_changed_body(target, value, oldvalue, initiator):
+#         allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
+#                         'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
+#                         'h1', 'h2', 'h3', 'p']
+#         target.body_html = bleach.linkify(bleach.clean(
+#             markdown(value, output_format='html'),
+#             tags=allowed_tags, strip=True))
+#
+#
+# db.event.listen(Post.body, 'set', Post.on_changed_body)
