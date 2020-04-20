@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileRequired
 from wtforms import StringField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, Length
 from flask_pagedown.fields import PageDownField
@@ -22,3 +23,8 @@ class EditProfileForm(FlaskForm):
 class PostForm(FlaskForm):
     body = PageDownField("What's on your mind?", validators=[DataRequired()])
     submit = SubmitField('Submit')
+
+
+class UploadPhotoForm(FlaskForm):
+    photo = FileField(validators = [FileRequired()])
+    submit = SubmitField('Upload')

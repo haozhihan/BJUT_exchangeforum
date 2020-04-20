@@ -1,8 +1,12 @@
+import os
+
 from flask import render_template, redirect, url_for, abort, flash, request,\
     current_app, make_response
 from flask_login import login_required, current_user
+from werkzeug.utils import secure_filename
+
 from . import main
-from .forms import EditProfileForm, PostForm
+from .forms import EditProfileForm, PostForm, UploadPhotoForm
 from .. import db
 from ..models import Permission, Role, User, Post
 from ..decorators import admin_required, permission_required
@@ -175,3 +179,26 @@ def show_followed():
     resp = make_response(redirect(url_for('.index')))
     resp.set_cookie('show_followed', '1', max_age=30*24*60*60)
     return resp
+
+#
+#
+#
+# ALLOWED_EXTENSIONS = set(['png','jpg','jpeg','gif'])
+#
+# def allow_file(filename):
+#     return '.' in filename and filename.rsplit('.',1)[1].lower() in ALLOWED_EXTENSIONS
+#
+# @main.route('/photo', methods=['GET', 'POST'])
+# def uploadPhoto():
+#     form = UploadPhotoForm()
+#     if form.validate_on_submit():
+#         f = form.photo.data
+#         if f.filename == '':
+#             flash("No selected file")
+#             return render_template('Photo.html', form = form)
+#         if f and allow_file(f.filename):
+#             filename = secure_filename(f.filename)
+#             f.save(os.path.join('app', 'static', 'assets', filename))
+#             # current_user.
+#     return render_template('Photo.html', form = form)
+#
