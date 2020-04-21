@@ -118,6 +118,7 @@ class User(UserMixin, db.Model):
 
     # 用avatar_hash来储存生成头像时产生的MD5散列值
     avatar_hash = db.Column(db.String(32))
+    avatar_img = db.Column(db.String(120), default='/static/assets/default.png', nullable=True)
 
     # 发帖
     posts = db.relationship('Post', backref='author', lazy='dynamic')
