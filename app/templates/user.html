@@ -3,6 +3,12 @@
 
 {% block title %}Flasky - {{ user.username }}{% endblock %}
 
+{% block head %}
+{{ super() }}
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static',filename='posts.css') }}" rel="stylesheet">
+{% endblock %}
+
 {% block page_content %}
 <div class="page-header">
     <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=256) }}">

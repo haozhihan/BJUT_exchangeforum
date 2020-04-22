@@ -3,6 +3,12 @@
 
 {% block title %}Flasky - Post{% endblock %}
 
+{% block head %}
+{{ super() }}
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static',filename='posts.css') }}" rel="stylesheet">
+{% endblock %}
+
 {% block page_content %}
 {% include '_posts.html' %}
 {% endblock %}
