@@ -1,53 +1,117 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
-{% block title %}Profile{% endblock %}
+{% block title %}Change Password{% endblock %}
 
 {% block head %}
 {{ super() }}
     <!-- Custom styles for this template -->
-    <link href="{{ url_for('static',filename='profile.css') }}" rel="stylesheet">
-
+    <link href="{{ url_for('static',filename='information.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block page_content %}
 
-<div class="container">
-    <div class="bg-profile">
-    </div>
-    <div class="container col-sm-12 info">
-        <div class="col-sm-5 photo-box">
-            <img>
-        </div>
-        <div class="col-sm-7">
-            <ul class="list-group">
-                <li class="list-group-item info-box">
-                    <h3>User name</h3>
-                </li>
-                <li class="list-group-item info-box">
-                    这里是个性签名
-                </li>
-                <li class="list-group-item info-box detail">
-                    <div class="col-sm-2 title">E-mail</div>
-                    <div class="col-sm-10">email used for sign up</div>
-                </li>
-                <li class="list-group-item info-box detail">
-                    <div class="col-sm-2 title">grade</div>
-                    <div class="col-sm-10">2</div>
-                </li>
-                <li class="list-group-item info-box detail">
-                    <div class="col-sm-2 title">collage</div>
-                    <div class="col-sm-10">BJUT-Dublin International Collage</div>
-                </li>
-            </ul>
 
-        </div>
-        <div class="col-sm-offset-10 btn-group btn-group-sm">
-            <button type="button" class="btn btn-default">
-                <a href="/edit-profile">Change my information</a>
-            </button>
-        </div>
-    </div>
+<div class="container">
+	<div class="row clearfix">
+		<div class="col-md-2 column">
+		</div>
+
+		<div class="col-md-8 column">
+
+			<h2 class="text-left">Account and Password</h2>
+
+			<div class="tabbable" id="tabs-456499">
+
+				<ul class="nav nav-tabs">
+					<li class="underline">
+					<a href="{{ url_for('auth.change_password') }}" >Password </a>
+					</li>
+					<li class="active underline">
+					 <a href="{{ url_for('auth.change_email_request') }}" >Email</a>
+					</li>
+				</ul>
+
+				<div class="tab-content">
+
+
+					<div class="tab-pane active" id="panel-2">
+						<div class="email">
+
+						<form class="form-horizontal" role="form" method="post">
+							<div class="form-group">
+								<div class="board">
+{#                                    显示旧的邮箱#}
+									<div class="form-group">
+                                        <label class="col-sm-offset-2 col-sm-2 control-label">Old Email</label>
+                                        <div class="col-sm-7">
+                                            <p class="form-control-static">{{ current_user.email }}</p>
+                                        </div>
+									</div>
+{#                                    请输入新的邮箱#}
+									<div class="form-group">
+										<label for="newEmail" class="col-sm-offset-2 col-sm-2 control-label">New Email</label>
+                                        <div class="col-sm-7">
+                                            <input name="email" type="text" class="form-control" id="newEmail" placeholder="New email address">
+                                            <p id="p1"></p>
+                                        </div>
+									</div>
+{#                                    请输入您的密码#}
+                                    <div class="form-group">
+										<label for="newEmail" class="col-sm-offset-2 col-sm-2 control-label">Password</label>
+                                        <div class="col-sm-7">
+                                            <input name="pwd" type="password" class="form-control" id="pwd" placeholder="Please enter your password">
+                                        </div>
+									</div>
+
+{#                                    按钮#}
+									<div class="form-group">
+										<div class="col-sm-offset-5 col-sm-5 submit">
+										<button id="submit" type="submit" class="btn btn-success">Update Email</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</form>
+
+						</div>
+				    </div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-2 column">
+		</div>
+	</div>
 </div>
 
+    {#修改密码时验证信息格式是否符合标准的脚本#}
+<script>
+        var email = document.getElementById('newEmail');
+        var pwd = document.getElementById('pwd');
+        var ep = document.getElementById('p1');
+        var submit = document.getElementById('submit')
+        submit.disabled = true;
+
+        email.onblur = function () {
+            var e = this.value;
+            var reg = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
+            // 不符合规则的话
+            if(!reg.test(e)){
+                ep.innerHTML = '请输入正确格式的email';
+                ep.className = 'text-danger';
+                submit.disabled=true;
+            }
+            else{
+                ep.innerHTML = '';
+                ep.className = 'text-success';
+            }
+            {#当所有都满足条件#}
+            if(ep.className == 'text-success'){
+                submit.disabled=false;
+            }
+        }
+
+</script>
 {% endblock %}
+
+
