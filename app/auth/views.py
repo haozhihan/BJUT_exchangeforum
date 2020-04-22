@@ -201,7 +201,7 @@ def password_reset(token):
             return redirect(url_for('auth.login'))
         else:
             return redirect(url_for('main.index'))
-    return render_template('auth/reset_password.html', form=form)
+    return render_template('auth/reset_password_inEmail.html', form=form)
 
 
 

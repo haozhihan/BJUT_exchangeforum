@@ -61,15 +61,17 @@ class ChangePasswordForm(FlaskForm):
 
 
 class PasswordResetRequestForm(FlaskForm):
-  email = StringField('Email', validators=[DataRequired(), Length(1, 64),
+  email = StringField('Email', render_kw={"placeholder":"Your Email"}, validators=[DataRequired(), Length(1, 64),
                                            Email()])
   submit = SubmitField('Reset Password')
 
 
 class PasswordResetForm(FlaskForm):
-  password = PasswordField('New Password', validators=[
-      DataRequired(), EqualTo('password2', message='Passwords must match')])
-  password2 = PasswordField('Confirm password', validators=[DataRequired()])
+  password = PasswordField('New Password', render_kw={"placeholder":"New Password"},
+                           validators=[DataRequired(),
+                                       EqualTo('password2', message='Passwords must match')])
+  password2 = PasswordField('Confirm password', render_kw={"placeholder":"Confirm password"},
+                            validators=[DataRequired()])
   submit = SubmitField('Reset Password')
 
 
