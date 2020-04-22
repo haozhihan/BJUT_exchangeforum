@@ -48,7 +48,8 @@
         {#    首页资料卡#}
           <div class="col-md-3 col-md-offset-1">
             <div class="thumbnail text-center">
-              <img src="{{ current_user.gravatar(size=256) }}" alt="avatar" >
+{#              <img src="{{ current_user.gravatar(size=256) }}" alt="avatar" >#}
+                <img src="{{ current_user.avatar_img }}" alt="avatar" >
               <div class="caption">
                 <h3>{{ current_user.username }}</h3>
                 <p>{{ current_user.about_me }}</p>

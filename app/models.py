@@ -2,16 +2,16 @@
 # as well as the permission settings of different users.
 from datetime import datetime
 import hashlib
-from sqlalchemy import *
-from sqlalchemy.orm import *
+# from sqlalchemy import *
+# from sqlalchemy.orm import *
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app, request
 from flask_login import UserMixin, AnonymousUserMixin
 from . import db, login_manager
-from markdown import markdown
-import bleach
-import sqlalchemy
+# from markdown import markdown
+# import bleach
+# import sqlalchemy
 
 
 class Permission:
