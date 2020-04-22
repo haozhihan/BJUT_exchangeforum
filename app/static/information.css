@@ -19,7 +19,7 @@ body {
 }
 
 .form-group .submit {
-    padding-top: 10px;
+    padding: 10px 0 10px 0;
 }
 
 .form-group .control-label {
@@ -35,7 +35,7 @@ body {
     border: 1px solid #ddd;
     border-top: none;
     border-radius: 4px;
-    box-shadow: 5px 5px #e3e3e3;
+    box-shadow: 0 0 10px 2px #e3e3e3;
 }
 
 .underline a:focus{
