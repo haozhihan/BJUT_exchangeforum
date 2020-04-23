@@ -56,21 +56,20 @@ def user(username):
 @main.route('/edit-profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
-    form = EditProfileForm()
-    if form.validate_on_submit():
-        current_user.username = form.username.data
-        current_user.college = form.college.data
-        current_user.grade = form.grade.data
-        current_user.about_me = form.about_me.data
+    if request.method == 'GET':
+        return render_template('edit_profile.html')
+    if request.method == 'POST':
+        # 读取前端数据
+        current_user.username = request.form["username"]
+        current_user.college = request.form["collage"]
+        current_user.grade = request.form["grade"]
+        current_user.about_me = request.form["aboutme"]
+
         db.session.add(current_user._get_current_object())
         db.session.commit()
+
         flash('Your profile has been updated.')
         return redirect(url_for('.user', username=current_user.username))
-    form.username.data = current_user.username
-    form.college.data = current_user.college
-    form.grade.data = current_user.grade
-    form.about_me.data = current_user.about_me
-    return render_template('edit_profile.html', form=form)
 
 
 @main.route('/post/<int:id>')
