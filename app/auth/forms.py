@@ -1,21 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired, Length, Email, Regexp, EqualTo
-from wtforms import ValidationError
-from ..models import User
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import DataRequired, Length, Email, EqualTo
 
 
-
-
-# 修改邮箱
-class ChangeEmailForm(FlaskForm):
-  email = StringField('New Email', validators=[DataRequired(), Length(1, 64), Email()])
-  password = PasswordField('Password', validators=[DataRequired()])
-  submit = SubmitField('Update Email Address')
-
-  def validate_email(self, field):
-      if User.query.filter_by(email=field.data.lower()).first():
-          raise ValidationError('Email already registered.')
 
 
 

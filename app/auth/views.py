@@ -4,7 +4,7 @@ from . import auth
 from .. import db
 from ..models import User, Students
 from ..email import send_email
-from .forms import  PasswordResetRequestForm, PasswordResetForm, ChangeEmailForm
+from .forms import  PasswordResetRequestForm, PasswordResetForm
 # This file is to write the route and some response to the user in different conditions
 
 
