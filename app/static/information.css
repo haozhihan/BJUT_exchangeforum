@@ -38,5 +38,7 @@ body {
     box-shadow: 0 0 10px 2px #e3e3e3;
 }
 
-.underline a:focus{
+.form-horizontal .form-group {
+    margin-left: 0;
+    margin-right: 0;
 }
