@@ -1,0 +1,26 @@
+.post-box{
+    padding: 10px;
+    margin: 5px;
+    border-bottom: 1px solid #ddd;
+    height: 130px;
+}
+.head-photo {
+    display: block;
+    margin: 10px 30px;
+}
+
+.col-sm-2 .post-author a {
+    font-size: 16px;
+    font-weight: 600;
+    font-family: consolas Arial;
+    color: #666868;
+}
+
+.col-sm-2 .post-author a:hover {
+    color: #1b34b9;
+    text-decoration: none;
+}
+
+.title {
+    margin: 0 0 5px 0;
+}
