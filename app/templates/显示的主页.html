@@ -16,28 +16,32 @@
     <div class="bg-profile">
     </div>
     <div class="container col-sm-12 info">
-        <div class="col-sm-5 photo-box">
-            <img>
+        <div class="col-sm-2">
+            {% if current_user.avatar_img %}
+                <img class="img-rounded profile-thumbnail" src="{{ current_user.avatar_img }}" alt="avatar"  style="width: 130px; height: 130px">
+            {% else %}
+                <img class="img-rounded profile-thumbnail" src="{{ current_user.gravatar(size=130) }}" alt="avatar">
+            {% endif %}
         </div>
         <div class="col-sm-7">
             <ul class="list-group">
                 <li class="list-group-item info-box">
-                    <h3>User name</h3>
+                    <h3>{{ current_user.username }}</h3>
                 </li>
                 <li class="list-group-item info-box">
-                    这里是个性签名
+                    {{ current_user.about_me }}
                 </li>
                 <li class="list-group-item info-box detail">
-                    <div class="col-sm-2 title">E-mail</div>
-                    <div class="col-sm-10">email used for sign up</div>
+                    <div class="col-sm-2 title">Email</div>
+                    <div class="col-sm-10">{{ current_user.email }}</div>
                 </li>
                 <li class="list-group-item info-box detail">
-                    <div class="col-sm-2 title">grade</div>
-                    <div class="col-sm-10">2</div>
+                    <div class="col-sm-2 title">Grade</div>
+                    <div class="col-sm-10">{{ current_user.grade }}</div>
                 </li>
                 <li class="list-group-item info-box detail">
-                    <div class="col-sm-2 title">collage</div>
-                    <div class="col-sm-10">BJUT-Dublin International Collage</div>
+                    <div class="col-sm-2 title">Collage</div>
+                    <div class="col-sm-10">{{ current_user.college }}</div>
                 </li>
             </ul>
 
