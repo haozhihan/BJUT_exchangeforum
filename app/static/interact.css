@@ -1,0 +1,8 @@
+.outer {
+    position: fixed;
+    left: 50%;
+    top: 100px;
+}
+.inner1 {
+    width: 280px;
+}
