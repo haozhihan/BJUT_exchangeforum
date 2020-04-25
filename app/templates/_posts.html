@@ -4,7 +4,11 @@
         <div class="post-box">
             <div class="post-thumbnail col-sm-2">
                 <a class="head-photo" href="{{ url_for('.user', username=post.author.username) }}">
-                    <img class="img-rounded profile-thumbnail" src="{{ post.author.gravatar(size=40) }}">
+                    {% if post.author.avatar_img %}
+                        <img class="img-rounded profile-thumbnail" src="{{ post.author.avatar_img }}" alt="avatar"  style="width: 40px; height: 40px">
+                    {% else %}
+                        <img class="img-rounded profile-thumbnail" src="{{ post.author.gravatar(size=40) }}" alt="avatar">
+                    {% endif %}
                 </a>
                 <div class="post-author">
                     <a href="{{ url_for('.user', username=post.author.username) }}">{{ post.author.username }}</a>

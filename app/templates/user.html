@@ -7,11 +7,18 @@
 {{ super() }}
     <!-- Custom styles for this template -->
     <link href="{{ url_for('static',filename='posts.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static',filename='interact.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block page_content %}
 <div class="page-header">
-    <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=256) }}">
+{#    <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=256) }}">#}
+
+    {% if user.avatar_img %}
+        <img class="img-rounded profile-thumbnail" src="{{ user.avatar_img }}" alt="avatar"  style="width: 256px; height: 256px">
+    {% else %}
+        <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=256) }}" alt="avatar">
+    {% endif %}
     <div class="profile-header">
         <h1>{{ user.username }}</h1>
         {% if user.grade or user.college %}

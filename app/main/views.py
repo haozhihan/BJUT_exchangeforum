@@ -49,7 +49,7 @@ def user(username):
         page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
     posts = pagination.items
-    return render_template('user.html', user=user, posts=posts,
+    return render_template('显示的主页.html', user=user, posts=posts,
                            pagination=pagination)
 
 
