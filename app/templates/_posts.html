@@ -12,7 +12,7 @@
                 <div class="post-date">{{ moment(post.timestamp).fromNow() }}</div>
             </div>
             <div class="post-content col-sm-offset-1 col-sm-9">
-                <h4 class="title">There is title for each post</h4>
+                <h4 class="title">{{ post.title }}</h4>
                 <div class="post-body">
                     {% if post.body_html %}
                         {{ post.body_html | safe }}
@@ -33,6 +33,14 @@
                     <a href="{{ url_for('.post', id=post.id) }}">
                         <span class="label label-default">Permalink</span>
                     </a>
+                    <a href="{{ url_for('.post', id=post.id) }}#comments">
+                        <span class="label label-primary">
+                            Comments
+                        </span>
+                    </a>
+{#                    <a href="{{ url_for('.post', id=post.id) }}#likes">#}
+{#                    <span class="label label-primary">{{ post.liker.count() }} Liker</span>#}
+{#                    </a>#}
                 </div>
             </div>
         </div>
