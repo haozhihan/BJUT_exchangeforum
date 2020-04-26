@@ -206,3 +206,34 @@ def uploadPhoto():
             render_template('Photo.html', form=form)
     return render_template('Photo.html', form = form)
 
+
+@main.route('/new_post', methods=['GET', 'POST'])
+@login_required
+def new_post():
+
+    if request.method == 'POST':
+        text = request.form.get('text1')
+        print(text)
+
+        post = Post(body = text,
+                    author=current_user._get_current_object())
+        db.session.add(post)
+        db.session.commit()
+        return redirect(url_for('.index'))
+    return render_template('new_post.html')
+
+
+
+    # form = PostForm()
+    # if form.validate_on_submit():
+    #     # title = form.title.data
+    #     body = form.body.data
+    #     print(body)
+    #       new = Post(title=title, body=body)
+    #       db.session.add(new)
+    #       db.session.commit()
+    #     flash('Post created.', 'success')
+    # #     return redirect(url_for('.post', id=post.id))
+    # return render_template('new_post.html',form=form)
+
+
