@@ -81,8 +81,8 @@
 
     <div class="container col-sm-12 info">
 
-         <p>{{ user.posts.count() }} blog posts.</p>
-        {% include '_posts.html' %}
+<!--         <p>{{ user.posts.count() }} blog posts.</p>-->
+        {% include 'profile_posts.html' %}
         {% if pagination %}
         <div class="pagination">
             {{ macros.pagination_widget(pagination, '.user', username=user.username) }}
