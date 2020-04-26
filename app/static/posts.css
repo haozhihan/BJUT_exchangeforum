@@ -1,3 +1,10 @@
+/*
+整体页面样式
+ */
+body {
+        background-color: #f2f2f2;
+    }
+
 .post-box{
     padding: 10px;
     border: 1px solid #ddd;
@@ -6,6 +13,10 @@
     background-color: #fff;
     /*box-shadow: 0 0 10px 2px #e3e3e3;*/
 }
+
+/*
+左侧用户信息样式
+ */
 .head-photo {
     display: block;
     margin: 10px 30px;
@@ -23,10 +34,25 @@
     text-decoration: none;
 }
 
+/*
+右侧帖子预览互动样式
+ */
+
 .title {
     margin: 0 0 5px 0;
 }
 
-body {
-        background-color: #f2f2f2;
-    }
+.post-title a{
+    color: black;
+}
+
+.post-title a:hover {
+    text-decoration: none;
+    color: #337ab7;
+}
+
+.post-title a:focus {
+    text-decoration: underline;
+    color: #337ab7;
+    text-shadow: 0 0 5px #9a9797;
+}

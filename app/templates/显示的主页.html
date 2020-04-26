@@ -19,8 +19,8 @@
     <div class="container col-sm-12 info" style="height: 270px;">
         <div class="col-md-2" style="padding: 0;">
             <div class="photo">
-                {% if current_user.avatar_img %}
-                <img class="img-rounded profile-thumbnail" src="{{ user.avatar_img }}" alt="avatar"  style="width: 130px; height: 130px">
+                {% if user.avatar_img %}
+                    <img class="img-rounded profile-thumbnail" src="{{ user.avatar_img }}" alt="avatar"  style="width: 130px; height: 130px">
                 {% else %}
                     <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=130) }}" alt="avatar">
                 {% endif %}
@@ -34,6 +34,7 @@
                     <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                     <span>Last seen {{ moment(user.last_seen).fromNow() }}</span>
                 </div>
+
                 <div class="follow">
                         {% if current_user.can(Permission.FOLLOW) and user != current_user %}
                             {% if not current_user.is_following(user) %}
@@ -48,15 +49,23 @@
                         | <span class="label label-default">Follows you</span>
                         {% endif %}
                 </div>
+
             </div>
         </div>
         <div class="col-md-10">
             <ul class="list-group">
                 <li class="list-group-item info-box">
-                    <h3>{{ current_user.username }}</h3>
+                    <h3 style="display: inline;">{{ user.username }}</h3>
+                     {% if current_user.can(Permission.FOLLOW) and user != current_user %}
+                            {% if not current_user.is_following(user) %}
+                            <a href="{{ url_for('.follow', username=user.username) }}" class="btn btn-primary">Follow</a>
+                            {% else %}
+                            <a href="{{ url_for('.unfollow', username=user.username) }}" class="btn btn-default">Unfollow</a>
+                            {% endif %}
+                     {% endif %}
                 </li>
                 <li class="list-group-item info-box" style="color: #727070;">
-                    {{ current_user.about_me }}
+                    {{ user.about_me }}
                 </li>
                 <li class="list-group-item info-box detail">
                     <div class="col-sm-2 title">Email</div>
@@ -68,7 +77,7 @@
                 </li>
                 <li class="list-group-item info-box detail">
                     <div class="col-sm-2 title">Collage</div>
-                    <div class="col-sm-10">{{ current_user.college }}</div>
+                    <div class="col-sm-10">{{ user.college }}</div>
                 </li>
             </ul>
             <div class="col-sm-offset-9 btn-group btn-group-sm">
@@ -81,8 +90,8 @@
 
     <div class="container col-sm-12 info">
 
-         <p>{{ user.posts.count() }} blog posts.</p>
-        {% include '_posts.html' %}
+{#<!--         <p>{{ user.posts.count() }} blog posts.</p>-->#}
+        {% include 'profile_posts.html' %}
         {% if pagination %}
         <div class="pagination">
             {{ macros.pagination_widget(pagination, '.user', username=user.username) }}

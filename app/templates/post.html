@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
 {% import "_macros.html" as macros %}
 
 {% block title %}Post{% endblock %}
@@ -24,7 +23,10 @@
     {{ macros.pagination_widget(pagination, '.post', fragment='#comments', id=posts[0].id) }}
 </div>
 {% endif %}
+{#{% include '_liker.html' %}#}
+{#{% if pagination %}#}
+{#<div class="pagination">#}
+{#    {{ macros.pagination_widget(pagination, '.post', fragment='#liker', id=posts[0].id) }}#}
+{#</div>#}
+{#{% endif %}#}
 {% endblock %}
-
-
-

@@ -11,6 +11,8 @@ from flask_login import UserMixin, AnonymousUserMixin
 from . import db, login_manager
 from markdown import markdown
 import bleach
+
+
 # import sqlalchemy
 
 
@@ -120,15 +122,16 @@ class User(UserMixin, db.Model):
     avatar_hash = db.Column(db.String(32))
     avatar_img = db.Column(db.String(120), default='/static/assets/default.png', nullable=True)
 
-    # 发帖
+    # 发帖、评论与点赞
     posts = db.relationship('Post', backref='author', lazy='dynamic')
+    comments = db.relationship('Comment', backref='author', lazy='dynamic')
+    # liker = db.relationship('Liker', backref='author', lazy='dynamic')
 
     # 关注
     following = db.relationship('Follow', foreign_keys=[Follow.follower_id], back_populates='follower',
                                 lazy='dynamic', cascade='all')
     followers = db.relationship('Follow', foreign_keys=[Follow.followed_id], back_populates='followed',
                                 lazy='dynamic', cascade='all')
-    comments = db.relationship('Comment', backref='author', lazy='dynamic')
 
     @staticmethod
     def add_self_follows():
@@ -297,11 +300,14 @@ def load_user(user_id):
 class Post(db.Model):
     __tablename__ = 'posts'
     id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.Text)
     body = db.Column(db.Text)
     body_html = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
+    # liker = db.relationship('Liker', backref='post', lazy='dynamic')
 
     @staticmethod
     def on_changed_body(target, value, oldvalue, initiator):
@@ -336,4 +342,14 @@ class Comment(db.Model):
             tags=allowed_tags, strip=True))
 
 
+
 db.event.listen(Comment.body, 'set', Comment.on_changed_body)
+
+
+# class Liker(db.Model):
+#     __tablename__ = 'liker'
+#     id = db.Column(db.Integer, primary_key=True)
+#     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+#     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+#     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+#     like = db.Column(db.Boolean, default=False)

@@ -75,3 +75,39 @@ body {
 .select-photo {
     margin-top: 50px;
 }
+
+/*
+posts栏目相关的样式
+ */
+.post-title {
+    margin-top: 15px;
+}
+
+.post-title a{
+    color: black;
+}
+
+.post-title a:hover {
+    text-decoration: none;
+    color: #337ab7;
+}
+
+.post-title a:focus {
+    text-decoration: underline;
+    color: #337ab7;
+    text-shadow: 0 0 5px #9a9797;
+}
+
+.post-content {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.post-body {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.post-date {
+    margin-top: 10px;
+}

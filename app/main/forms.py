@@ -22,12 +22,13 @@ class EditProfileForm(FlaskForm):
 
 
 class PostForm(FlaskForm):
+    title = TextAreaField("Title", validators=[DataRequired()])
     body = PageDownField("What's on your mind?", validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 
 class UploadPhotoForm(FlaskForm):
-    photo = FileField('image', validators = [FileRequired(), FileAllowed(['jpg', 'png'], 'Images only!')])
+    photo = FileField('image', validators=[FileRequired(), FileAllowed(['jpg', 'png'], 'Images only!')])
     submit = SubmitField('Upload')
 
 

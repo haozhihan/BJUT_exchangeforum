@@ -1,6 +1,6 @@
 import os
 
-from flask import render_template, redirect, url_for, abort, flash, request,\
+from flask import render_template, redirect, url_for, abort, flash, request, \
     current_app, make_response
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
@@ -20,7 +20,8 @@ from ..decorators import admin_required
 def index():
     form = PostForm()
     if current_user.can(Permission.WRITE) and form.validate_on_submit():
-        post = Post(body=form.body.data,
+        post = Post(title=form.title.data,
+                    body=form.body.data,
                     author=current_user._get_current_object())
         db.session.add(post)
         db.session.commit()
@@ -49,7 +50,7 @@ def user(username):
         page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
     posts = pagination.items
-    return render_template('user.html', user=user, posts=posts,
+    return render_template('显示的主页.html', user=user, posts=posts,
                            pagination=pagination)
 
 
@@ -105,12 +106,14 @@ def edit(id):
         abort(403)
     form = PostForm()
     if form.validate_on_submit():
+        post.title = form.title.data
         post.body = form.body.data
         db.session.add(post)
         db.session.commit()
         flash('The post has been updated.')
         return redirect(url_for('.post', id=post.id))
     form.body.data = post.body
+    form.title.data = post.title
     return render_template('edit_post.html', form=form)
 
 
@@ -204,7 +207,7 @@ def followed_by(username):
 @login_required
 def show_all():
     resp = make_response(redirect(url_for('.index')))
-    resp.set_cookie('show_followed', '', max_age=30*24*60*60)
+    resp.set_cookie('show_followed', '', max_age=30 * 24 * 60 * 60)
     return resp
 
 
@@ -212,16 +215,15 @@ def show_all():
 @login_required
 def show_followed():
     resp = make_response(redirect(url_for('.index')))
-    resp.set_cookie('show_followed', '1', max_age=30*24*60*60)
+    resp.set_cookie('show_followed', '1', max_age=30 * 24 * 60 * 60)
     return resp
 
 
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
-
-ALLOWED_EXTENSIONS = set(['png','jpg','jpeg','gif'])
 
 def allow_file(filename):
-    return '.' in filename and filename.rsplit('.',1)[1].lower() in ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 @main.route('/photo', methods=['GET', 'POST'])
@@ -235,7 +237,7 @@ def uploadPhoto():
         if f and allow_file(f.filename):
             filename = secure_filename(f.filename)
             f.save(os.path.join('app', 'static', 'assets', filename))
-            current_user.avatar_img = '/static/assets/'+filename
+            current_user.avatar_img = '/static/assets/' + filename
             db.session.commit()
             return redirect(url_for('.index'))
         else:
@@ -243,3 +245,70 @@ def uploadPhoto():
             render_template('Photo.html', form=form)
     return render_template('Photo.html', form = form)
 
+
+@main.route('/new_post', methods=['GET', 'POST'])
+@login_required
+def new_post():
+
+    if request.method == 'POST':
+        text = request.form.get('text1')
+        print(text)
+
+        post = Post(body = text,
+                    author=current_user._get_current_object())
+        db.session.add(post)
+        db.session.commit()
+        return redirect(url_for('.index'))
+    return render_template('new_post.html')
+
+
+
+    # form = PostForm()
+    # if form.validate_on_submit():
+    #     # title = form.title.data
+    #     body = form.body.data
+    #     print(body)
+    #       new = Post(title=title, body=body)
+    #       db.session.add(new)
+    #       db.session.commit()
+    #     flash('Post created.', 'success')
+    # #     return redirect(url_for('.post', id=post.id))
+    # return render_template('new_post.html',form=form)
+
+
+
+@main.route('/moderate')
+@login_required
+@permission_required(Permission.MODERATE)
+def moderate():
+    page = request.args.get('page', 1, type=int)
+    pagination = Comment.query.order_by(Comment.timestamp.desc()).paginate(
+        page, per_page=current_app.config['FLASKY_COMMENTS_PER_PAGE'],
+        error_out=False)
+    comments = pagination.items
+    return render_template('moderate.html', comments=comments,
+                           pagination=pagination, page=page)
+
+
+@main.route('/moderate/enable/<int:id>')
+@login_required
+@permission_required(Permission.MODERATE)
+def moderate_enable(id):
+    comment = Comment.query.get_or_404(id)
+    comment.disabled = False
+    db.session.add(comment)
+    db.session.commit()
+    return redirect(url_for('.moderate',
+                            page=request.args.get('page', 1, type=int)))
+
+
+@main.route('/moderate/disable/<int:id>')
+@login_required
+@permission_required(Permission.MODERATE)
+def moderate_disable(id):
+    comment = Comment.query.get_or_404(id)
+    comment.disabled = True
+    db.session.add(comment)
+    db.session.commit()
+    return redirect(url_for('.moderate',
+                            page=request.args.get('page', 1, type=int)))
