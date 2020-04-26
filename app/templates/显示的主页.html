@@ -20,9 +20,9 @@
         <div class="col-md-2" style="padding: 0;">
             <div class="photo">
                 {% if current_user.avatar_img %}
-                <img class="img-rounded profile-thumbnail" src="{{ current_user.avatar_img }}" alt="avatar"  style="width: 130px; height: 130px">
+                <img class="img-rounded profile-thumbnail" src="{{ user.avatar_img }}" alt="avatar"  style="width: 130px; height: 130px">
                 {% else %}
-                    <img class="img-rounded profile-thumbnail" src="{{ current_user.gravatar(size=130) }}" alt="avatar">
+                    <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=130) }}" alt="avatar">
                 {% endif %}
             </div>
             <div>
@@ -60,11 +60,11 @@
                 </li>
                 <li class="list-group-item info-box detail">
                     <div class="col-sm-2 title">Email</div>
-                    <div class="col-sm-10">{{ current_user.email }}</div>
+                    <div class="col-sm-10">{{ user.email }}</div>
                 </li>
                 <li class="list-group-item info-box detail">
                     <div class="col-sm-2 title">Grade</div>
-                    <div class="col-sm-10">{{ current_user.grade }}</div>
+                    <div class="col-sm-10">{{ user.grade }}</div>
                 </li>
                 <li class="list-group-item info-box detail">
                     <div class="col-sm-2 title">Collage</div>

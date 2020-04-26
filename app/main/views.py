@@ -6,9 +6,9 @@ from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 
 from . import main
-from .forms import EditProfileForm, PostForm, UploadPhotoForm
+from .forms import EditProfileForm, PostForm, UploadPhotoForm, CommentForm
 from .. import db
-from ..models import Permission, Role, User, Post
+from ..models import Permission, Role, User, Post, Comment
 from ..decorators import admin_required, permission_required
 from ..decorators import admin_required
 
@@ -49,7 +49,7 @@ def user(username):
         page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
     posts = pagination.items
-    return render_template('显示的主页.html', user=user, posts=posts,
+    return render_template('user.html', user=user, posts=posts,
                            pagination=pagination)
 
 
@@ -72,10 +72,28 @@ def edit_profile():
         return redirect(url_for('.user', username=current_user.username))
 
 
-@main.route('/post/<int:id>')
+@main.route('/post/<int:id>', methods=['GET', 'POST'])
 def post(id):
     post = Post.query.get_or_404(id)
-    return render_template('post.html', posts=[post])
+    form = CommentForm()
+    if form.validate_on_submit():
+        comment = Comment(body=form.body.data,
+                          post=post,
+                          author=current_user._get_current_object())
+        db.session.add(comment)
+        db.session.commit()
+        flash('Your comment has been published.')
+        return redirect(url_for('.post', id=post.id, page=-1))
+    page = request.args.get('page', 1, type=int)
+    if page == -1:
+        page = (post.comments.count() - 1) // \
+               current_app.config['FLASKY_COMMENTS_PER_PAGE'] + 1
+    pagination = post.comments.order_by(Comment.timestamp.asc()).paginate(
+        page, per_page=current_app.config['FLASKY_COMMENTS_PER_PAGE'],
+        error_out=False)
+    comments = pagination.items
+    return render_template('post.html', posts=[post], form=form,
+                           comments=comments, pagination=pagination)
 
 
 @main.route('/edit/<int:id>', methods=['GET', 'POST'])
@@ -95,6 +113,24 @@ def edit(id):
     form.body.data = post.body
     return render_template('edit_post.html', form=form)
 
+
+@main.route('/delete/<int:id>')
+@login_required
+def delete(id):
+    comment = Comment.query.get_or_404(id)
+    posts = Post.query.filter_by(id=comment.post_id).first()
+    users = User.query.filter_by(id=posts.author_id).first()
+    print(users.username)
+    print(comment.author.username)
+    print(current_user.username)
+    if current_user == comment.author or current_user == users:
+        db.session.delete(comment)
+        db.session.commit()
+        flash('The comment has been deleted.')
+        return redirect(url_for('.post', id=posts.id))
+    else:
+        flash('你没有删评论权限')
+        return redirect(url_for('.post', id=posts.id))
 
 @main.route('/follow/<username>')
 @login_required
@@ -186,6 +222,7 @@ ALLOWED_EXTENSIONS = set(['png','jpg','jpeg','gif'])
 
 def allow_file(filename):
     return '.' in filename and filename.rsplit('.',1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 @main.route('/photo', methods=['GET', 'POST'])
 def uploadPhoto():
