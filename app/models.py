@@ -86,12 +86,9 @@ class Students(db.Model):
 
 
 class Follow(db.Model):
-    follower_id = db.Column(db.Integer, db.ForeignKey('users.id'),
-                            primary_key=True)
-    followed_id = db.Column(db.Integer, db.ForeignKey('users.id'),
-                            primary_key=True)
+    follower_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    followed_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-
     follower = db.relationship('User', foreign_keys=[follower_id], back_populates='following', lazy='joined')
     followed = db.relationship('User', foreign_keys=[followed_id], back_populates='followers', lazy='joined')
 
@@ -132,6 +129,9 @@ class User(UserMixin, db.Model):
                                 lazy='dynamic', cascade='all')
     followers = db.relationship('Follow', foreign_keys=[Follow.followed_id], back_populates='followed',
                                 lazy='dynamic', cascade='all')
+    #点赞
+    liked_post = db.relationship('Like', back_populates='liker', lazy='joined')
+
 
     @staticmethod
     def add_self_follows():
@@ -306,8 +306,9 @@ class Post(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
-    comments = db.relationship('Comment', backref='post', lazy='dynamic')
-    # liker = db.relationship('Liker', backref='post', lazy='dynamic')
+    comments = db.relationship('Comment', back_populates='post', cascade='all, delete-orphan')
+
+    liker = db.relationship('Like', back_populates='liked_post', lazy='joined')
 
     @staticmethod
     def on_changed_body(target, value, oldvalue, initiator):
@@ -332,6 +333,16 @@ class Comment(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
 
+    post = db.relationship('Post', back_populates='comments')
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+
+
+    # 被回复的评论的id
+    replied_id = db.Column(db.Integer, db.ForeignKey('comments.id'))
+    # 回复
+    replies = db.relationship('Comment', back_populates='replied', cascade='all, delete-orphan')
+    # 表示被回复的评论
+    replied = db.relationship('Comment', back_populates='replies', remote_side=[id])
 
     @staticmethod
     def on_changed_body(target, value, oldvalue, initiator):
@@ -345,11 +356,10 @@ class Comment(db.Model):
 
 db.event.listen(Comment.body, 'set', Comment.on_changed_body)
 
-
-# class Liker(db.Model):
-#     __tablename__ = 'liker'
-#     id = db.Column(db.Integer, primary_key=True)
-#     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-#     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
-#     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-#     like = db.Column(db.Boolean, default=False)
+class Like(db.Model):
+    __tablename__='likes'
+    liker_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    liked_post_id = db.Column(db.Integer, db.ForeignKey('posts.id'), primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    liker = db.relationship('User', back_populates='liked_post', lazy='joined')
+    liked_post = db.relationship('Post', back_populates='liker', lazy='joined')
