@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}New Post (Markdown) {% endblock %}
+
+
+{% block head %}
+{{ super() }}
+<!--     Custom styles for this template -->
+    <link href="{{ url_for('static',filename='posts.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static',filename='interact.css') }}" rel="stylesheet">
+{% endblock %}
+
+
+
+{% block page_content %}
+    <div>
+        {% if current_user.can(Permission.WRITE) %}
+            <div class="col-sm-offset-3 col-sm-6">
+
+             <label class="WriteIndex-titleInput Input-wrapper Input-wrapper--multiline">
+                <textarea  id="title" name="title" rows="1" class="Input" maxlength="20"  placeholder="      请输入标题（最多 20 个字）"
+                          style="-webkit-tap-highlight-color: rgba(26,26,26,0);
+                                -webkit-box-flex: 1;
+                                flex: 1 1;
+                                padding: 0;
+                                font-family: inherit;
+                                background: transparent;
+                                resize: none;
+                                color: #1a1a1a;
+                                overflow: auto;
+                                min-height: 44px;
+                                display: block;
+                                width: 728px;
+                                border: 0;
+                                font-size: 32px;
+                                line-height: 1.4;
+                                font-weight: 600;
+                                outline: none;
+                                box-shadow: none;
+                                height: 44px;"></textarea>
+             </label>
+            </div>
+
+            <div class="col-sm-3">{{ form.submit }}</div>
+
+
+{#            <div class="col-md-6">#}
+                {{ form.csrf_token }}
+                {{ form.body }}
+{#            </div>#}
+            <div class="col-md-offset-6 col-md-6" id="pre">
+
+            </div>
+
+        {% endif %}
+    </div>
+
+
+
+{% endblock %}
+
+
+
+{% block scripts %}
+{{ super() }}
+    <script>
+    var input = document.getElementsByClassName("flask-pagedown-body")
+    input.resize = none;
+    {#var preview = document.getElementById("flask-pagedown-body-preview")#}
+    {#input.style.display = "inline";#}
+    {#input.className = "flask-pagedown col-sm-6"#}
+    {#preview.className = "flask-pagedown-preview col-sm-offset-6 col-sm-6"#}
+
+    document.getElementById("flask-pagedown-preview").parentNode = document.getElementById("pre");
+
+    document.getElementById("pre").appendChild("flask-pagedown-preview");
+
+    </script>
+
+{{ pagedown.include_pagedown() }}
+
+
+
+{% endblock %}

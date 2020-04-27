@@ -27,6 +27,12 @@ class PostForm(FlaskForm):
     submit = SubmitField('Submit')
 
 
+class PostMdForm(FlaskForm):
+    # title = TextAreaField("Title", validators=[DataRequired()])
+    body = TextAreaField("Body", validators=[DataRequired()])
+
+
+
 class UploadPhotoForm(FlaskForm):
     photo = FileField('image', validators=[FileRequired(), FileAllowed(['jpg', 'png'], 'Images only!')])
     submit = SubmitField('Upload')

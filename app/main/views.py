@@ -6,7 +6,7 @@ from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 
 from . import main
-from .forms import EditProfileForm, PostForm, UploadPhotoForm, CommentForm
+from .forms import EditProfileForm, PostForm, UploadPhotoForm, CommentForm, PostMdForm
 from .. import db
 from ..models import Permission, Role, User, Post, Comment
 from ..decorators import admin_required, permission_required
@@ -239,32 +239,42 @@ def uploadPhoto():
 @main.route('/new_post', methods=['GET', 'POST'])
 @login_required
 def new_post():
-
     if request.method == 'POST':
+        title = request.form.get('title')
         text = request.form.get('text1')
-        print(text)
-
-        post = Post(body = text,
-                    author=current_user._get_current_object())
+        if title == "":
+            flash("Title cannot be None!")
+            return render_template('new_post.html')
+        if text == "" or text == "<p><br></p>":
+            flash("Post cannot be None")
+            return render_template('new_post.html')
+        post = Post(title = title,
+                    body = text,
+                    author = current_user._get_current_object())
         db.session.add(post)
         db.session.commit()
+        flash("You have just posted a posting", 'success')
         return redirect(url_for('.index'))
     return render_template('new_post.html')
 
-
-
-    # form = PostForm()
-    # if form.validate_on_submit():
-    #     # title = form.title.data
-    #     body = form.body.data
-    #     print(body)
-    #       new = Post(title=title, body=body)
-    #       db.session.add(new)
-    #       db.session.commit()
-    #     flash('Post created.', 'success')
-    # #     return redirect(url_for('.post', id=post.id))
-    # return render_template('new_post.html',form=form)
-
+@main.route('/new_post_md', methods=['GET', 'POST'])
+@login_required
+def new_post_md():
+    form = PostMdForm()
+    if current_user.can(Permission.WRITE) and form.validate_on_submit():
+        title = request.form.get('title')
+        body = form.body.data
+        if title == "":
+            flash("Title cannot be None!")
+            return render_template('new_mdpost2.html', form=form)
+        post = Post(title=title,
+                    body=body,
+                    author=current_user._get_current_object())
+        db.session.add(post)
+        db.session.commit()
+        flash("You have just posted a posting", 'success')
+        return redirect(url_for('.index'))
+    return render_template('new_mdpost2.html', form=form)
 
 
 @main.route('/moderate')
