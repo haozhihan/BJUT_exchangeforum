@@ -54,21 +54,42 @@ def user(username):
                            pagination=pagination)
 
 
+
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+
+
+def allow_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@main.route('/photo', methods=['POST'])
+def uploadPhoto():
+    form = UploadPhotoForm()
+    f = form.photo.data
+    if f and allow_file(f.filename):
+        filename = secure_filename(f.filename)
+        f.save(os.path.join('app', 'static', 'assets', filename))
+        current_user.avatar_img = '/static/assets/' + filename
+        db.session.commit()
+    else:
+        flash("Please upload a picture of the compound rule")
+    return redirect(url_for('.edit_profile'))
+
+
 @main.route('/edit-profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
+    form = UploadPhotoForm()
     if request.method == 'GET':
-        return render_template('edit_profile.html')
+        return render_template('edit_profile.html', form=form)
     if request.method == 'POST':
         # 读取前端数据
         current_user.username = request.form["username"]
         current_user.college = request.form["collage"]
         current_user.grade = request.form["grade"]
         current_user.about_me = request.form["aboutme"]
-
         db.session.add(current_user._get_current_object())
         db.session.commit()
-
         flash('Your profile has been updated.')
         return redirect(url_for('.user', username=current_user.username))
 
@@ -207,33 +228,6 @@ def show_followed():
     resp = make_response(redirect(url_for('.index')))
     resp.set_cookie('show_followed', '1', max_age=30 * 24 * 60 * 60)
     return resp
-
-
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
-
-
-def allow_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-@main.route('/photo', methods=['GET', 'POST'])
-def uploadPhoto():
-    form = UploadPhotoForm()
-    if form.validate_on_submit():
-        f = form.photo.data
-        if f.filename == '':
-            flash("No selected file")
-            return render_template('Photo.html', form = form)
-        if f and allow_file(f.filename):
-            filename = secure_filename(f.filename)
-            f.save(os.path.join('app', 'static', 'assets', filename))
-            current_user.avatar_img = '/static/assets/' + filename
-            db.session.commit()
-            return redirect(url_for('.index'))
-        else:
-            flash("Please upload a picture of the compound rule")
-            render_template('Photo.html', form=form)
-    return render_template('Photo.html', form = form)
 
 
 @main.route('/new_post', methods=['GET', 'POST'])
