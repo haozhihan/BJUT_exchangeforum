@@ -1,0 +1,28 @@
+/*
+个人资料版样式
+ */
+.outer {
+    position: fixed;
+    left: 50%;
+    top: 100px;
+}
+.inner1 {
+    width: 280px;
+}
+
+/*
+互动功能样式
+ */
+.new-post {
+    background-color: #fff;
+    width: 60px;
+    height: 80px;
+    border: 1px solid #ddd;
+}
+.icon {
+    margin: 5px 10px 0 10px;
+}
+.icon-word {
+    font-size: 12px;
+    text-align: center;
+}

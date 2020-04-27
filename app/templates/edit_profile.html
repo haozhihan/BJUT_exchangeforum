@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Edit Profile{% endblock %}
+
+
+
+{% block head %}
+{{ super() }}
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static',filename='profile.css') }}" rel="stylesheet">
+
+{% endblock %}
+
+
+{% block page_content %}
+
+
+
+<div class="container">
+    <div class="bg-profile">
+    </div>
+    <div class="container col-sm-12 info" style="height: 400px">
+        <div class="col-sm-5 photo-box">
+{#            <img class="img-rounded profile-thumbnail" src="{{ current_user.gravatar(size=150) }}">#}
+        </div>
+        <div class="col-sm-7">
+            <form class="form-horizontal" method="post">
+                <div class="form-group" style="margin-top: 15px; ">
+                    <label for="username" class="col-sm-2 control-label text-left">User name</label>
+                    <div class="col-sm-10">
+                        <input name="username" type="text" class="form-control " id="username" placeholder="{{ current_user.username }}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label text-left">E-mail</label>
+                    <div class="col-sm-10" style="margin-top: 5px;">
+                        <p>{{ current_user.email }}</p>
+                    </div>
+                </div>
+                 <div class="form-group">
+                    <label for="grade" class="col-sm-2 control-label text-left">Grade</label>
+                    <div class="col-sm-10">
+                        <select name="grade" class="form-control" id="grade">
+                            <option selected="selected" value="Freshman">Freshman</option>
+                            <option value="Sophomore">Sophomore</option>
+                            <option value="Junior">Junior</option>
+                            <option value="Senior">Senior</option>
+                            <option value="Postgraduate">Postgraduate</option>
+                            <option value="PHD.">PHD.</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="collage" class="col-sm-2 control-label text-left">Collage</label>
+                    <div class="col-sm-10">
+                        <select name="collage" class="form-control" id="collage">
+                            <option selected="selected" value="Beijing-Dublin International Collage">Beijing-Dublin International Collage</option>
+                            <option>Fan Gongxiu Honor Collage</option>
+                            <option>Environmental and Energy Engineering Collage</option>
+                            <option>Economics and Management Collage</option>
+                            <option>Humanities Department</option>
+                            <option>Art Design Collage</option>
+                            <option>Architecture and Urban Planning Collage</option>
+                            <option>Architecture and Engineering Collage</option>
+                            <option>Applied Mathematics Collage</option>
+                            <option>Informatics Department</option>
+                            <option>Mechanical Engineering and Applied Electronics Technology Collage</option>
+                            <option>Life Science and Bioengineering Collage</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="introduction" class="col-sm-2 control-label text-left">What's Up</label>
+                    <div class="col-sm-10">
+                        <textarea name="aboutme" class="form-control" rows="3" id="introduction" placeholder="{{ current_user.about_me }}"></textarea>
+                    </div>
+                </div>
+                <div class="col-sm-offset-4  submit">
+                    <button type="submit" class="btn btn-default">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

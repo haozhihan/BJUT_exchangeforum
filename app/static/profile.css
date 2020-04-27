@@ -1,0 +1,113 @@
+/*
+用于修改用户主页的样式
+ */
+body {
+    background-color: #f2f2f2;
+}
+
+.bg-profile {
+    background-image: url("Image/bg-profile.jpg");
+    background-position: center -245px;
+    background-repeat: no-repeat;
+    height: 300px;
+}
+
+.navbar {
+    margin-bottom: 0;
+}
+
+.photo {
+    margin: 20px;
+}
+
+.detail {
+    padding-left: 20px;
+    margin-bottom: 10px;
+    color: #727070;
+}
+
+.follow a {
+    color: #727070;
+}
+.follow a:hover{
+    color: black;
+    text-decoration: none;
+}
+.follow a:focus{
+    color: black;
+    text-decoration: none;
+    text-shadow: 0 0 5px #727070;
+}
+
+/*
+右侧资料的样式
+ */
+
+.list-group .info-box {
+    border-style: none;
+    background-color: rgba(0,0,0,0);
+}
+
+.list-group .detail {
+    margin: 10px auto;
+    color:black;
+}
+.list-group .title {
+    font-weight: 600;
+    padding-left: 0;
+}
+
+.container .info {
+    background-color: #fff;
+    box-shadow: 0 0 10px 2px rgba(58, 58, 58, 0.4);
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.submit {
+    margin-top: 5px;
+}
+
+.form-group .text-left {
+    text-align: left;
+}
+
+.select-photo {
+    margin-top: 50px;
+}
+
+/*
+posts栏目相关的样式
+ */
+.post-title {
+    margin-top: 15px;
+}
+
+.post-title a{
+    color: black;
+}
+
+.post-title a:hover {
+    text-decoration: none;
+    color: #337ab7;
+}
+
+.post-title a:focus {
+    text-decoration: underline;
+    color: #337ab7;
+    text-shadow: 0 0 5px #9a9797;
+}
+
+.post-content {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.post-body {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.post-date {
+    margin-top: 10px;
+}

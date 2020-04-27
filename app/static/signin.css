@@ -1,8 +1,6 @@
-/*body {*/
-/*  !*padding-top: 40px;*!*/
-/*  padding-bottom: 40px;*/
-/*  background-color: #eee;*/
-/*}*/
+body{
+  padding: 0;
+}
 
 .form-signin {
   max-width: 450px;
@@ -33,5 +31,8 @@
 }
 
 .nav .chose a:hover {
+  background-color: #e7a00e;
+}
+.navbar-toggle {
   background-color: #e7a00e;
 }

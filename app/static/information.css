@@ -1,0 +1,44 @@
+/*
+用于修改用户资料的界面的样式
+ */
+/*.tab-content .pwd, .tab-content .email {*/
+/*    margin: 35px auto;*/
+/*}*/
+body {
+    background-color: #f6f7f8;
+}
+
+.tabbable {
+    margin: 30px auto;
+}
+
+.form-group .form-control{
+    margin-top: 3px;
+    margin-bottom: 3px;
+    width: 90%;
+}
+
+.form-group .submit {
+    padding: 10px 0 10px 0;
+}
+
+.form-group .control-label {
+    font-size: 16px;
+    font-weight: 600;
+    text-align: left;
+    margin-bottom: 5px;
+}
+
+.board {
+    background-color: #fff;
+    padding:35px 0 0 20px;
+    border: 1px solid #ddd;
+    border-top: none;
+    border-radius: 4px;
+    box-shadow: 0 0 10px 2px #e3e3e3;
+}
+
+.form-horizontal .form-group {
+    margin-left: 0;
+    margin-right: 0;
+}
