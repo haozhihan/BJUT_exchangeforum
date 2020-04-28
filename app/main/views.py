@@ -1,4 +1,5 @@
 import os
+from operator import or_
 
 from flask import render_template, redirect, url_for, abort, flash, request, \
     current_app, make_response
@@ -13,9 +14,40 @@ from ..decorators import admin_required, permission_required
 from ..decorators import admin_required
 
 
-
 # view functions for index page
 # unfinished
+# @main.route('/query-user', methods=['GET', 'POST'])
+# def query_user():
+#     if request.method == 'GET':
+#         return render_template('queryuser.html')
+#     if request.method == 'POST':
+#         user_inf = request.form["user"]
+#         search_user = "%" + user_inf + "%"
+#         result = User.query.filter(or_(User.username.like(search_user), User.student_id.like(search_user)))
+#         page = request.args.get('page', 1, type=int)
+#         pagination = result.order_by(User.username.desc()).paginate(
+#             page, per_page=current_app.config['FLASKY_FOLLOWERS_PER_PAGE'],
+#             error_out=False)
+#         query = pagination.items
+#         return render_template('queryuser.html', query=query, title="Result of query", pagination=pagination)
+
+
+@main.route('/query-post', methods=['GET', 'POST'])
+def query_user():
+    if request.method == 'GET':
+        return render_template('querypost.html')
+    if request.method == 'POST':
+        post_inf = request.form["post"]
+        search_post = "%" + post_inf + "%"
+        result = Post.query.filter(or_(Post.title.like(search_post), Post.body.like(search_post)))
+        page = request.args.get('page', 1, type=int)
+        pagination = result.order_by(Post.timestamp.desc()).paginate(
+            page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+            error_out=False)
+        query = pagination.items
+        return render_template('querypost.html', query=query, title="Result of query", pagination=pagination)
+
+
 @main.route('/', methods=['GET', 'POST'])
 def index():
     form = PostForm()
@@ -52,7 +84,6 @@ def user(username):
     posts = pagination.items
     return render_template('显示的主页.html', user=user, posts=posts,
                            pagination=pagination)
-
 
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
@@ -156,6 +187,7 @@ def delete(id):
         flash('你没有删评论权限')
         return redirect(url_for('.post', id=posts.id))
 
+
 @main.route('/follow/<username>')
 @login_required
 @permission_required(Permission.FOLLOW)
@@ -252,14 +284,15 @@ def new_post():
         if text == "" or text == "<p><br></p>":
             flash("Post cannot be None")
             return render_template('new_post.html')
-        post = Post(title = title,
-                    body = text,
-                    author = current_user._get_current_object())
+        post = Post(title=title,
+                    body=text,
+                    author=current_user._get_current_object())
         db.session.add(post)
         db.session.commit()
         flash("You have just posted a posting", 'success')
         return redirect(url_for('.index'))
     return render_template('new_post.html')
+
 
 @main.route('/new_post_md', methods=['GET', 'POST'])
 @login_required
