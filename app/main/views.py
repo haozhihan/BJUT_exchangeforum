@@ -114,14 +114,6 @@ def post(id):
         page, per_page=current_app.config['FLASKY_COMMENTS_PER_PAGE'],
         error_out=False)
     comments = pagination.items
-    # page2 = request.args.get('page2', 1, type=int)
-    # if page2 == -1:
-    #     page2 = (post.liker.count() - 1) // \
-    #            current_app.config['FLASKY_LIKER_PER_PAGE'] + 1
-    # pagination = post.liker.order_by(Liker.timestamp.asc()).paginate(
-    #     page2, per_page=current_app.config['FLASKY_LIKER_PER_PAGE'],
-    #     error_out=False)
-    # liker = pagination.items
     return render_template('post.html', posts=[post], form=form,
                            comments=comments, pagination=pagination)
 
@@ -145,6 +137,24 @@ def edit(id):
     form.title.data = post.title
     return render_template('edit_post.html', form=form)
 
+
+@main.route('/delete/<int:id>')
+@login_required
+def delete(id):
+    comment = Comment.query.get_or_404(id)
+    posts = Post.query.filter_by(id=comment.post_id).first()
+    users = User.query.filter_by(id=posts.author_id).first()
+    print(users.username)
+    print(comment.author.username)
+    print(current_user.username)
+    if current_user == comment.author or current_user == users:
+        db.session.delete(comment)
+        db.session.commit()
+        flash('The comment has been deleted.')
+        return redirect(url_for('.post', id=posts.id))
+    else:
+        flash('你没有删评论权限')
+        return redirect(url_for('.post', id=posts.id))
 
 @main.route('/follow/<username>')
 @login_required
