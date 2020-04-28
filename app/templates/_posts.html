@@ -1,5 +1,14 @@
 <ul class="posts list-unstyled">
+
+
+
+
+
     {% for post in posts %}
+
+
+
+
     <li class="post">
         <div class="post-box">
             <div class="post-thumbnail col-sm-2">
@@ -53,5 +62,29 @@
             </div>
         </div>
     </li>
+
+
+
+
     {% endfor %}
+
+
+
+
+
+
 </ul>
+
+{#{% for post in posts %}#}
+{#<h3 class=`text-primary`><a href=`#`>{{ post.title }}</a></h3>#}
+{#    <p>#}
+{#        <div class=`post-body`>#}
+{#            {% if post.body_html %}#}
+{#                {{ post.body_html |safe|striptags|truncate }}#}
+{#            {% else %}#}
+{#                {{ post.body }}#}
+{#            {% endif %}#}
+{#        </div>#}
+{#        <small><a href=`#`>Read More</a></small>#}
+{#    </p>#}
+{#{% endfor %}#}
