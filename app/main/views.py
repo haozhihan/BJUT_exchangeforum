@@ -13,7 +13,7 @@ from ..models import Permission, Role, User, Post, Comment
 from ..decorators import admin_required, permission_required
 from ..decorators import admin_required
 
-
+# 查询
 # view functions for index page
 # unfinished
 # @main.route('/query-user', methods=['GET', 'POST'])
