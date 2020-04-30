@@ -41,11 +41,7 @@
                             <a href="{{ url_for('.user', username=post.author.username) }}"> {{ post.author.username }} </a>
                         </span>
                         <span class="post-date"><small>{{ moment(post.timestamp).fromNow() }}</small></span>
-                            {% if not current_user.is_liking(post) %}
-                            <a href="{{ url_for('.like', post_id=post.id) }}" class="btn btn-primary">Like</a>
-                            {% else %}
-                            <a href="{{ url_for('.dislike', post_id=post.id) }}" class="btn btn-default">Dislike</a>
-                            {% endif %}
+
                     </div>
 
                     <div class="post-footer">
@@ -56,10 +52,17 @@
                                 <span>comment</span>
                             </a>
                     {#            喜欢#}
-                            <a class="icon-btn" style="float:right; margin-right: 15px" href="{{ url_for('.liked_by', post_id=post.id) }}">
+                        {% if not current_user.is_liking(post) %}
+                            <a class="icon-btn" style="float:right; margin-right: 15px" href="{{ url_for('.like', post_id=post.id) }}">
                                 <span class="glyphicon glyphicon-heart-empty"></span>
-                                <span>{{ post.liker.count() }} likes</span>
+                                <span>{{ post.liker.count() }} Likes</span>
                             </a>
+                        {% else %}
+                            <a class="icon-btn" style="float:right; margin-right: 15px" href="{{ url_for('.dislike', post_id=post.id) }}">
+                                <span class="glyphicon glyphicon-heart-empty"></span>
+                                <span>{{ post.liker.count() }} Dislikes</span>
+                            </a>
+                        {% endif %}
 
                         {% if current_user == post.author %}
                         {#            删除#}

@@ -8,7 +8,6 @@
     <style type="text/css">
         .toolbar {
             border: 1px solid #cccccc;
-
         }
         .text {
             border: 1px solid #ccc;
@@ -76,13 +75,13 @@
     var editor1 = new E('#div1', '#div2')  // 两个参数也可以传入 elem 对象，class 选择器
 
     var $text1 = $('#text1')
-    editor1.customConfig.onchange = function (html) {
+    editor1.customConfig.onchange = function (text) {
         // 监控变化，同步更新到 textarea
-        $text1.val(html)
+        $text1.val(text)
     }
     editor1.create()
     // 初始化 textarea 的值
-    $text1.val(editor1.txt.html())
+    $text1.val(editor1.txt.text())
 </script>
 
 {% endblock %}

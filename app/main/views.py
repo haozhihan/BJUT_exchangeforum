@@ -385,15 +385,17 @@ def new_post_md():
         body = form.body.data
         if title == "":
             flash("Title cannot be None!")
-            return render_template('new_mdpost2.html', form=form)
+            return render_template('new_mdpost.html', form=form)
+        body_html = request.form['test-editormd-html-code']
         post = Post(title=title,
                     body=body,
+                    body_html=body_html,
                     author=current_user._get_current_object())
         db.session.add(post)
         db.session.commit()
         flash("You have just posted a posting", 'success')
         return redirect(url_for('.index'))
-    return render_template('new_mdpost2.html', form=form)
+    return render_template('new_mdpost.html', form=form)
 
 
 @main.route('/moderate')

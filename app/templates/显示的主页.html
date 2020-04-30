@@ -78,11 +78,13 @@
                     <div class="col-sm-10">{{ user.college }}</div>
                 </li>
             </ul>
+        {% if user == current_user %}
             <div class="col-sm-offset-11 btn-group btn-group-sm" >
                 <button type="button" class="btn btn-default" href="/edit-profile">
                     <a href="/edit-profile">Change my information</a>
                 </button>
             </div>
+        {% endif %}
         </div>
     </div>
 

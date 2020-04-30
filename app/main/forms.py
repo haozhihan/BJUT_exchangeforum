@@ -1,13 +1,12 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired, FileAllowed
-from wtforms import StringField, SubmitField, TextAreaField
+from wtforms import StringField, SubmitField, TextAreaField, HiddenField
 from wtforms.validators import DataRequired, Length
 from flask_pagedown.fields import PageDownField
 
 
 
-# unfinished
-# forms for index page
+
 class NameForm(FlaskForm):
     name = StringField('What is your name?', validators=[DataRequired()])
     submit = SubmitField('Submit')
@@ -28,8 +27,8 @@ class PostForm(FlaskForm):
 
 
 class PostMdForm(FlaskForm):
-    # title = TextAreaField("Title", validators=[DataRequired()])
     body = TextAreaField("Body", validators=[DataRequired()])
+    body_html = HiddenField()
 
 
 
