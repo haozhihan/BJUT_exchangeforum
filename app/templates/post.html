@@ -4,109 +4,120 @@
 
 {% block title %}Post{% endblock %}
 
-{% block head %}
-{{ super() }}
-    <!-- Custom styles for this template -->
-    <link href="{{ url_for('static',filename='posts.css') }}" rel="stylesheet">
 
 
+{%block styles%}
+{{super()}}
     <link href="{{ url_for('static', filename='editormd/css/editormd.preview.min.css') }}" rel="stylesheet" />
     <link href="{{ url_for('static', filename='editormd/css/editormd.css') }}" rel="stylesheet" />
-    <!--以下是js部分 -->
+{%endblock%}
+
+
+{%block scripts%}
+{{super()}}
     <script type="text/javascript" src="{{ url_for('static', filename='editormd/lib/marked.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='editormd/lib/prettify.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='editormd/editormd.min.js') }}"></script>
+
     <script type="text/javascript">
-        editormd.markdownToHTML("fancy-content");
+        editormd.markdownToHTML("fancy-content", {
+        {#markdown:{{ posts.bod }},#}
+        htmlDecode      : "style,script,iframe",
+        emoji           : true,
+        taskList        : true,
+        tex             : true,  // 默认不解析
+        flowChart       : true,  // 默认不解析
+        sequenceDiagram : true  // 默认不解析
+    });
     </script>
 
+    <script>
+    {% for post in posts %}
+        editormd.markdownToHTML("content_id",{markdown : "{{ posts.body }}"});
+    {% endfor %}
 
 
-{% endblock %}
+    </script>
+
+{%endblock%}
+
 
 {% block page_content %}
-
-
-
-{#{% include '_posts.html' %}#}
     <ul class="posts list-unstyled">
     {% for post in posts %}
     <li class="post">
         <div class="post-box">
-            <div class="post-thumbnail col-sm-2">
-                <a class="head-photo" href="{{ url_for('.user', username=post.author.username) }}">
-                    {% if post.author.avatar_img %}
-                        <img class="img-rounded profile-thumbnail" src="{{ post.author.avatar_img }}" alt="avatar"  style="width: 40px; height: 40px">
-                    {% else %}
-                        <img class="img-rounded profile-thumbnail" src="{{ post.author.gravatar(size=40) }}" alt="avatar">
-                    {% endif %}
-                </a>
-                <div class="post-author">
-                    <a href="{{ url_for('.user', username=post.author.username) }}">{{ post.author.username }}</a>
-                </div>
-                <div class="post-date">{{ moment(post.timestamp).fromNow() }}</div>
-            </div>
+
             <div class="post-content col-sm-offset-1 col-sm-9">
-                <h4 class="post-title">
+{#                标题#}
+                <h1 align="center" class="post-title">
                     <a href="{{ url_for('.post', id=post.id) }}">
                         {{ post.title }}
                     </a>
-                </h4>
-
-                <div class="post-body">
-                    {% if post.body_html %}
-                        <div class="content" id="fancy-content">
-                                {{ post.body_html| safe }}
-                        </div>
-                    {% else %}
-                        {{ post.body }}
-                    {% endif %}
+                </h1>
+{#                正文#}
+                <div class="content" id="fancy-content">
+                            {{ post.body_html| safe }}
                 </div>
-                <div class="post-footer col-sm-offset-10">
-                    {% if current_user == post.author %}
-                    <a href="{{ url_for('.edit', id=post.id) }}">
-                        <span class="label label-primary">Edit</span>
-                    </a>
-                    {% elif current_user.is_administrator() %}
-                    <a href="{{ url_for('.edit', id=post.id) }}">
-                        <span class="label label-danger">Edit [Admin]</span>
-                    </a>
-                    {% endif %}
-{#<!--                    <a href="{{ url_for('.post', id=post.id) }}">-->#}
-{#<!--                        <span class="label label-default">Permalink</span>-->#}
-<!--                    </a>-->
-                    <a href="{{ url_for('.post', id=post.id) }}#comments">
-                        <span class="label label-primary">
-                            Comments
-                        </span>
-                    </a>
-{#                    <a href="{{ url_for('.post', id=post.id) }}#likes">#}
-{#                    <span class="label label-primary">{{ post.liker.count() }} Liker</span>#}
-{#                    </a>#}
+            </div>
+
+
+            <div class="panel panel-default col-md-offset-1 col-md-9" style="margin-top: 30px">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Author</h3>
+                </div>
+
+                <div class="panel-body">
+                    <div class=" col-sm-2">
+                        <a class="head-photo" href="{{ url_for('.user', username=post.author.username) }}">
+                        {% if post.author.avatar_img %}
+                            <img class="img-rounded profile-thumbnail" src="{{ post.author.avatar_img }}" alt="avatar"  style="width: 60px; height: 60px">
+                        {% else %}
+                            <img class="img-rounded profile-thumbnail" src="{{ post.author.gravatar(size=60) }}" alt="avatar">
+                        {% endif %}
+                        </a>
+                    </div>
+                    <div class="post-author col-sm-2">
+                        <h4>
+                            <a href="{{ url_for('.user', username=post.author.username) }}">{{ post.author.username }}</a>
+                        </h4>
+                    </div>
+                    <div class="col-sm-6">
+                        <h6>{{ post.author.grade }}</h6>
+                        <h6>{{ post.author.college }}</h6>
+                    </div>
+                  {% if current_user.can(Permission.FOLLOW) and post.author != current_user %}
+                      {% if not current_user.is_following(post.author) %}
+                          <a align="center" href="{{ url_for('.follow', username=post.author.username) }}" class="btn btn-primary">Follow</a>
+                      {% else %}
+                          <a align="center" href="{{ url_for('.unfollow', username=post.author.username) }}" class="btn btn-default">Unfollow</a>
+                      {% endif %}
+                  {% endif %}
                 </div>
             </div>
         </div>
+
+
+    {#        评论区#}
+    <div class="col-md-12">
+        <h4 id="comments">Comments</h4>
+        {% if current_user.can(Permission.COMMENT) %}
+            <div class="comment-form">
+                {{ wtf.quick_form(form) }}
+            </div>
+        {% endif %}
+
+        {% include '_comments.html' %}
+
+        {% if pagination %}
+            <div class="pagination">
+                {{ macros.pagination_widget(pagination, '.post', fragment='#comments', id=posts[0].id) }}
+            </div>
+        {% endif %}
+    </div>
+
     </li>
     {% endfor %}
 </ul>
-
-
-
-
-{#    评论区#}
-    <h4 id="comments">Comments</h4>
-    {% if current_user.can(Permission.COMMENT) %}
-        <div class="comment-form">
-            {{ wtf.quick_form(form) }}
-        </div>
-    {% endif %}
-
-    {% include '_comments.html' %}
-
-    {% if pagination %}
-        <div class="pagination">
-            {{ macros.pagination_widget(pagination, '.post', fragment='#comments', id=posts[0].id) }}
-        </div>
-    {% endif %}
 
 {% endblock %}

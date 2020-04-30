@@ -2,29 +2,47 @@
 整体页面样式
  */
 body {
-        background-color: #f2f2f2;
+    background-color: #f2f2f2;
+    line-height: 1.5em;
     }
 
 .post-box{
     padding: 10px;
     border: 1px solid #ddd;
     border-top: none;
-    height: 130px;
+    /*height: 130px;*/
     background-color: #fff;
     /*box-shadow: 0 0 10px 2px #e3e3e3;*/
+}
+.panel {
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 /*
 左侧用户信息样式
  */
 .head-photo {
-    display: block;
-    margin: 10px 30px;
+}
+
+.post-author {
+    padding: 10px;
+    border-right: 1px solid #ddd;
+}
+.post-date {
+    color: #646464;
+    padding: 15px;
+}
+
+
+.post-thumbnail, .post-footer {
+    display: inline;
+    padding-left: 5px;
 }
 
 .col-sm-2 .post-author a {
-    font-size: 16px;
-    font-weight: 600;
+    /*font-size: 16px;*/
+    /*font-weight: 600;*/
     font-family: consolas Arial;
     color: #666868;
 }
@@ -33,7 +51,6 @@ body {
     color: #1b34b9;
     text-decoration: none;
 }
-
 /*
 右侧帖子预览互动样式
  */
@@ -43,7 +60,7 @@ body {
 }
 
 .post-title a{
-    color: black;
+    color: #0D3349;
 }
 
 .post-title a:hover {
@@ -55,4 +72,17 @@ body {
     text-decoration: underline;
     color: #337ab7;
     text-shadow: 0 0 5px #9a9797;
+}
+
+.post-body {
+    height: 4.5em;
+    overflow: hidden;
+}
+
+/*
+footer的所有样式
+ */
+
+.icon-btn {
+    padding: 5px;
 }

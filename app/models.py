@@ -122,16 +122,16 @@ class User(UserMixin, db.Model):
     # 发帖、评论与点赞
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     comments = db.relationship('Comment', backref='author', lazy='dynamic')
-    # liker = db.relationship('Liker', backref='author', lazy='dynamic')
 
     # 关注
     following = db.relationship('Follow', foreign_keys=[Follow.follower_id], back_populates='follower',
                                 lazy='dynamic', cascade='all')
     followers = db.relationship('Follow', foreign_keys=[Follow.followed_id], back_populates='followed',
                                 lazy='dynamic', cascade='all')
-    #点赞
-    liked_post = db.relationship('Like', back_populates='liker', lazy='joined')
-
+    # 点赞
+    liked_post = db.relationship('Like', back_populates='liker', lazy='dynamic', cascade='all')
+    # 消息中心
+    notifications = db.relationship('Notification', back_populates='receiver', lazy='dynamic')
 
     @staticmethod
     def add_self_follows():
@@ -253,18 +253,40 @@ class User(UserMixin, db.Model):
     def follow(self, user):
         if not self.is_following(user):
             f = Follow(follower=self, followed=user)
+            n = Notification(receiver_id=user.id, timestamp=datetime.utcnow(),
+                             message=self.username+" has followed you!")
+            db.session.add(n)
             db.session.add(f)
+
+    def like(self, post):
+        if not self.is_liking(post):
+            ll = Like(liker=self, liked_post=post)
+            n = Notification(receiver_id=post.author_id, timestamp=datetime.utcnow(),
+                             message=self.username + " has liked you post " + post.title)
+            db.session.add(n)
+            db.session.add(ll)
 
     def unfollow(self, user):
         f = self.following.filter_by(followed_id=user.id).first()
         if f:
             db.session.delete(f)
 
+    def dislike(self, post):
+        ll = self.liked_post.filter_by(liked_post_id=post.id).first()
+        if ll:
+            db.session.delete(ll)
+
     def is_following(self, user):
         if user.id is None:
             return False
         return self.following.filter_by(
             followed_id=user.id).first() is not None
+
+    def is_liking(self, post):
+        if post.id is None:
+            return False
+        return self.liked_post.filter_by(
+            liked_post_id=post.id).first() is not None
 
     def is_followed_by(self, user):
         if user.id is None:
@@ -288,6 +310,9 @@ class AnonymousUser(AnonymousUserMixin):
     def is_administrator(self):
         return False
 
+    def is_liking(self, post):
+        return False
+
 
 login_manager.anonymous_user = AnonymousUser
 
@@ -308,7 +333,23 @@ class Post(db.Model):
 
     comments = db.relationship('Comment', back_populates='post', cascade='all, delete-orphan')
 
-    liker = db.relationship('Like', back_populates='liked_post', lazy='joined')
+    liker = db.relationship('Like', back_populates='liked_post', lazy='dynamic', cascade='all')
+
+    def like(self, user):
+        if not self.is_liked_by(user):
+            ll = Like(liker=user, liked_post=self)
+            db.session.add(ll)
+
+    def dislike(self, user):
+        ll = self.liker.filter_by(liker_id=user.id).first()
+        if ll:
+            db.session.delete(ll)
+
+    def is_liked_by(self, user):
+        if user.id is None:
+            return False
+        return self.liker.filter_by(
+            liker_id=user.id).first() is not None
 
     @staticmethod
     def on_changed_body(target, value, oldvalue, initiator):
@@ -334,8 +375,6 @@ class Comment(db.Model):
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
 
     post = db.relationship('Post', back_populates='comments')
-    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
-
 
     # 被回复的评论的id
     replied_id = db.Column(db.Integer, db.ForeignKey('comments.id'))
@@ -353,13 +392,23 @@ class Comment(db.Model):
             tags=allowed_tags, strip=True))
 
 
-
 db.event.listen(Comment.body, 'set', Comment.on_changed_body)
 
+
 class Like(db.Model):
-    __tablename__='likes'
+    __tablename__ = 'likes'
     liker_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
     liked_post_id = db.Column(db.Integer, db.ForeignKey('posts.id'), primary_key=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     liker = db.relationship('User', back_populates='liked_post', lazy='joined')
     liked_post = db.relationship('Post', back_populates='liker', lazy='joined')
+
+
+class Notification(db.Model):
+    __tablename__ = 'notification'
+    id = db.Column(db.Integer, primary_key=True)
+    message = db.Column(db.Text, nullable=False)
+    is_read = db.Column(db.Boolean, default=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    receiver_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    receiver = db.relationship('User', back_populates='notifications', lazy='joined')

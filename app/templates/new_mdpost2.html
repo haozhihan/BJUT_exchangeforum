@@ -4,26 +4,6 @@
 {% block title %}New Post (Markdown) {% endblock %}
 
 
-{% block head %}
-{{ super() }}
-    <link rel="stylesheet" href="{{ url_for('static',filename='editormd/css/editormd.css') }}">
-    <script src="{{ url_for('static',filename='editormd/examples/js/jquery.min.js') }}"></script>
-    <script src="{{ url_for('static',filename='editormd/editormd.min.js') }}"></script>
-    <script type="text/javascript">
-    var testEditor;
-        $(function () {
-            testEditor = editormd("fancy-editormd", {
-                // width: "100%", 请不要添加
-                height: 640,
-                syncScrolling: "single"，
-                path: "{{ url_for('static',filename='editormd/lib/') }}",
-                saveHTMLToTextarea : true
-            });
-        });
-    </script>
-
-{% endblock %}
-
 {%block styles%}
 {{super()}}
     <link rel="stylesheet" href="{{url_for('static',filename='editormd/css/editormd.min.css')}}">
@@ -37,10 +17,21 @@
         var testEditor;
         $(function(){
             testEditor=editormd("test-editormd",{
-                width:'1150px',
+                placeholder:'本编辑器支持Markdown编辑，左边编写，右边预览',
+                width:'1130px',
                 height:'800px',
                 syncScrolling : "single",
                 path:"{{url_for('static',filename='editormd/lib/')}}",
+                saveHTMLToTextarea: true,
+                emoji: false,
+                taskList: true,
+                toolbarIcons : function() {  //自定义工具栏，后面有详细介绍
+                    return ["undo","redo","|","bold","del","italic","quote",
+                        "uppercase","lowercase","|","h1","h2","h3","h4","h5","h6","|",
+                        "list-ul","list-ol","hr","|","watch","preview","fullscreen"]
+                    {#return editormd.toolbarModes['simple']; // full, simple, mini#}
+                },
+
                 //启动本地图片上传功能
                 {#imageUpload:true,#}
                 {#imageFormats   : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],#}

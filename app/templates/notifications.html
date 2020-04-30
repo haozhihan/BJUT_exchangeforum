@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% import "_macros.html" as macros %}
+
+{% block page_content %}
+<table class="table table-hover Notification">
+    <thead><tr><th>Notification</th><th>Since</th></tr></thead>
+    {% for notice in notices %}
+    <tr>
+        <td>
+            <div class="notice-box">
+                <div class="notice-thumbnail col-sm-2">
+                </div>
+                <div class="notice-content col-sm-offset-1 col-sm-9">
+                    <h4 class="title">{{ notice.message }}</h4>
+                </div>
+            </div>
+        </td>
+        <td>{{ moment(notice.timestamp).format('L') }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

@@ -9,9 +9,10 @@ from werkzeug.utils import secure_filename
 from . import main
 from .forms import EditProfileForm, PostForm, UploadPhotoForm, CommentForm, PostMdForm
 from .. import db
-from ..models import Permission, Role, User, Post, Comment
+from ..models import Permission, Role, User, Post, Comment, Notification
 from ..decorators import admin_required, permission_required
 from ..decorators import admin_required
+
 
 # 查询
 # view functions for index page
@@ -86,6 +87,17 @@ def user(username):
                            pagination=pagination)
 
 
+@main.route('/notification')
+def notification():
+    page = request.args.get('page', 1, type=int)
+    pagination = current_user.notifications.order_by(Notification.timestamp.desc()).paginate(
+        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+        error_out=False)
+    notices = pagination.items
+    return render_template('notifications.html', notices=notices,
+                           pagination=pagination)
+
+
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
 
@@ -139,12 +151,13 @@ def post(id):
         return redirect(url_for('.post', id=post.id, page=-1))
     page = request.args.get('page', 1, type=int)
     if page == -1:
-        page = (post.comments.count() - 1) // \
+        page = (post.comments.count('*') - 1) // \
                current_app.config['FLASKY_COMMENTS_PER_PAGE'] + 1
     pagination = Comment.query.order_by(Comment.timestamp.asc()).paginate(
         page, per_page=current_app.config['FLASKY_COMMENTS_PER_PAGE'],
         error_out=False)
     comments = pagination.items
+    print([post][0].body)
     return render_template('post.html', posts=[post], form=form,
                            comments=comments, pagination=pagination)
 
@@ -222,6 +235,42 @@ def unfollow(username):
     return redirect(url_for('.user', username=username))
 
 
+@main.route('/like/<post_id>')
+@login_required
+@permission_required(Permission.FOLLOW)
+def like(post_id):
+    post = Post.query.filter_by(id=post_id).first()
+    if post is None:
+        flash('Invalid post.')
+        return redirect(url_for('.index'))
+    if current_user.is_liking(post):
+        flash('You are already liking this post.')
+        return redirect(url_for('.post', id=post_id))
+    current_user.like(post)
+    post.like(current_user)
+    db.session.commit()
+    flash('You are now liking this post')
+    return redirect(url_for('.post', id=post_id))
+
+
+@main.route('/dislike/<post_id>')
+@login_required
+@permission_required(Permission.FOLLOW)
+def dislike(post_id):
+    post = Post.query.filter_by(id=post_id).first()
+    if post is None:
+        flash('Invalid post.')
+        return redirect(url_for('.index'))
+    if not current_user.is_liking(post):
+        flash('You are not liking this post.')
+        return redirect(url_for('.post', id=post_id))
+    current_user.dislike(post)
+    post.dislike(current_user)
+    db.session.commit()
+    flash('You are not liking this post')
+    return redirect(url_for('.post', id=post_id))
+
+
 @main.route('/followers/<username>')
 def followers(username):
     user = User.query.filter_by(username=username).first()
@@ -254,6 +303,23 @@ def followed_by(username):
     return render_template('followers.html', user=user, title="Followed by",
                            endpoint='.followed_by', pagination=pagination,
                            follows=follows)
+
+
+@main.route('/liked_by/<post_id>')
+def liked_by(post_id):
+    post = Post.query.filter_by(id=post_id).first()
+    if post is None:
+        flash('Invalid post.')
+        return redirect(url_for('.index'))
+    page = request.args.get('page', 1, type=int)
+    pagination = post.liker.paginate(
+        page, per_page=current_app.config['FLASKY_LIKER_PER_PAGE'],
+        error_out=False)
+    liker = [{'user': item.liker, 'timestamp': item.timestamp}
+               for item in pagination.items]
+    return render_template('liker.html', post=post, title="The liker of",
+                           endpoint='.liked_by', pagination=pagination,
+                           liker=liker)
 
 
 @main.route('/all')
