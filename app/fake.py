@@ -52,5 +52,3 @@ def comments(count=300):
         )
         db.session.add(comment)
     db.session.commit()
-
-

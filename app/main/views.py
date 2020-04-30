@@ -141,25 +141,41 @@ def edit_profile():
 def post(id):
     post = Post.query.get_or_404(id)
     form = CommentForm()
-    if form.validate_on_submit():
-        comment = Comment(body=form.body.data,
-                          post=post,
-                          author=current_user._get_current_object())
-        db.session.add(comment)
-        db.session.commit()
-        flash('Your comment has been published.')
-        return redirect(url_for('.post', id=post.id, page=-1))
+
     page = request.args.get('page', 1, type=int)
     if page == -1:
         page = (post.comments.count('*') - 1) // \
                current_app.config['FLASKY_COMMENTS_PER_PAGE'] + 1
-    pagination = Comment.query.order_by(Comment.timestamp.asc()).paginate(
+    pagination = Comment.query.with_parent(post).order_by(Comment.timestamp.asc()).paginate(
         page, per_page=current_app.config['FLASKY_COMMENTS_PER_PAGE'],
         error_out=False)
     comments = pagination.items
-    print([post][0].body)
+    """发表评论与回复"""
+    if form.validate_on_submit():
+        body = form.body.data
+        comment = Comment(body=body,
+                          post=post,
+                          author=current_user._get_current_object(),
+                          replied_id=request.args.get('reply'))
+
+        if comment.replied_id:
+            replied = Comment.query.get_or_404(comment.replied_id)
+            comment.replied = replied
+        db.session.add(comment)
+        db.session.commit()
+        db.session.add(comment)
+        db.session.commit()
+        flash('Comment published successfully')
+        """此处应该设置消息提醒"""
+        return redirect(url_for('.post', id=post.id))
     return render_template('post.html', posts=[post], form=form,
                            comments=comments, pagination=pagination)
+
+
+@main.route('/reply/comment/<int:comment_id>')
+def reply_comment(comment_id):
+    comment = Comment.query.get_or_404(comment_id)
+    return redirect(url_for('.post', id=comment.post.id, reply=comment_id, author=comment.author ))
 
 
 @main.route('/edit/<int:id>', methods=['GET', 'POST'])

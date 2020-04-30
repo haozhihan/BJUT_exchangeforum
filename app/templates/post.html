@@ -10,6 +10,7 @@
 {{super()}}
     <link href="{{ url_for('static', filename='editormd/css/editormd.preview.min.css') }}" rel="stylesheet" />
     <link href="{{ url_for('static', filename='editormd/css/editormd.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='comments.css') }}" rel="stylesheet" />
 {%endblock%}
 
 
@@ -103,6 +104,12 @@
         <h4 id="comments">Comments</h4>
         {% if current_user.can(Permission.COMMENT) %}
             <div class="comment-form">
+                {% if request.args.get('reply') %}
+                    <div class="alert alert-dark">
+                        Reply to <b>{{ request.args.get('author') }}</b>
+                        <a class="float-right" href="{{ url_for('.post', id=post.id) }}">Cancel</a>
+                    </div>
+                {% endif %}
                 {{ wtf.quick_form(form) }}
             </div>
         {% endif %}
