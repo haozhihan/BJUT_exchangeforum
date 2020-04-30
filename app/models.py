@@ -2,18 +2,13 @@
 # as well as the permission settings of different users.
 from datetime import datetime
 import hashlib
-# from sqlalchemy import *
-# from sqlalchemy.orm import *
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app, request
 from flask_login import UserMixin, AnonymousUserMixin
-from . import db, login_manager
+from app import db, login_manager
 from markdown import markdown
 import bleach
-
-
-# import sqlalchemy
 
 
 class Permission:
@@ -355,10 +350,15 @@ class Post(db.Model):
     def on_changed_body(target, value, oldvalue, initiator):
         allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
                         'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
-                        'h1', 'h2', 'h3', 'p']
+                        'h1', 'h2', 'h3', 'p', 'img', 'div', 'iframe',
+                        'p', 'br', 'span', 'hr', 'src', 'class',
+                        'table', 'tr', 'th']
+        allowed_attrs = {'*': ['class'],
+                         'a': ['href', 'rel'],
+                         'img': ['src', 'alt']}
         target.body_html = bleach.linkify(bleach.clean(
             markdown(value, output_format='html'),
-            tags=allowed_tags, strip=True))
+            tags=allowed_tags, strip=True, attributes=allowed_attrs))
 
 
 db.event.listen(Post.body, 'set', Post.on_changed_body)
@@ -372,9 +372,9 @@ class Comment(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     disabled = db.Column(db.Boolean)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    post = db.relationship('Post', back_populates='comments')
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
 
-    post = db.relationship('Post', back_populates='comments')
 
     # 被回复的评论的id
     replied_id = db.Column(db.Integer, db.ForeignKey('comments.id'))
@@ -382,17 +382,6 @@ class Comment(db.Model):
     replies = db.relationship('Comment', back_populates='replied', cascade='all, delete-orphan')
     # 表示被回复的评论
     replied = db.relationship('Comment', back_populates='replies', remote_side=[id])
-
-    @staticmethod
-    def on_changed_body(target, value, oldvalue, initiator):
-        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'code', 'em', 'i',
-                        'strong']
-        target.body_html = bleach.linkify(bleach.clean(
-            markdown(value, output_format='html'),
-            tags=allowed_tags, strip=True))
-
-
-db.event.listen(Comment.body, 'set', Comment.on_changed_body)
 
 
 class Like(db.Model):

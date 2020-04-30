@@ -15,6 +15,7 @@ def users(count=100):
                  username=fake.user_name(),
                  password='password',
                  confirmed=True,
+                 role_id=1,
                  about_me=fake.text(),
                  member_since=fake.past_date())
         db.session.add(u)
@@ -25,7 +26,7 @@ def users(count=100):
             db.session.rollback()
 
 
-def posts(count=100):
+def posts(count=200):
     fake = Faker()
     user_count = User.query.count()
     for i in range(count):
