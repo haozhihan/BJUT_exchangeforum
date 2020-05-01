@@ -57,12 +57,15 @@
                     {% else %}
                         <img class="img-rounded profile-thumbnail" src="{{ current_user.gravatar(size=256) }}" alt="avatar">
                     {% endif %}
+
                     <div class="caption text-center">
-                        <h3>{{ current_user.username }}</h3>
+                        <a href="{{ url_for('main.user', username=current_user.username) }}">
+                            <h3>{{ current_user.username }}</h3>
+                        </a>
                         <p> {{ current_user.about_me }}</p>
                         <p>
-                            <a href="#" class="btn btn-primary" role="button">{{ current_user.followers.count() - 1 }} Followers</a>
-                            <a href="#" class="btn btn-default" role="button">{{ current_user.following.count() - 1 }} Following</a>
+                            <a href="{{ url_for('.followers', username=current_user.username) }}" class="btn btn-primary" role="button">{{ current_user.followers.count() - 1 }} Followers</a>
+                            <a href="{{ url_for('.followed_by', username=current_user.username) }}" class="btn btn-default" role="button">{{ current_user.following.count() - 1 }} Following</a>
                         </p>
                    </div>
               </div>
