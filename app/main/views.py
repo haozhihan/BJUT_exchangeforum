@@ -198,9 +198,9 @@ def edit(id):
     return render_template('edit_post.html', form=form)
 
 
-@main.route('/delete/<int:id>')
+@main.route('/delete_comment/<int:id>')
 @login_required
-def delete(id):
+def delete_comment(id):
     comment = Comment.query.get_or_404(id)
     posts = Post.query.filter_by(id=comment.post_id).first()
     users = User.query.filter_by(id=posts.author_id).first()
@@ -215,6 +215,29 @@ def delete(id):
     else:
         flash('你没有删评论权限')
         return redirect(url_for('.post', id=posts.id))
+
+
+@main.route('/delete_post/<int:id>')
+@login_required
+def delete_post(id):
+    posts = Post.query.filter_by(id=id).first()
+    db.session.delete(posts)
+    db.session.commit()
+    flash('The comment has been deleted.')
+    page = request.args.get('page', 1, type=int)
+    show_followed = False
+    if current_user.is_authenticated:
+        show_followed = bool(request.cookies.get('show_followed', ''))
+    if show_followed:
+        query = current_user.followed_posts
+    else:
+        query = Post.query
+    pagination = query.order_by(Post.timestamp.desc()).paginate(
+        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+        error_out=False)
+    posts = pagination.items
+    form = PostForm()
+    return render_template('index.html', posts=posts, form=form, show_followed=show_followed, pagination=pagination)
 
 
 @main.route('/follow/<username>')
