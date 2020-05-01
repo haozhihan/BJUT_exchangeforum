@@ -59,7 +59,7 @@
                             </a>
                         {% else %}
                             <a class="icon-btn" style="float:right; margin-right: 15px" href="{{ url_for('.dislike', post_id=post.id) }}">
-                                <span class="glyphicon glyphicon-heart-empty"></span>
+                                <span class="glyphicon glyphicon-heart"></span>
                                 <span>{{ post.liker.count() }} Dislikes</span>
                             </a>
                         {% endif %}

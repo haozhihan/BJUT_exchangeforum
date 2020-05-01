@@ -26,13 +26,6 @@
     </div>
 
 
-    <div>
-        {% if current_user.can(Permission.WRITE) %}
-            {{ wtf.quick_form(form) }}
-        {% endif %}
-    </div>
-
-
     <div class="post-tabs">
         <ul class="nav nav-tabs">
             <li{% if not show_followed %} class="active"{% endif %}><a href="{{ url_for('.show_all') }}">All</a></li>
@@ -76,7 +69,7 @@
               <div class="inner2">
                   <div class="new-post">
                       <div>
-                          <a href="{{ url_for('.new_post')}}">
+                          <a href="{{ url_for('.new_post_md')}}">
                               <svg class="icon" viewBox="0 0 1024 1024" version="1.1" width="40" height="40">
                                 <defs><style type="text/css"></style></defs>
                                 <path d="M824 921H184c-52.9 0-96-43.1-96-96V185c0-52.9 43.1-96 96-96h640c52.9 0 96 43.1 96 96v640c0 52.9-43.1 96-96 96zM184 153c-17.6 0-32 14.4-32 32v640c0 17.6 14.4 32 32 32h640c17.6 0 32-14.4 32-32V185c0-17.6-14.4-32-32-32H184z" fill="#3688FF" p-id="1446"></path>

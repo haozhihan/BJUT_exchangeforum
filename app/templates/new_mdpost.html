@@ -15,12 +15,22 @@
     <script src="{{ url_for('static',filename='editormd/editormd.min.js') }}"></script>
 
     <script>
+        window.onload = function(){
+            document.getElementById('title').addEventListener('keydown',function(e){
+                if(e.keyCode!=13) return;
+                e.preventDefault();
+                this.value += '';
+            });
+        };
+    </script>
+
+    <script>
         var testEditor;
         $(function(){
             testEditor=editormd("test-editormd",{
-                placeholder:'本编辑器支持Markdown编辑，左边编写，右边预览',
+                placeholder:'This editor supports Markdown editing, write on the left, preview on the right',
                 width:'1130px',
-                height:'800px',
+                height:'600px',
                 syncScrolling : "single",
                 path:"{{url_for('static',filename='editormd/lib/')}}",
                 saveHTMLToTextarea: true,
@@ -30,7 +40,6 @@
                     return ["undo","redo","|","bold","del","italic","quote",
                         "uppercase","lowercase","|","h1","h2","h3","h4","h5","h6","|",
                         "list-ul","list-ol","hr","|","watch","preview","fullscreen"]
-                    {#return editormd.toolbarModes['simple']; // full, simple, mini#}
                 },
 
                 //启动本地图片上传功能
@@ -63,7 +72,7 @@
                                     background: transparent;
                                     resize: none;
                                     color: #1a1a1a;
-                                    overflow: auto;
+                                    overflow: hidden;
                                     min-height: 44px;
                                     display: block;
                                     width: 728px;
