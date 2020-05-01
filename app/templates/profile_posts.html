@@ -15,33 +15,33 @@
 <!--                </div>-->
 <!--            </div>-->
             <div class="post-content">
-                <h4 class="post-title">
-                    <a href="{{ url_for('.post', id=post.id) }}">Title{{ post.title }}</a>
-                </h4>
+
+                <h3 class="post-title">
+                    <a href="{{ url_for('.post', id=post.id) }}">{{ post.title }}</a>
+                </h3>
+
                 <div class="post-body">
-                    {% if post.body_html %}
-                        {{ post.body_html | safe }}
-                    {% else %}
-                        {{ post.body }}
-                    {% endif %}
+                   <p>
+                            {% if post.body_html %}
+                                {{ post.body_html |safe|striptags|truncate(260,killwords=Flase,leeway=0) }}
+                            {% else %}
+                                {{ post.body |truncate(200,killwords=Flase,leeway=0)}}
+                            {% endif %}
+                            <small><a href="{{ url_for('.post', id=post.id) }}"><B>Read More</B></a></small></p>
                 </div>
-                <div class="post-date">
-                    <span class="glyphicon glyphicon-time"></span>
-                    {{ moment(post.timestamp).fromNow() }}
-                </div>
-                <div class="post-footer col-sm-offset-10">
+
+                <div class="post-footer">
+                    <span class="post-date">
+                        <span class="glyphicon glyphicon-time"></span>
+                        {{ moment(post.timestamp).fromNow() }}
+                    </span>
                     {% if current_user == post.author %}
-{#                    <a href="{{ url_for('.edit', id=post.id) }}">#}
-{#                        <span class="label label-primary">Edit</span>#}
-{#                    </a>#}
-                    {% elif current_user.is_administrator() %}
-{#                    <a href="{{ url_for('.edit', id=post.id) }}">#}
-{#                        <span class="label label-danger">Edit [Admin]</span>#}
-{#                    </a>#}
+                        {#            删除#}
+                            <a class="icon-btn" href="#" style="">
+                                <span class="glyphicon glyphicon-trash"></span>
+                                <span>delete</span>
+                            </a>
                     {% endif %}
-<!--                    <a href="{{ url_for('.post', id=post.id) }}">-->
-<!--                        <span class="label label-default">Permalink</span>-->
-<!--                    </a>-->
                 </div>
             </div>
         </div>
