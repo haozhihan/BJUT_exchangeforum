@@ -326,7 +326,7 @@ class Post(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
-    comments = db.relationship('Comment', back_populates='post', cascade='all, delete-orphan')
+    comments = db.relationship('Comment', back_populates='post', lazy='dynamic', cascade='all, delete-orphan')
 
     liker = db.relationship('Like', back_populates='liked_post', lazy='dynamic', cascade='all')
 

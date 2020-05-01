@@ -1,11 +1,10 @@
 import os
+from datetime import datetime
 from operator import or_
-
 from flask import render_template, redirect, url_for, abort, flash, request, \
     current_app, make_response
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
-
 from . import main
 from .forms import EditProfileForm, PostForm, UploadPhotoForm, CommentForm, PostMdForm
 from .. import db
@@ -175,27 +174,12 @@ def post(id):
 @main.route('/reply/comment/<int:comment_id>')
 def reply_comment(comment_id):
     comment = Comment.query.get_or_404(comment_id)
+    post1 = comment.post
+    n = Notification(receiver_id=comment.author_id, timestamp=datetime.utcnow(),
+                     message=current_user.username + " has replied on you comment " + post1.title)
+    db.session.add(n)
+    db.session.commit()
     return redirect(url_for('.post', id=comment.post.id, reply=comment_id, author=comment.author ))
-
-
-@main.route('/edit/<int:id>', methods=['GET', 'POST'])
-@login_required
-def edit(id):
-    post = Post.query.get_or_404(id)
-    if current_user != post.author and \
-            not current_user.can(Permission.ADMIN):
-        abort(403)
-    form = PostForm()
-    if form.validate_on_submit():
-        post.title = form.title.data
-        post.body = form.body.data
-        db.session.add(post)
-        db.session.commit()
-        flash('The post has been updated.')
-        return redirect(url_for('.post', id=post.id))
-    form.body.data = post.body
-    form.title.data = post.title
-    return render_template('edit_post.html', form=form)
 
 
 @main.route('/delete_comment/<int:id>')
@@ -289,7 +273,7 @@ def like(post_id):
     post.like(current_user)
     db.session.commit()
     flash('You are now liking this post')
-    return redirect(url_for('.post', id=post_id))
+    return redirect(url_for('.index', id=post_id))
 
 
 @main.route('/dislike/<post_id>')
@@ -307,7 +291,7 @@ def dislike(post_id):
     post.dislike(current_user)
     db.session.commit()
     flash('You are not liking this post')
-    return redirect(url_for('.post', id=post_id))
+    return redirect(url_for('.index', id=post_id))
 
 
 @main.route('/followers/<username>')

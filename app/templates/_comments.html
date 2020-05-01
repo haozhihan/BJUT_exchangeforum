@@ -29,8 +29,10 @@
                     <a href="{{ url_for('.user', username=comment.author.username) }}">{{ comment.author.username }}</a>
                 </span>
                 <span class="comment-date">{{ moment(comment.timestamp).fromNow() }}</span>
-                {% if current_user == comment.author %}
-             {#            删除#}
+
+
+                {#            删除#}
+                {% if current_user == comment.author or current_user == post.author %}
                  <a class="icon-btn" href="{{ url_for('.delete_comment', id=comment.id) }}">
                      <span class="glyphicon glyphicon-trash"></span>
                      <span>delete</span>
