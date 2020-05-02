@@ -50,38 +50,39 @@
                 </div>
             </div>
 
+            <div class="col-md-offset-1 col-md-9">
+                <div class="panel panel-default" style="margin-top: 30px">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Author</h3>
+                    </div>
 
-            <div class="panel panel-default col-md-offset-1 col-md-9" style="margin-top: 30px">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Author</h3>
-                </div>
-
-                <div class="panel-body">
-                    <div class=" col-sm-2">
-                        <a class="head-photo" href="{{ url_for('.user', username=post.author.username) }}">
-                        {% if post.author.avatar_img %}
-                            <img class="img-rounded profile-thumbnail" src="{{ post.author.avatar_img }}" alt="avatar"  style="width: 60px; height: 60px">
-                        {% else %}
-                            <img class="img-rounded profile-thumbnail" src="{{ post.author.gravatar(size=60) }}" alt="avatar">
-                        {% endif %}
-                        </a>
-                    </div>
-                    <div class="post-author col-sm-2">
-                        <h4>
-                            <a href="{{ url_for('.user', username=post.author.username) }}">{{ post.author.username }}</a>
-                        </h4>
-                    </div>
-                    <div class="col-sm-6">
-                        <h6>{{ post.author.grade }}</h6>
-                        <h6>{{ post.author.college }}</h6>
-                    </div>
-                  {% if current_user.can(Permission.FOLLOW) and post.author != current_user %}
-                      {% if not current_user.is_following(post.author) %}
-                          <a align="center" href="{{ url_for('.follow', username=post.author.username) }}" class="btn btn-primary">Follow</a>
-                      {% else %}
-                          <a align="center" href="{{ url_for('.unfollow', username=post.author.username) }}" class="btn btn-default">Unfollow</a>
+                    <div class="panel-body">
+                        <div class=" col-sm-2">
+                            <a class="head-photo" href="{{ url_for('.user', username=post.author.username) }}">
+                            {% if post.author.avatar_img %}
+                                <img class="img-rounded profile-thumbnail" src="{{ post.author.avatar_img }}" alt="avatar"  style="width: 60px; height: 60px">
+                            {% else %}
+                                <img class="img-rounded profile-thumbnail" src="{{ post.author.gravatar(size=60) }}" alt="avatar">
+                            {% endif %}
+                            </a>
+                        </div>
+                        <div class="post-author col-sm-2">
+                            <h4>
+                                <a href="{{ url_for('.user', username=post.author.username) }}">{{ post.author.username }}</a>
+                            </h4>
+                        </div>
+                        <div class="col-sm-6">
+                            <h6>{{ post.author.grade }}</h6>
+                            <h6>{{ post.author.college }}</h6>
+                        </div>
+                      {% if current_user.can(Permission.FOLLOW) and post.author != current_user %}
+                          {% if not current_user.is_following(post.author) %}
+                              <a align="center" href="{{ url_for('.follow', username=post.author.username) }}" class="btn btn-primary">Follow</a>
+                          {% else %}
+                              <a align="center" href="{{ url_for('.unfollow', username=post.author.username) }}" class="btn btn-default">Unfollow</a>
+                          {% endif %}
                       {% endif %}
-                  {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
