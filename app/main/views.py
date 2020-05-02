@@ -369,10 +369,10 @@ def new_post():
         text = request.form.get('text1')
         if title == "":
             flash("Title cannot be None!")
-            return render_template('new_post.html')
+            return render_template('new_posting/new_post.html')
         if text == "" or text == "<p><br></p>":
             flash("Post cannot be None")
-            return render_template('new_post.html')
+            return render_template('new_posting/new_post.html')
         post = Post(title=title,
                     body=text,
                     author=current_user._get_current_object())
@@ -380,7 +380,7 @@ def new_post():
         db.session.commit()
         flash("You have just posted a posting", 'success')
         return redirect(url_for('.index'))
-    return render_template('new_post.html')
+    return render_template('new_posting/new_post.html')
 
 
 @main.route('/new_post_md', methods=['GET', 'POST'])
@@ -392,7 +392,7 @@ def new_post_md():
         body = form.body.data
         if title == "":
             flash("Title cannot be None!")
-            return render_template('new_mdpost.html', form=form)
+            return render_template('new_posting/new_mdpost.html', form=form)
         body_html = request.form['test-editormd-html-code']
         post = Post(title=title,
                     body=body,
@@ -402,7 +402,7 @@ def new_post_md():
         db.session.commit()
         flash("You have just posted a posting", 'success')
         return redirect(url_for('.index'))
-    return render_template('new_mdpost.html', form=form)
+    return render_template('new_posting/new_mdpost.html', form=form)
 
 
 @main.route('/moderate')
