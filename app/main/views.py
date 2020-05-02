@@ -93,7 +93,7 @@ def notification():
         page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
     notices = pagination.items
-    return render_template('notifications.html', notices=notices,
+    return render_template('table/notifications.html', notices=notices,
                            pagination=pagination)
 
 
@@ -356,7 +356,7 @@ def liked_by(post_id):
         error_out=False)
     liker = [{'user': item.liker, 'timestamp': item.timestamp}
                for item in pagination.items]
-    return render_template('liker.html', post=post, title="The liker of",
+    return render_template('table/liker.html', post=post, title="The liker of",
                            endpoint='.liked_by', pagination=pagination,
                            liker=liker)
 

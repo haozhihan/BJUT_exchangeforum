@@ -5,13 +5,13 @@
 
 {% block page_content %}
     <div class="page-header">
-        <h1>{{ title }} {{ user.username }}</h1>
+        <h1>{{ title }} User ( {{ user.username }} )</h1>
     </div>
 
     <div class="col-md-10">
         <div class="panel panel-primary">
             <!-- Default panel contents -->
-            <div class="panel-heading"><h5>{{ title }} {{ user.username }}</h5></div>
+            <div class="panel-heading"><h5>{{ title }} User ( {{ user.username }} )</h5></div>
             <!-- Table -->
             <table class="table">
                 <thead><tr><th></th><th>User</th><th>Since</th></tr></thead>
@@ -37,10 +37,9 @@
                 {% endfor %}
             </table>
         </div>
-{#    分页#}
+    {#    分页#}
         <div class="pagination">
             {{ macros.pagination_widget(pagination, endpoint, username = user.username) }}
         </div>
-
     </div>
 {% endblock %}

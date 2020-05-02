@@ -9,12 +9,13 @@
                 </h3>
                 <div class="post-body">
                    <p>
-                            {% if post.body_html %}
-                                {{ post.body_html |safe|striptags|truncate(260,killwords=Flase,leeway=0) }}
-                            {% else %}
-                                {{ post.body |truncate(200,killwords=Flase,leeway=0)}}
-                            {% endif %}
-                            <small><a href="{{ url_for('.post', id=post.id) }}"><B>Read More</B></a></small></p>
+                        {% if post.body_html %}
+                            {{ post.body_html |safe|striptags|truncate(260,killwords=Flase,leeway=0) }}
+                        {% else %}
+                            {{ post.body |truncate(200,killwords=Flase,leeway=0)}}
+                        {% endif %}
+                        <small><a href="{{ url_for('.post', id=post.id) }}"><B>Read More</B></a></small>
+                   </p>
                 </div>
                 <div class="post-footer">
                     <span class="post-date">
