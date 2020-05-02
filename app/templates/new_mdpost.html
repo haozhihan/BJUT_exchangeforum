@@ -34,18 +34,15 @@
                 syncScrolling : "single",
                 path:"{{url_for('static',filename='editormd/lib/')}}",
                 saveHTMLToTextarea: true,
-                emoji: false,
+                emoji: true,
                 taskList: true,
-                toolbarIcons : function() {  //自定义工具栏，后面有详细介绍
-                    return ["undo","redo","|","bold","del","italic","quote",
+                toolbarIcons : function() {  //自定义工具栏
+                    return ["undo","redo","search","|","bold","del","italic","quote",
                         "uppercase","lowercase","|","h1","h2","h3","h4","h5","h6","|",
-                        "list-ul","list-ol","hr","|","image","table","|","watch","preview","fullscreen"]
+                        "list-ul","list-ol","hr","|","link","reference-link","image",
+                        "table","code","preformatted-text","code-block","datetime",
+                        "emoji","pagebreak","|","clear","watch","preview"]
                 },
-
-                //启动本地图片上传功能
-                {#imageUpload:true,#}
-                {#imageFormats   : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],#}
-                {#imageUploadURL : "{{url_for('main.upload')}}"#}
             });
         })
     </script>
@@ -63,30 +60,30 @@
 
                 <div class="col-md-offset-3 col-md-4">
                     <label class="WriteIndex-titleInput Input-wrapper Input-wrapper--multiline">
-                        <textarea  id="title" name="title" rows="1" class="Input" maxlength="20"  placeholder="           请输入标题（最多 20 个字）"
-                              style="-webkit-tap-highlight-color: rgba(26,26,26,0);
-                                    -webkit-box-flex: 1;
-                                    flex: 1 1;
-                                    padding: 0;
-                                    font-family: inherit;
-                                    background: transparent;
-                                    resize: none;
-                                    color: #1a1a1a;
-                                    overflow: hidden;
-                                    min-height: 44px;
-                                    display: block;
-                                    width: 728px;
-                                    border: 0;
-                                    font-size: 32px;
-                                    line-height: 1.4;
-                                    font-weight: 600;
-                                    outline: none;
-                                    box-shadow: none;
-                                    height: 44px;"></textarea>
+                        <textarea  id="title" name="title" rows="1" class="Input" maxlength="20"
+                                   placeholder="           请输入标题（最多 20 个字）"
+                                   style="-webkit-tap-highlight-color: rgba(26,26,26,0);
+                                        -webkit-box-flex: 1;
+                                        flex: 1 1;
+                                        padding: 0;
+                                        font-family: inherit;
+                                        resize: none;
+                                        color: #1a1a1a;
+                                        overflow: hidden;
+                                        min-height: 44px;
+                                        display: block;
+                                        width: 550px;
+                                        border: 0;
+                                        font-size: 32px;
+                                        line-height: 1.4;
+                                        font-weight: 600;
+                                        outline: none;
+                                        box-shadow: none;
+                                        height: 44px;"></textarea>
                     </label>
                 </div>
                 <div class="col-md-offset-3 col-md-2">
-                    <button type="submit" class="btn btn-primary form-control">提交</button>
+                    <button type="submit" class="btn btn-primary form-control" style="margin-top: 10px">提交</button>
                 </div>
                 {{form.hidden_tag()}}
 
