@@ -82,7 +82,7 @@ def user(username):
         page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
     posts = pagination.items
-    return render_template('显示的主页.html', user=user, posts=posts,
+    return render_template('user.html', user=user, posts=posts,
                            pagination=pagination)
 
 
@@ -207,7 +207,7 @@ def delete_post(id):
     posts = Post.query.filter_by(id=id).first()
     db.session.delete(posts)
     db.session.commit()
-    flash('The comment has been deleted.')
+    flash('The posting has been deleted.')
     page = request.args.get('page', 1, type=int)
     show_followed = False
     if current_user.is_authenticated:
@@ -222,6 +222,22 @@ def delete_post(id):
     posts = pagination.items
     form = PostForm()
     return render_template('index.html', posts=posts, form=form, show_followed=show_followed, pagination=pagination)
+
+
+@main.route('/delete_post_profile/<int:id>')
+@login_required
+def delete_post_inProfile(id):
+    post = Post.query.filter_by(id=id).first()
+    user = User.query.filter_by(id=post.author_id).first_or_404()
+    db.session.delete(post)
+    db.session.commit()
+    flash('The posting has been deleted.')
+    page = request.args.get('page', 1, type=int)
+    pagination = user.posts.order_by(Post.timestamp.desc()).paginate(
+        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+        error_out=False)
+    posts = pagination.items
+    return render_template('user.html', user=user, posts=posts,pagination=pagination)
 
 
 @main.route('/follow/<username>')

@@ -2,24 +2,11 @@
     {% for post in posts %}
     <li class="post">
         <div class="post-box">
-<!--            <div class="post-thumbnail col-sm-2">-->
-<!--                <a class="head-photo" href="{{ url_for('.user', username=post.author.username) }}">-->
-<!--                    {% if post.author.avatar_img %}-->
-<!--                        <img class="img-rounded profile-thumbnail" src="{{ post.author.avatar_img }}" alt="avatar"  style="width: 40px; height: 40px">-->
-<!--                    {% else %}-->
-<!--                        <img class="img-rounded profile-thumbnail" src="{{ post.author.gravatar(size=40) }}" alt="avatar">-->
-<!--                    {% endif %}-->
-<!--                </a>-->
-<!--                <div class="post-author">-->
-<!--                    <a href="{{ url_for('.user', username=post.author.username) }}">{{ post.author.username }}</a>-->
-<!--                </div>-->
-<!--            </div>-->
-            <div class="post-content">
 
+            <div class="post-content">
                 <h3 class="post-title">
                     <a href="{{ url_for('.post', id=post.id) }}">{{ post.title }}</a>
                 </h3>
-
                 <div class="post-body">
                    <p>
                             {% if post.body_html %}
@@ -29,7 +16,6 @@
                             {% endif %}
                             <small><a href="{{ url_for('.post', id=post.id) }}"><B>Read More</B></a></small></p>
                 </div>
-
                 <div class="post-footer">
                     <span class="post-date">
                         <span class="glyphicon glyphicon-time"></span>
@@ -37,13 +23,14 @@
                     </span>
                     {% if current_user == post.author %}
                         {#            删除#}
-                            <a class="icon-btn" href="#" style="">
+                            <a class="icon-btn" href="{{ url_for('main.delete_post_inProfile', id=post.id)}}">
                                 <span class="glyphicon glyphicon-trash"></span>
                                 <span>delete</span>
                             </a>
                     {% endif %}
                 </div>
             </div>
+
         </div>
     </li>
     {% endfor %}
