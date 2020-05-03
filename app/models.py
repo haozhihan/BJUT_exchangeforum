@@ -325,9 +325,8 @@ class Post(db.Model):
     body_html = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-
+    important = db.Column(db.INT, default=0)
     comments = db.relationship('Comment', back_populates='post', cascade='all, delete-orphan')
-
     liker = db.relationship('Like', back_populates='liked_post', lazy='dynamic', cascade='all')
 
     def like(self, user):

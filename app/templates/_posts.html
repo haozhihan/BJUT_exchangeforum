@@ -1,6 +1,6 @@
 <ul class="posts list-unstyled">
     {% for post in posts %}
-    <li class="post">
+    <li class="post" id="{{ post.id }}">
 
         <div class="panel panel-default">
               <div class="panel-body">
@@ -41,11 +41,7 @@
                             <a href="{{ url_for('.user', username=post.author.username) }}"> {{ post.author.username }} </a>
                         </span>
                         <span class="post-date"><small>{{ moment(post.timestamp).fromNow() }}</small></span>
-                            {% if not current_user.is_liking(post) %}
-                            <a href="{{ url_for('.like', post_id=post.id) }}" class="btn btn-primary">Like</a>
-                            {% else %}
-                            <a href="{{ url_for('.dislike', post_id=post.id) }}" class="btn btn-default">Dislike</a>
-                            {% endif %}
+
                     </div>
 
                     <div class="post-footer">
@@ -53,24 +49,27 @@
                     {#            评论#}
                             <a class="icon-btn" style="float:right" href="{{ url_for('.post', id=post.id) }}#comments">
                                 <span class="glyphicon glyphicon-comment"></span>
-                                <span>comment</span>
+                                <span>{{ post.comments.count() }} comment</span>
                             </a>
+
                     {#            喜欢#}
-                            <a class="icon-btn" style="float:right; margin-right: 15px" href="{{ url_for('.liked_by', post_id=post.id) }}">
+                        {% if not current_user.is_liking(post) %}
+                            <a class="icon-btn" style="float:right; margin-right: 15px" href="{{ url_for('.like', post_id=post.id) }}#{{ post.id }}">
                                 <span class="glyphicon glyphicon-heart-empty"></span>
                                 <span>{{ post.liker.count() }} likes</span>
                             </a>
+                        {% else %}
+                            <a class="icon-btn" style="float:right; margin-right: 15px" href="{{ url_for('.dislike', post_id=post.id) }}#{{ post.id }}">
+                                <span class="glyphicon glyphicon-heart"></span>
+                                <span>{{ post.liker.count() }} likes</span>
+                            </a>
+                        {% endif %}
 
+                    {#            删除#}
                         {% if current_user == post.author %}
-                        {#            删除#}
-                            <a class="icon-btn" href="#" style="float:right; margin-right: 15px">
+                            <a class="icon-btn" style="float:right; margin-right: 15px" href="{{ url_for('main.delete_post', id=post.id)}}">
                                 <span class="glyphicon glyphicon-trash"></span>
                                 <span>delete</span>
-                            </a>
-                    {#            编辑#}
-                            <a class="icon-btn" href="{{ url_for('.edit', id=post.id) }}" style="float:right; margin-right: 15px">
-                                <span class="glyphicon glyphicon-edit"></span>
-                                <span>edit</span>
                             </a>
                         {% endif %}
                     </div>

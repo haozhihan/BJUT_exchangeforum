@@ -26,13 +26,6 @@
     </div>
 
 
-    <div>
-        {% if current_user.can(Permission.WRITE) %}
-            {{ wtf.quick_form(form) }}
-        {% endif %}
-    </div>
-
-
     <div class="post-tabs">
         <ul class="nav nav-tabs">
             <li{% if not show_followed %} class="active"{% endif %}><a href="{{ url_for('.show_all') }}">All</a></li>
@@ -42,7 +35,6 @@
         </ul>
         {% include '_posts.html' %}
     </div>
-
 
     {% if pagination %}
     <div class="pagination">
@@ -56,27 +48,28 @@
         {#    登录用户的个人资料卡及互动功能#}
           <div class="col-md-offset-2 col-sm-3 outer">
               <div class="thumbnail inner1">
-    {#              <img src="{{ current_user.gravatar(size=256) }}" alt="avatar" >#}
-{#                    <img src="{{ current_user.avatar_img }}" alt="avatar" >#}
 
                     {% if current_user.avatar_img %}
                         <img class="img-rounded profile-thumbnail" src="{{ current_user.avatar_img }}" alt="avatar"  style="width: 256px; height: 256px">
                     {% else %}
                         <img class="img-rounded profile-thumbnail" src="{{ current_user.gravatar(size=256) }}" alt="avatar">
                     {% endif %}
+
                     <div class="caption text-center">
-                        <h3>{{ current_user.username }}</h3>
+                        <a href="{{ url_for('main.user', username=current_user.username) }}">
+                            <h3>{{ current_user.username }}</h3>
+                        </a>
                         <p> {{ current_user.about_me }}</p>
                         <p>
-                            <a href="#" class="btn btn-primary" role="button">{{ current_user.followers.count() - 1 }} Followers</a>
-                            <a href="#" class="btn btn-default" role="button">{{ current_user.following.count() - 1 }} Following</a>
+                            <a href="{{ url_for('.followers', username=current_user.username) }}" class="btn btn-primary" role="button">{{ current_user.followers.count() - 1 }} Followers</a>
+                            <a href="{{ url_for('.followed_by', username=current_user.username) }}" class="btn btn-default" role="button">{{ current_user.following.count() - 1 }} Following</a>
                         </p>
                    </div>
               </div>
               <div class="inner2">
                   <div class="new-post">
                       <div>
-                          <a href="{{ url_for('.new_post')}}">
+                          <a href="{{ url_for('.new_post_md')}}">
                               <svg class="icon" viewBox="0 0 1024 1024" version="1.1" width="40" height="40">
                                 <defs><style type="text/css"></style></defs>
                                 <path d="M824 921H184c-52.9 0-96-43.1-96-96V185c0-52.9 43.1-96 96-96h640c52.9 0 96 43.1 96 96v640c0 52.9-43.1 96-96 96zM184 153c-17.6 0-32 14.4-32 32v640c0 17.6 14.4 32 32 32h640c17.6 0 32-14.4 32-32V185c0-17.6-14.4-32-32-32H184z" fill="#3688FF" p-id="1446"></path>
@@ -90,9 +83,6 @@
               </div>
           </div>
     {% endif %}
-
-
-
 {% endblock %}
 
 {% block scripts %}

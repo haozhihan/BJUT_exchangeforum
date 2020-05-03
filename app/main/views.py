@@ -1,52 +1,123 @@
 import os
+from datetime import datetime
 from operator import or_
-
 from flask import render_template, redirect, url_for, abort, flash, request, \
     current_app, make_response
 from flask_login import login_required, current_user
+from sqlalchemy.sql.functions import func
 from werkzeug.utils import secure_filename
-
 from . import main
-from .forms import EditProfileForm, PostForm, UploadPhotoForm, CommentForm, PostMdForm
+from .forms import PostForm, UploadPhotoForm, CommentForm, PostMdForm
 from .. import db
-from ..models import Permission, Role, User, Post, Comment, Notification
-from ..decorators import admin_required, permission_required
-from ..decorators import admin_required
+from ..models import Permission, User, Post, Comment, Notification, Like
+from ..decorators import permission_required
 
 
 # 查询
 # view functions for index page
 # unfinished
-# @main.route('/query-user', methods=['GET', 'POST'])
-# def query_user():
-#     if request.method == 'GET':
-#         return render_template('queryuser.html')
-#     if request.method == 'POST':
-#         user_inf = request.form["user"]
-#         search_user = "%" + user_inf + "%"
-#         result = User.query.filter(or_(User.username.like(search_user), User.student_id.like(search_user)))
-#         page = request.args.get('page', 1, type=int)
-#         pagination = result.order_by(User.username.desc()).paginate(
-#             page, per_page=current_app.config['FLASKY_FOLLOWERS_PER_PAGE'],
-#             error_out=False)
-#         query = pagination.items
-#         return render_template('queryuser.html', query=query, title="Result of query", pagination=pagination)
-
-
 @main.route('/query-post', methods=['GET', 'POST'])
-def query_user():
+def query_post():
     if request.method == 'GET':
         return render_template('querypost.html')
     if request.method == 'POST':
         post_inf = request.form["post"]
         search_post = "%" + post_inf + "%"
         result = Post.query.filter(or_(Post.title.like(search_post), Post.body.like(search_post)))
+        for item in result:
+            item.important = 0
+            sentence = item.title + item.body
+            counts = 0
+            list1 = sentence.split(" ")
+            for y in range(len(list1)):
+                if list1[y].find(post_inf) != -1:
+                    counts = counts + 1
+            item.important = counts
         page = request.args.get('page', 1, type=int)
-        pagination = result.order_by(Post.timestamp.desc()).paginate(
-            page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-            error_out=False)
-        query = pagination.items
-        return render_template('querypost.html', query=query, title="Result of query", pagination=pagination)
+        show_newest = False
+        show_hottest = False
+        show_relevance = False
+        if current_user.is_authenticated:
+            show_newest = bool(request.cookies.get('show_newest', ''))
+            show_hottest = bool(request.cookies.get('show_hottest', ''))
+            show_relevance = bool(request.cookies.get('show_relevance', ''))
+        if show_relevance and not show_newest and not show_hottest:
+            pagination = result.order_by(Post.important.desc()).paginate(
+                page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+                error_out=False)
+        elif show_newest and not show_hottest and not show_relevance:
+            pagination = result.order_by(Post.timestamp.desc()).paginate(
+                page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+                error_out=False)
+        elif show_hottest and not show_relevance and not show_newest:
+            for item in result:
+                item.important = 0
+                com_num = db.session.query(func.count(Comment.id)).filter_by(post_id=item.id).scalar()
+                item.important = com_num
+            pagination = result.order_by(Post.important.desc()).paginate(
+                page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+                error_out=False)
+        else:
+            for item in result:
+                item.important = 0
+                sentence = item.title + item.body
+                counts = 0
+                list1 = sentence.split(" ")
+                for y in range(len(list1)):
+                    if list1[y].find(post_inf) != -1:
+                        counts = counts + 1
+                com_num = db.session.query(func.count(Comment.id)).filter_by(post_id=item.id).scalar()
+                li_num = db.session.query(func.count(Like.liker_id)).filter_by(liked_post_id=item.id).scalar()
+                item.important = counts * 4 + 3 * com_num + 3 * li_num
+                print("post: " + str(item.id) + "importance" + str(item.important))
+            pagination = result.order_by(Post.important.desc()).paginate(
+                page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+                error_out=False)
+        posts = pagination.items
+        print(show_newest + show_relevance + show_hottest)
+        for item in result:
+            item.important = 0
+        return render_template('querypost.html', posts=posts, title="Result of query", pagination=pagination)
+
+
+@main.route('/newest')
+@login_required
+def show_newest():
+    resp = make_response(redirect(url_for('.query_post')))
+    resp.set_cookie('show_relevance', '', max_age=30 * 24 * 60 * 60)
+    resp.set_cookie('show_newest', '1', max_age=30 * 24 * 60 * 60)
+    resp.set_cookie('show_hottest', '', max_age=30 * 24 * 60 * 60)
+    return resp
+
+
+@main.route('/hottest')
+@login_required
+def show_hottest():
+    resp = make_response(redirect(url_for('.query_post')))
+    resp.set_cookie('show_relevance', '', max_age=30 * 24 * 60 * 60)
+    resp.set_cookie('show_newest', '', max_age=30 * 24 * 60 * 60)
+    resp.set_cookie('show_hottest', '1', max_age=30 * 24 * 60 * 60)
+    return resp
+
+
+@main.route('/relevance')
+@login_required
+def show_relevance():
+    resp = make_response(redirect(url_for('.query_post')))
+    resp.set_cookie('show_relevance', '1', max_age=30 * 24 * 60 * 60)
+    resp.set_cookie('show_newest', '', max_age=30 * 24 * 60 * 60)
+    resp.set_cookie('show_hottest', '', max_age=30 * 24 * 60 * 60)
+    return resp
+
+
+@main.route('/information')
+@login_required
+def show_information():
+    resp = make_response(redirect(url_for('.query_post')))
+    resp.set_cookie('show_relevance', '', max_age=30 * 24 * 60 * 60)
+    resp.set_cookie('show_newest', '', max_age=30 * 24 * 60 * 60)
+    resp.set_cookie('show_hottest', '', max_age=30 * 24 * 60 * 60)
+    return resp
 
 
 @main.route('/', methods=['GET', 'POST'])
@@ -83,7 +154,7 @@ def user(username):
         page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
     posts = pagination.items
-    return render_template('显示的主页.html', user=user, posts=posts,
+    return render_template('user.html', user=user, posts=posts,
                            pagination=pagination)
 
 
@@ -94,7 +165,7 @@ def notification():
         page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
     notices = pagination.items
-    return render_template('notifications.html', notices=notices,
+    return render_template('table/notifications.html', notices=notices,
                            pagination=pagination)
 
 
@@ -157,13 +228,13 @@ def post(id):
                           post=post,
                           author=current_user._get_current_object(),
                           replied_id=request.args.get('reply'))
-
+        n = Notification(receiver_id=post.author_id, timestamp=datetime.utcnow(),
+                         message=current_user.username + " has commented on you post " + post.title)
         if comment.replied_id:
             replied = Comment.query.get_or_404(comment.replied_id)
             comment.replied = replied
         db.session.add(comment)
-        db.session.commit()
-        db.session.add(comment)
+        db.session.add(n)
         db.session.commit()
         flash('Comment published successfully')
         """此处应该设置消息提醒"""
@@ -175,32 +246,17 @@ def post(id):
 @main.route('/reply/comment/<int:comment_id>')
 def reply_comment(comment_id):
     comment = Comment.query.get_or_404(comment_id)
-    return redirect(url_for('.post', id=comment.post.id, reply=comment_id, author=comment.author ))
+    post1 = comment.post
+    n = Notification(receiver_id=comment.author_id, timestamp=datetime.utcnow(),
+                     message=current_user.username + " has replied on you comment " + post1.title)
+    db.session.add(n)
+    db.session.commit()
+    return redirect(url_for('.post', id=comment.post.id, reply=comment_id, author=comment.author))
 
 
-@main.route('/edit/<int:id>', methods=['GET', 'POST'])
+@main.route('/delete_comment/<int:id>')
 @login_required
-def edit(id):
-    post = Post.query.get_or_404(id)
-    if current_user != post.author and \
-            not current_user.can(Permission.ADMIN):
-        abort(403)
-    form = PostForm()
-    if form.validate_on_submit():
-        post.title = form.title.data
-        post.body = form.body.data
-        db.session.add(post)
-        db.session.commit()
-        flash('The post has been updated.')
-        return redirect(url_for('.post', id=post.id))
-    form.body.data = post.body
-    form.title.data = post.title
-    return render_template('edit_post.html', form=form)
-
-
-@main.route('/delete/<int:id>')
-@login_required
-def delete(id):
+def delete_comment(id):
     comment = Comment.query.get_or_404(id)
     posts = Post.query.filter_by(id=comment.post_id).first()
     users = User.query.filter_by(id=posts.author_id).first()
@@ -215,6 +271,45 @@ def delete(id):
     else:
         flash('你没有删评论权限')
         return redirect(url_for('.post', id=posts.id))
+
+
+@main.route('/delete_post/<int:id>')
+@login_required
+def delete_post(id):
+    posts = Post.query.filter_by(id=id).first()
+    db.session.delete(posts)
+    db.session.commit()
+    flash('The posting has been deleted.')
+    page = request.args.get('page', 1, type=int)
+    show_followed = False
+    if current_user.is_authenticated:
+        show_followed = bool(request.cookies.get('show_followed', ''))
+    if show_followed:
+        query = current_user.followed_posts
+    else:
+        query = Post.query
+    pagination = query.order_by(Post.timestamp.desc()).paginate(
+        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+        error_out=False)
+    posts = pagination.items
+    form = PostForm()
+    return render_template('index.html', posts=posts, form=form, show_followed=show_followed, pagination=pagination)
+
+
+@main.route('/delete_post_profile/<int:id>')
+@login_required
+def delete_post_inProfile(id):
+    post = Post.query.filter_by(id=id).first()
+    user = User.query.filter_by(id=post.author_id).first_or_404()
+    db.session.delete(post)
+    db.session.commit()
+    flash('The posting has been deleted.')
+    page = request.args.get('page', 1, type=int)
+    pagination = user.posts.order_by(Post.timestamp.desc()).paginate(
+        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+        error_out=False)
+    posts = pagination.items
+    return render_template('user.html', user=user, posts=posts,pagination=pagination)
 
 
 @main.route('/follow/<username>')
@@ -266,7 +361,7 @@ def like(post_id):
     post.like(current_user)
     db.session.commit()
     flash('You are now liking this post')
-    return redirect(url_for('.post', id=post_id))
+    return redirect(url_for('.index', id=post_id))
 
 
 @main.route('/dislike/<post_id>')
@@ -284,7 +379,7 @@ def dislike(post_id):
     post.dislike(current_user)
     db.session.commit()
     flash('You are not liking this post')
-    return redirect(url_for('.post', id=post_id))
+    return redirect(url_for('.index', id=post_id))
 
 
 @main.route('/followers/<username>')
@@ -299,7 +394,7 @@ def followers(username):
         error_out=False)
     follows = [{'user': item.follower, 'timestamp': item.timestamp}
                for item in pagination.items]
-    return render_template('followers.html', user=user, title="Followers of",
+    return render_template('table/followers.html', user=user, title="Followers of",
                            endpoint='.followers', pagination=pagination,
                            follows=follows)
 
@@ -316,7 +411,7 @@ def followed_by(username):
         error_out=False)
     follows = [{'user': item.followed, 'timestamp': item.timestamp}
                for item in pagination.items]
-    return render_template('followers.html', user=user, title="Followed by",
+    return render_template('table/followers.html', user=user, title="Followed by",
                            endpoint='.followed_by', pagination=pagination,
                            follows=follows)
 
@@ -333,7 +428,7 @@ def liked_by(post_id):
         error_out=False)
     liker = [{'user': item.liker, 'timestamp': item.timestamp}
                for item in pagination.items]
-    return render_template('liker.html', post=post, title="The liker of",
+    return render_template('table/liker.html', post=post, title="The liker of",
                            endpoint='.liked_by', pagination=pagination,
                            liker=liker)
 
@@ -362,10 +457,10 @@ def new_post():
         text = request.form.get('text1')
         if title == "":
             flash("Title cannot be None!")
-            return render_template('new_post.html')
+            return render_template('new_posting/new_post.html')
         if text == "" or text == "<p><br></p>":
             flash("Post cannot be None")
-            return render_template('new_post.html')
+            return render_template('new_posting/new_post.html')
         post = Post(title=title,
                     body=text,
                     author=current_user._get_current_object())
@@ -373,7 +468,7 @@ def new_post():
         db.session.commit()
         flash("You have just posted a posting", 'success')
         return redirect(url_for('.index'))
-    return render_template('new_post.html')
+    return render_template('new_posting/new_post.html')
 
 
 @main.route('/new_post_md', methods=['GET', 'POST'])
@@ -385,15 +480,17 @@ def new_post_md():
         body = form.body.data
         if title == "":
             flash("Title cannot be None!")
-            return render_template('new_mdpost2.html', form=form)
+            return render_template('new_posting/new_mdpost.html', form=form)
+        body_html = request.form['test-editormd-html-code']
         post = Post(title=title,
                     body=body,
+                    body_html=body_html,
                     author=current_user._get_current_object())
         db.session.add(post)
         db.session.commit()
         flash("You have just posted a posting", 'success')
         return redirect(url_for('.index'))
-    return render_template('new_mdpost2.html', form=form)
+    return render_template('new_posting/new_mdpost.html', form=form)
 
 
 @main.route('/moderate')

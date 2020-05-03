@@ -24,49 +24,68 @@
         </div>
     </form>
 </div>
-<table class="table table-hover results">
-    <thead><tr><th>Result</th><th>Since</th></tr></thead>
-    {% for item in query %}
-    <tr>
-        <td>
-            <div class="post-box">
-                <div class="post-thumbnail col-sm-2">
-                    <a class="head-photo" href="{{ url_for('.user', username=item.author.username) }}">
-                        <img class="img-rounded profile-thumbnail" src="{{ item.author.gravatar(size=40) }}">
-                    </a>
-                    <div class="post-author">
-                        <a href="{{ url_for('.user', username=item.author.username) }}">{{ item.author.username }}</a>
-                    </div>
-                    <div class="post-date">{{ moment(item.timestamp).fromNow() }}</div>
-                </div>
-                <div class="post-content col-sm-offset-1 col-sm-9">
-                    <h4 class="title">{{ item.title }}</h4>
-                    <div class="post-body">
-                        {% if item.body_html %}
-                            {{ item.body_html | safe }}
-                        {% else %}
-                            {{ item.body }}
-                        {% endif %}
-                    </div>
-                    <div class="post-footer col-sm-offset-10">
-                        {% if current_user == item.author %}
-                        <a href="{{ url_for('.edit', id=item.id) }}">
-                            <span class="label label-primary">Edit</span>
-                        </a>
-                        {% endif %}
-                        <a href="{{ url_for('.post', id=item.id) }}">
-                            <span class="label label-default">Permalink</span>
-                        </a>
-                        <a href="{{ url_for('.post', id=item.id) }}#comments">
-                            <span class="label label-primary">
-                                Comments
-                            </span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
+
+
+<div class="post-tabs">
+        <ul class="nav nav-tabs">
+            <li{% if not show_relevance and not show_newest and not show_hottest %} class="active"{% endif %}>
+                <a href="{{ url_for('.show_information') }}">AllInformation</a>
+            </li>
+            <li{% if show_relevance and not show_newest and not show_hottest %} class="active"{% endif %}>
+                <a href="{{ url_for('.show_relevance') }}">Relevance</a>
+            </li>
+            <li{% if not show_relevance and show_newest and not show_hottest %} class="active"{% endif %}>
+                <a href="{{ url_for('.show_newest') }}">Newest</a>
+            </li>
+            <li{% if not show_relevance and not show_newest and show_hottest %} class="active"{% endif %}>
+                <a href="{{ url_for('.show_hottest') }}">Hottest</a>
+            </li>
+        </ul>
+    {% include '_posts.html' %}
+</div>
+{#<table class="table table-hover results">#}
+{#    <thead><tr><th>Result</th><th>Since</th></tr></thead>#}
+{#    {% for item in query %}#}
+{#    <tr>#}
+{#        <td>#}
+{#            <div class="post-box">#}
+{#                <div class="post-thumbnail col-sm-2">#}
+{#                    <a class="head-photo" href="{{ url_for('.user', username=item.author.username) }}">#}
+{#                        <img class="img-rounded profile-thumbnail" src="{{ item.author.gravatar(size=40) }}">#}
+{#                    </a>#}
+{#                    <div class="post-author">#}
+{#                        <a href="{{ url_for('.user', username=item.author.username) }}">{{ item.author.username }}</a>#}
+{#                    </div>#}
+{#                    <div class="post-date">{{ moment(item.timestamp).fromNow() }}</div>#}
+{#                </div>#}
+{#                <div class="post-content col-sm-offset-1 col-sm-9">#}
+{#                    <h4 class="title">{{ item.title }}</h4>#}
+{#                    <div class="post-body">#}
+{#                        {% if item.body_html %}#}
+{#                            {{ item.body_html | safe }}#}
+{#                        {% else %}#}
+{#                            {{ item.body }}#}
+{#                        {% endif %}#}
+{#                    </div>#}
+{#                    <div class="post-footer col-sm-offset-10">#}
+{#                        {% if current_user == item.author %}#}
+{#                        <a href="{{ url_for('.edit', id=item.id) }}">#}
+{#                            <span class="label label-primary">Edit</span>#}
+{#                        </a>#}
+{#                        {% endif %}#}
+{#                        <a href="{{ url_for('.post', id=item.id) }}">#}
+{#                            <span class="label label-default">Permalink</span>#}
+{#                        </a>#}
+{#                        <a href="{{ url_for('.post', id=item.id) }}#comments">#}
+{#                            <span class="label label-primary">#}
+{#                                Comments#}
+{#                            </span>#}
+{#                        </a>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </td>#}
+{#    </tr>#}
+{#    {% endfor %}#}
+{#</table>#}
 {% endblock %}
