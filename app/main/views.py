@@ -13,9 +13,6 @@ from ..models import Permission, User, Post, Comment, Notification, Like
 from ..decorators import permission_required
 
 
-# 查询
-# view functions for index page
-# unfinished
 @main.route('/query-post', methods=['GET', 'POST'])
 def query_post():
     if request.method == 'GET':
