@@ -326,7 +326,7 @@ class Post(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     important = db.Column(db.INT, default=0)
-    comments = db.relationship('Comment', back_populates='post', cascade='all, delete-orphan')
+    comments = db.relationship('Comment', back_populates='post', cascade='all, delete-orphan', lazy='dynamic')
     liker = db.relationship('Like', back_populates='liked_post', lazy='dynamic', cascade='all')
 
     def like(self, user):
@@ -371,7 +371,7 @@ class Comment(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     disabled = db.Column(db.Boolean)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    post = db.relationship('Post', back_populates='comments')
+    post = db.relationship('Post', back_populates='comments', lazy='joined')
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
 
 
