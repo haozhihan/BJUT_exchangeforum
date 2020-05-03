@@ -162,6 +162,7 @@ def notification():
         page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
     notices = pagination.items
+    # print(notices[0])
     return render_template('table/notifications.html', notices=notices,
                            pagination=pagination)
 
@@ -226,7 +227,8 @@ def post(id):
                           author=current_user._get_current_object(),
                           replied_id=request.args.get('reply'))
         n = Notification(receiver_id=post.author_id, timestamp=datetime.utcnow(),
-                         message=current_user.username + " has commented on you post " + post.title)
+                         username = current_user.username, action=" has commented on your posting",
+                         object=post.title, object_id=post.id)
         if comment.replied_id:
             replied = Comment.query.get_or_404(comment.replied_id)
             comment.replied = replied
@@ -245,7 +247,8 @@ def reply_comment(comment_id):
     comment = Comment.query.get_or_404(comment_id)
     post1 = comment.post
     n = Notification(receiver_id=comment.author_id, timestamp=datetime.utcnow(),
-                     message=current_user.username + " has replied on you comment " + post1.title)
+                     username=current_user.username, action=" has replied on your comment in the posting ",
+                     object=post1.title, object_id=post1.id)
     db.session.add(n)
     db.session.commit()
     return redirect(url_for('.post', id=comment.post.id, reply=comment_id, author=comment.author))
