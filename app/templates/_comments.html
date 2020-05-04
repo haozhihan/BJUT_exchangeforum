@@ -21,7 +21,7 @@
                         {% if comment.author.avatar_img %}
                             <img class="img-rounded profile-thumbnail" src="{{ comment.author.avatar_img }}" alt="avatar"  style="width: 25px; height: 25px">
                         {% else %}
-                            <img class="img-rounded profile-thumbnail" src="{{ comment.author.gravatar(size=40) }}" alt="avatar">
+                            <img class="img-rounded profile-thumbnail" src="{{ comment.author.gravatar(size=25) }}" alt="avatar">
                         {% endif %}
                     </a>
                 </span>

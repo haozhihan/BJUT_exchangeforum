@@ -250,7 +250,7 @@ class User(UserMixin, db.Model):
             f = Follow(follower=self, followed=user)
             n = Notification(receiver_id=user.id, timestamp=datetime.utcnow(),
                              username = self.username, action= " has followed ",
-                             object = "you", object_id=user.id)
+                             object = "you")
             db.session.add(n)
             db.session.add(f)
 

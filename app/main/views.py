@@ -162,9 +162,18 @@ def notification():
         page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
     notices = pagination.items
-    # print(notices[0])
     return render_template('table/notifications.html', notices=notices,
                            pagination=pagination)
+
+@main.route('/change_read/<int:id>')
+def change_read(id):
+    notice = Notification.query.filter_by(id=id).first()
+    notice.is_read = True
+    db.session.add(notice)
+    db.session.commit()
+    flash("You have read one notification")
+    return redirect(url_for('.notification'))
+
 
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
@@ -247,7 +256,7 @@ def reply_comment(comment_id):
     comment = Comment.query.get_or_404(comment_id)
     post1 = comment.post
     n = Notification(receiver_id=comment.author_id, timestamp=datetime.utcnow(),
-                     username=current_user.username, action=" has replied on your comment in the posting ",
+                     username=current_user.username, action=" has replied to your comment in the posting ",
                      object=post1.title, object_id=post1.id)
     db.session.add(n)
     db.session.commit()
