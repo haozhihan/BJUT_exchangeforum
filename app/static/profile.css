@@ -38,6 +38,27 @@ body {
     text-decoration: none;
     text-shadow: 0 0 5px #727070;
 }
+.file {
+    position: relative;
+    display: inline-block;
+    border-radius: 4px;
+    padding: 4px 12px;
+    overflow: hidden;
+    text-decoration: none;
+    text-indent: 0;
+    line-height: 20px;
+    width: 178px;
+}
+.file input {
+    position: absolute;
+    font-size: 100px;
+    right: 0;
+    top: 0;
+    opacity: 0;
+}
+.file:hover {
+    text-decoration: none;
+}
 
 /*
 右侧资料的样式
@@ -77,10 +98,15 @@ body {
 }
 
 /*
+导航的相关样式
+ */
+
+/*
 posts栏目相关的样式
  */
 .post-title {
     margin-top: 15px;
+    padding-left: 10px;
 }
 
 .post-title a{
@@ -99,15 +125,27 @@ posts栏目相关的样式
 }
 
 .post-content {
-    padding: 10px;
+    padding-left: 30px;
+    padding-right: 30px;
     border-bottom: 1px solid #ddd;
 }
 
 .post-body {
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
 .post-date {
     margin-top: 10px;
+}
+/*
+footer的所有样式
+ */
+.post-footer {
+    margin: 15px 10px 10px;
+}
+
+.icon-btn {
+    float:right;
+    margin-right: 15px
 }

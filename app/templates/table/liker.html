@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% import "_macros.html" as macros %}
+
+
+{% block title %}{{ title }} {{ post.title }}{% endblock %}
+
+
+{% block page_content %}
+    <div class="page-header">
+        <h1>{{ title }} Posting ( {{ post.title }} ) </h1>
+    </div>
+
+    <div class="col-md-10">
+        <div class="panel panel-primary">
+            <!-- Default panel contents -->
+            <div class="panel-heading"><h5>{{ title }} Posting ( {{ post.title }} )</h5></div>
+            <!-- Table -->
+            <table class="table">
+                <thead><tr><th></th><th>User</th><th>Since</th></tr></thead>
+                {% for like in liker %}
+                    <tr>
+                        <td></td>
+                        <td>
+                            <a class="head-photo" href="{{ url_for('.user', username = like.user.username) }}">
+                                {% if like.user.avatar_img %}
+                                    <img class="img-rounded profile-thumbnail" src="{{ like.user.avatar_img }}" alt="avatar"  style="width: 32px; height: 32px">
+                                {% else %}
+                                    <img class="img-rounded profile-thumbnail" src="{{ like.user.gravatar(size=32) }}" alt="avatar">
+                                {% endif %}
+                                {{ like.user.username }}
+                            </a>
+                        </td>
+                        <td style="padding-top: 14px;">
+                            {{ moment(like.timestamp).format('L') }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        {#    分页#}
+        <div class="pagination">
+            {{ macros.pagination_widget(pagination, endpoint, post_id=post.id) }}
+        </div>
+    </div>
+
+{% endblock %}

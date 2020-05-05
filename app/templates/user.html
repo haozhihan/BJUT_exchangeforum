@@ -1,69 +1,103 @@
 {% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 {% import "_macros.html" as macros %}
 
-{% block title %}{{ user.username }}{% endblock %}
+{% block title %}Profile{% endblock %}
 
 {% block head %}
 {{ super() }}
     <!-- Custom styles for this template -->
-    <link href="{{ url_for('static',filename='posts.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static',filename='interact.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static',filename='profile.css') }}" rel="stylesheet">
+
 {% endblock %}
 
 {% block page_content %}
-<div class="page-header">
-{#    <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=256) }}">#}
 
-    {% if user.avatar_img %}
-        <img class="img-rounded profile-thumbnail" src="{{ user.avatar_img }}" alt="avatar"  style="width: 256px; height: 256px">
-    {% else %}
-        <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=256) }}" alt="avatar">
-    {% endif %}
-    <div class="profile-header">
-        <h1>{{ user.username }}</h1>
-        {% if user.grade or user.college %}
-        <p>
-            {% if user.grade %}{{ user.grade }}<br>{% endif %}
-            {% if user.college %}
-                {{ user.college }}<br>
-            {% endif %}
-        </p>
-        {% endif %}
-        {% if current_user.is_administrator() %}
-        <p><a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
-        {% endif %}
-        {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
-        <p>Member since {{ moment(user.member_since).format('L') }}. Last seen {{ moment(user.last_seen).fromNow() }}.</p>
-        <p>{{ user.posts.count() }} blog posts.</p>
-        <p>
-            {% if current_user.can(Permission.FOLLOW) and user != current_user %}
-                {% if not current_user.is_following(user) %}
-                <a href="{{ url_for('.follow', username=user.username) }}" class="btn btn-primary">Follow</a>
+<div class="container">
+    <div class="bg-profile" style="height: 280px">
+    </div>
+    <div class="container col-sm-12 info" style="height: 300px;">
+
+
+        <div class="col-md-2" style="padding: 0; margin: 20px 20px 20px 110px">
+            <div class="photo">
+                {% if user.avatar_img %}
+                    <img class="img-rounded profile-thumbnail" src="{{ user.avatar_img }}" alt="avatar"  style="width: 130px; height: 130px">
                 {% else %}
-                <a href="{{ url_for('.unfollow', username=user.username) }}" class="btn btn-default">Unfollow</a>
+                    <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=130) }}" alt="avatar">
                 {% endif %}
-            {% endif %}
-            <a href="{{ url_for('.followers', username=user.username) }}">Followers: <span class="badge">{{ user.followers.count() - 1 }}</span></a>
-            <a href="{{ url_for('.followed_by', username=user.username) }}">Following: <span class="badge">{{ user.following.count() - 1 }}</span></a>
-            {% if current_user.is_authenticated and user != current_user and user.is_following(current_user) %}
-            | <span class="label label-default">Follows you</span>
-            {% endif %}
-        </p>
-        <p>
-            {% if user == current_user %}
-            <a class="btn btn-default" href="{{ url_for('.edit_profile') }}">Edit Profile</a>
-            {% endif %}
-            {% if current_user.is_administrator() %}
-            <a class="btn btn-danger" href="{{ url_for('.edit_profile_admin', id=user.id) }}">Edit Profile [Admin]</a>
-            {% endif %}
-        </p>
+            </div>
+            <div>
+                <div class="detail">
+                    <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>
+                    <span>Joined {{ moment(user.member_since).format('L') }}</span>
+                </div>
+                <div class="detail">
+                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                    <span>Last seen {{ moment(user.last_seen).fromNow() }}</span>
+                </div>
+
+                <div class="follow">
+                        <a href="{{ url_for('.followers', username=user.username) }}">Followers: <span class="badge">{{ user.followers.count() - 1 }}</span></a>&nbsp;
+                        <a href="{{ url_for('.followed_by', username=user.username) }}">Following: <span class="badge">{{ user.following.count() - 1 }}</span></a>
+                        {% if current_user.is_authenticated and user != current_user and user.is_following(current_user) %}
+                        | <span class="label label-default">Follows you</span>
+                        {% endif %}
+                </div>
+
+            </div>
+        </div>
+
+
+
+        <div class="col-sm-offset-2 col-md-5" style="margin-top: 35px;margin-left: 80px;">
+            <ul class="list-group">
+                <li class="list-group-item info-box">
+                    <h3 style="display: inline;">{{ user.username }}</h3>
+                     {% if current_user.can(Permission.FOLLOW) and user != current_user %}
+                            {% if not current_user.is_following(user) %}
+                            <a href="{{ url_for('.follow', username=user.username) }}" class="btn btn-primary" style="width: 230px; margin-bottom: 8px;margin-left: 20px">Follow</a>
+                            {% else %}
+                            <a href="{{ url_for('.unfollow', username=user.username) }}" class="btn btn-default" style="width: 230px; margin-bottom: 8px;margin-left: 20px">Unfollow</a>
+                            {% endif %}
+                     {% endif %}
+                </li>
+                <li class="list-group-item info-box" style="color: #727070;">
+                    {{ user.about_me }}
+                </li>
+                <li class="list-group-item info-box detail">
+                    <div class="col-sm-2 title">Email</div>
+                    <div class="col-sm-10">{{ user.email }}</div>
+                </li>
+                <li class="list-group-item info-box detail">
+                    <div class="col-sm-2 title">Grade</div>
+                    <div class="col-sm-10">{{ user.grade }}</div>
+                </li>
+                <li class="list-group-item info-box detail">
+                    <div class="col-sm-2 title">Collage</div>
+                    <div class="col-sm-10">{{ user.college }}</div>
+                </li>
+            </ul>
+        {% if user == current_user %}
+            <div class="col-sm-offset-11 btn-group btn-group-sm" >
+                <button type="button" class="btn btn-default" href="/edit-profile">
+                    <a href="/edit-profile">Change my information</a>
+                </button>
+            </div>
+        {% endif %}
+        </div>
+    </div>
+
+    <div class="container col-sm-12 info">
+
+{#<!--         <p>{{ user.posts.count() }} blog posts.</p>-->#}
+        {% include '_postsInprofile.html' %}
+        {% if pagination %}
+        <div class="pagination">
+            {{ macros.pagination_widget(pagination, '.user', username=user.username) }}
+        </div>
+        {% endif %}
     </div>
 </div>
-<h3>Posts by {{ user.username }}</h3>
-{% include '_posts.html' %}
-{% if pagination %}
-<div class="pagination">
-    {{ macros.pagination_widget(pagination, '.user', username=user.username) }}
-</div>
-{% endif %}
+
 {% endblock %}

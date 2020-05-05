@@ -2,18 +2,13 @@
 # as well as the permission settings of different users.
 from datetime import datetime
 import hashlib
-# from sqlalchemy import *
-# from sqlalchemy.orm import *
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app, request
 from flask_login import UserMixin, AnonymousUserMixin
-from . import db, login_manager
+from app import db, login_manager
 from markdown import markdown
 import bleach
-
-
-# import sqlalchemy
 
 
 class Permission:
@@ -86,12 +81,9 @@ class Students(db.Model):
 
 
 class Follow(db.Model):
-    follower_id = db.Column(db.Integer, db.ForeignKey('users.id'),
-                            primary_key=True)
-    followed_id = db.Column(db.Integer, db.ForeignKey('users.id'),
-                            primary_key=True)
+    follower_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    followed_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-
     follower = db.relationship('User', foreign_keys=[follower_id], back_populates='following', lazy='joined')
     followed = db.relationship('User', foreign_keys=[followed_id], back_populates='followers', lazy='joined')
 
@@ -120,18 +112,21 @@ class User(UserMixin, db.Model):
 
     # 用avatar_hash来储存生成头像时产生的MD5散列值
     avatar_hash = db.Column(db.String(32))
-    avatar_img = db.Column(db.String(120), default='/static/assets/default.png', nullable=True)
+    avatar_img = db.Column(db.String(120), nullable=True)
 
     # 发帖、评论与点赞
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     comments = db.relationship('Comment', backref='author', lazy='dynamic')
-    # liker = db.relationship('Liker', backref='author', lazy='dynamic')
 
     # 关注
     following = db.relationship('Follow', foreign_keys=[Follow.follower_id], back_populates='follower',
                                 lazy='dynamic', cascade='all')
     followers = db.relationship('Follow', foreign_keys=[Follow.followed_id], back_populates='followed',
                                 lazy='dynamic', cascade='all')
+    # 点赞
+    liked_post = db.relationship('Like', back_populates='liker', lazy='dynamic', cascade='all')
+    # 消息中心
+    notifications = db.relationship('Notification', back_populates='receiver', lazy='dynamic')
 
     @staticmethod
     def add_self_follows():
@@ -253,18 +248,42 @@ class User(UserMixin, db.Model):
     def follow(self, user):
         if not self.is_following(user):
             f = Follow(follower=self, followed=user)
+            n = Notification(receiver_id=user.id, timestamp=datetime.utcnow(),
+                             username = self.username, action= " has followed ",
+                             object = "you")
+            db.session.add(n)
             db.session.add(f)
+
+    def like(self, post):
+        if not self.is_liking(post):
+            ll = Like(liker=self, liked_post=post)
+            n = Notification(receiver_id=post.author_id, timestamp=datetime.utcnow(),
+                             username = self.username, action = " has liked your posting ",
+                             object = post.title, object_id = post.id)
+            db.session.add(n)
+            db.session.add(ll)
 
     def unfollow(self, user):
         f = self.following.filter_by(followed_id=user.id).first()
         if f:
             db.session.delete(f)
 
+    def dislike(self, post):
+        ll = self.liked_post.filter_by(liked_post_id=post.id).first()
+        if ll:
+            db.session.delete(ll)
+
     def is_following(self, user):
         if user.id is None:
             return False
         return self.following.filter_by(
             followed_id=user.id).first() is not None
+
+    def is_liking(self, post):
+        if post.id is None:
+            return False
+        return self.liked_post.filter_by(
+            liked_post_id=post.id).first() is not None
 
     def is_followed_by(self, user):
         if user.id is None:
@@ -288,6 +307,9 @@ class AnonymousUser(AnonymousUserMixin):
     def is_administrator(self):
         return False
 
+    def is_liking(self, post):
+        return False
+
 
 login_manager.anonymous_user = AnonymousUser
 
@@ -305,19 +327,39 @@ class Post(db.Model):
     body_html = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    important = db.Column(db.INT, default=0)
+    comments = db.relationship('Comment', back_populates='post', cascade='all, delete-orphan', lazy='dynamic')
+    liker = db.relationship('Like', back_populates='liked_post', lazy='dynamic', cascade='all')
 
-    comments = db.relationship('Comment', backref='post', lazy='dynamic')
-    # liker = db.relationship('Liker', backref='post', lazy='dynamic')
+    def like(self, user):
+        if not self.is_liked_by(user):
+            ll = Like(liker=user, liked_post=self)
+            db.session.add(ll)
+
+    def dislike(self, user):
+        ll = self.liker.filter_by(liker_id=user.id).first()
+        if ll:
+            db.session.delete(ll)
+
+    def is_liked_by(self, user):
+        if user.id is None:
+            return False
+        return self.liker.filter_by(
+            liker_id=user.id).first() is not None
 
     @staticmethod
     def on_changed_body(target, value, oldvalue, initiator):
         allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
                         'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
-                        'h1', 'h2', 'h3', 'p']
+                        'h1', 'h2', 'h3', 'p', 'img', 'div', 'iframe',
+                        'p', 'br', 'span', 'hr', 'src', 'class',
+                        'table', 'tr', 'th']
+        allowed_attrs = {'*': ['class'],
+                         'a': ['href', 'rel'],
+                         'img': ['src', 'alt']}
         target.body_html = bleach.linkify(bleach.clean(
             markdown(value, output_format='html'),
-            tags=allowed_tags, strip=True))
-
+            tags=allowed_tags, strip=True, attributes=allowed_attrs))
 
 db.event.listen(Post.body, 'set', Post.on_changed_body)
 
@@ -330,26 +372,36 @@ class Comment(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     disabled = db.Column(db.Boolean)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    post = db.relationship('Post', back_populates='comments', lazy='joined')
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
 
-
-    @staticmethod
-    def on_changed_body(target, value, oldvalue, initiator):
-        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'code', 'em', 'i',
-                        'strong']
-        target.body_html = bleach.linkify(bleach.clean(
-            markdown(value, output_format='html'),
-            tags=allowed_tags, strip=True))
+    # 被回复的评论的id
+    replied_id = db.Column(db.Integer, db.ForeignKey('comments.id'))
+    # 回复
+    replies = db.relationship('Comment', back_populates='replied', cascade='all, delete-orphan')
+    # 表示被回复的评论
+    replied = db.relationship('Comment', back_populates='replies', remote_side=[id])
 
 
+class Like(db.Model):
+    __tablename__ = 'likes'
+    liker_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    liked_post_id = db.Column(db.Integer, db.ForeignKey('posts.id'), primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    liker = db.relationship('User', back_populates='liked_post', lazy='joined')
+    liked_post = db.relationship('Post', back_populates='liker', lazy='joined')
 
-db.event.listen(Comment.body, 'set', Comment.on_changed_body)
 
+class Notification(db.Model):
+    __tablename__ = 'notification'
+    id = db.Column(db.Integer, primary_key=True)
 
-# class Liker(db.Model):
-#     __tablename__ = 'liker'
-#     id = db.Column(db.Integer, primary_key=True)
-#     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-#     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
-#     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-#     like = db.Column(db.Boolean, default=False)
+    username = db.Column(db.String(64), nullable=False)
+    action = db.Column(db.Text, nullable=False)# has followed \\ has like \\ has comment \\ has reply
+    object = db.Column(db.String(64), nullable=False)# you \\ your posting \\ your comment
+    object_id = db.Column(db.Integer)# posting
+
+    is_read = db.Column(db.Boolean, default=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    receiver_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    receiver = db.relationship('User', back_populates='notifications', lazy='joined')

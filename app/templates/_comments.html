@@ -1,14 +1,13 @@
-<ul class="comments">
+<ul class="comments list-unstyled">
     {% for comment in comments %}
     <li class="comment">
-        <div class="comment-thumbnail">
-            <a href="{{ url_for('.user', username=comment.author.username) }}">
-                <img class="img-rounded profile-thumbnail" src="{{ comment.author.gravatar(size=40) }}">
-            </a>
-        </div>
-        <div class="comment-content">
-            <div class="comment-date">{{ moment(comment.timestamp).fromNow() }}</div>
-            <div class="comment-author"><a href="{{ url_for('.user', username=comment.author.username) }}">{{ comment.author.username }}</a></div>
+        <div class="comment-content col-sm-12">
+             {% if comment.replied %}
+                   <p class="alert alert-dark reply-body">
+                       {{ comment.replied.author }}:
+                       <br>{{ comment.replied.body }}
+                   </p>
+             {% endif %}
             <div class="comment-body">
                 {% if comment.body_html %}
                     {{ comment.body_html | safe }}
@@ -16,10 +15,35 @@
                     {{ comment.body }}
                 {% endif %}
             </div>
-        <a href="{{ url_for('.delete', id=comment.id) }}">
-                        <span class="label label-default">delete</span>
+            <div class="comment-footer">
+                <span class="comment-thumbnail">
+                    <a href="{{ url_for('.user', username=comment.author.username) }}">
+                        {% if comment.author.avatar_img %}
+                            <img class="img-rounded profile-thumbnail" src="{{ comment.author.avatar_img }}" alt="avatar"  style="width: 25px; height: 25px">
+                        {% else %}
+                            <img class="img-rounded profile-thumbnail" src="{{ comment.author.gravatar(size=25) }}" alt="avatar">
+                        {% endif %}
                     </a>
-        </div>
+                </span>
+                <span class="comment-author">
+                    <a href="{{ url_for('.user', username=comment.author.username) }}">{{ comment.author.username }}</a>
+                </span>
+                <span class="comment-date">{{ moment(comment.timestamp).fromNow() }}</span>
+
+
+                {#            删除#}
+                {% if current_user == comment.author or current_user == post.author %}
+                 <a class="icon-btn" href="{{ url_for('.delete_comment', id=comment.id) }}">
+                     <span class="glyphicon glyphicon-trash"></span>
+                     <span>delete</span>
+                 </a>
+                {% endif %}
+                <!--                回复-->
+                <a class="icon-btn" href="{{ url_for('.reply_comment', comment_id=comment.id) }}#comments">
+                    <span class="glyphicon glyphicon-share"></span>
+                    <span>reply</span>
+                </a>
+            </div>
     </li>
     {% endfor %}
 </ul>

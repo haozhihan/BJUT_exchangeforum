@@ -1,0 +1,42 @@
+/*
+整体样式
+ */
+.comment-content {
+    padding: 5px;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+    overflow: hidden;
+}
+
+.comment-body {
+    margin: 15px;
+    font-size: 16px;
+}
+
+/*
+footer的所有样式
+ */
+.comment-footer {
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.comment-author{
+    padding: 5px;
+    border-right: 1px solid #ddd;
+}
+
+.comment-date{
+    padding-left: 15px;
+    color: #646464;
+}
+
+.icon-btn {
+    padding: 5px;
+    float:right;
+    margin-right: 15px;
+}
+
+.comment-footer a:hover {
+    text-decoration: none;
+}
