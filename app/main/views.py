@@ -269,9 +269,6 @@ def delete_comment(id):
     comment = Comment.query.get_or_404(id)
     posts = Post.query.filter_by(id=comment.post_id).first()
     users = User.query.filter_by(id=posts.author_id).first()
-    print(users.username)
-    print(comment.author.username)
-    print(current_user.username)
     if current_user == comment.author or current_user == users:
         db.session.delete(comment)
         db.session.commit()
