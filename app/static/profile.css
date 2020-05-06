@@ -100,7 +100,31 @@ body {
 /*
 导航的相关样式
  */
+.post-nav {
+    border-bottom: 1px solid #ddd;
+}
 
+.post-nav li a{
+    margin: 10px;
+    float: left;
+    font-size: 16px;
+    color: black;
+
+}
+
+.post-nav .active a{
+    color: #4760e8;
+    background-color: #fff;
+}
+
+.post-nav li a:hover{
+    background-color: #fff;
+    color: #1b34b9;
+}
+
+.post-nav li a:focus {
+    background-color: #fff;
+}
 /*
 posts栏目相关的样式
  */

@@ -91,7 +91,27 @@
     <div class="container col-sm-12 info">
 
 {#<!--         <p>{{ user.posts.count() }} blog posts.</p>-->#}
-        {% include '_postsInprofile.html' %}
+        <div class="tabbable">
+				<ul class="nav post-nav">
+					<li class="active" id="btn-1">
+						 <a href="#panel-1" data-toggle="tab">Posts</a>
+					</li>
+					<li id="btn-2">
+						 <a href="#panel-2" data-toggle="tab">Likes</a>
+					</li>
+				</ul>
+				<div class="tab-content">
+					<div class="tab-pane active" id="panel-1">
+						{% include '_postsInprofile.html' %}
+					</div>
+					<div class="tab-pane" id="panel-2">
+						<p>
+							Howdy, I'm in Section 2.
+						</p>
+					</div>
+				</div>
+			</div>
+
         {% if pagination %}
         <div class="pagination">
             {{ macros.pagination_widget(pagination, '.user', username=user.username) }}
@@ -100,4 +120,24 @@
     </div>
 </div>
 
+<script>
+    var l1 = document.getElementById('btn-1')
+    var l2 = document.getElementById('btn-2')
+    var content1 = document.getElementById('panel-1')
+    var content2 = document.getElementById('panel-2')
+
+    l1.onclick = function () {
+        this.className = 'active'
+        content1.className = 'active'
+        l2.className = ''
+        content2.className = 'tab-pane'
+    }
+
+    l2.onclick = function () {
+        this.className = 'active'
+        content2.className = 'active'
+        l1.className = ''
+        content1.className = 'tab-pane'
+    }
+</script>
 {% endblock %}
