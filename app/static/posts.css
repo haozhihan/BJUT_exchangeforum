@@ -84,5 +84,6 @@ footer的所有样式
  */
 
 .icon-btn {
-    padding: 5px;
+    float:right;
+    margin-right: 15px
 }

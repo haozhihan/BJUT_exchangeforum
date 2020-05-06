@@ -26,6 +26,10 @@ body {
     color: #727070;
 }
 
+.follow {
+    margin-bottom: 10px;
+}
+
 .follow a {
     color: #727070;
 }
@@ -63,6 +67,37 @@ body {
 /*
 右侧资料的样式
  */
+.btn-follow {
+    margin-left: 25px;
+    margin-right: 25px;
+    background-color: #0077e6;
+    color: #fff;
+}
+
+.btn-follow:hover{
+    background-color: #0077e6;
+    color:#fff;
+}
+
+.btn-follow:focus {
+    color: #fff;
+}
+
+.btn-unfollow{
+    margin-left: 25px;
+    margin-right: 25px;
+    color: #fff;
+    background-color: #76839b;
+}
+
+.btn-unfollow:hover{
+    background-color: #76839b;
+    color:#fff;
+}
+
+.btn-unfollow:focus{
+    color: #fff;
+}
 
 .list-group .info-box {
     border-style: none;
@@ -95,6 +130,12 @@ body {
 
 .select-photo {
     margin-top: 50px;
+}
+
+.set-info {
+    float: right;
+    margin: 20px;
+    padding: 10px;
 }
 
 /*
