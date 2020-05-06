@@ -35,5 +35,5 @@ class UploadPhotoForm(FlaskForm):
 
 
 class CommentForm(FlaskForm):
-    body = StringField('Enter your comment', validators=[DataRequired()])
+    body = StringField('Enter your comment', render_kw={"placeholder": "Enter your comment"}, validators=[DataRequired()])
     submit = SubmitField('Submit')

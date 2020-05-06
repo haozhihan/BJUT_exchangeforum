@@ -27,6 +27,12 @@
         taskList        : true,
     });
     </script>
+    <script>
+        var comment = document.getElementById('body')
+        comment.className = 'form-control'
+        var submit = document.getElementById('submit')
+        submit.className = 'btn btn-warning btn-block';
+    </script>
 
 {%endblock%}
 
@@ -37,7 +43,7 @@
     <li class="post">
         <div class="post-box">
 
-            <div class="post-content col-sm-offset-1 col-sm-9">
+            <div class="post-content col-sm-offset-1 col-sm-10">
 {#                标题#}
                 <h1 align="center" class="post-title">
                     <a href="{{ url_for('.post', id=post.id) }}">
@@ -50,7 +56,7 @@
                 </div>
             </div>
 
-            <div class="col-md-offset-1 col-md-9">
+            <div class="col-md-offset-1 col-md-10">
                 <div class="panel panel-default" style="margin-top: 30px">
                     <div class="panel-heading">
                         <h3 class="panel-title">Author</h3>
@@ -77,9 +83,9 @@
                         </div>
                       {% if current_user.can(Permission.FOLLOW) and post.author != current_user %}
                           {% if not current_user.is_following(post.author) %}
-                              <a align="center" href="{{ url_for('.follow', username=post.author.username) }}" class="btn btn-primary">Follow</a>
+                              <a align="center" href="{{ url_for('.follow', username=post.author.username) }}" class="btn btn-primary" style="margin-top: 12px">Follow</a>
                           {% else %}
-                              <a align="center" href="{{ url_for('.unfollow', username=post.author.username) }}" class="btn btn-default">Unfollow</a>
+                              <a align="center" href="{{ url_for('.unfollow', username=post.author.username) }}" class="btn btn-default" style="margin-top: 12px">Unfollow</a>
                           {% endif %}
                       {% endif %}
                     </div>
@@ -88,18 +94,18 @@
         </div>
 
     {#    这个也要改哦#}
-    <div class="col-md-12">
+    <div class="col-md-offset-4 col-md-6">
         <div>
             <a href="{{ url_for('.liked_by', post_id = post.id )}}">
-                All of Likers
+{#                All of Likers#}
             </a>
         </div>
     </div>
 
 
     {#        评论区#}
-    <div class="col-md-12">
-        <h4 id="comments">Comments</h4>
+    <div class="col-md-offset-2 col-md-8">
+{#        <h4 id="comments">Comments</h4>#}
         {% if current_user.can(Permission.COMMENT) %}
             <div class="comment-form">
                 {% if request.args.get('reply') %}
@@ -108,7 +114,16 @@
                         <a class="float-right" href="{{ url_for('.post', id=post.id) }}">Cancel</a>
                     </div>
                 {% endif %}
-                {{ wtf.quick_form(form) }}
+
+                <form role="form" class="form-signin" method="post">
+                    <div class="col-md-10" style="padding: 0px;">
+                        {{ form.csrf_token }}
+                        {{ form.body}}
+                    </div>
+                    <div class="col-md-2" style="padding: 0px;">
+                        {{ form.submit }}
+                    </div>
+                </form>
             </div>
         {% endif %}
 
