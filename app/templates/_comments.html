@@ -21,7 +21,7 @@
                         {% if comment.author.avatar_img %}
                             <img class="img-rounded profile-thumbnail" src="{{ comment.author.avatar_img }}" alt="avatar"  style="width: 25px; height: 25px">
                         {% else %}
-                            <img class="img-rounded profile-thumbnail" src="{{ comment.author.gravatar(size=40) }}" alt="avatar">
+                            <img class="img-rounded profile-thumbnail" src="{{ comment.author.gravatar(size=25) }}" alt="avatar">
                         {% endif %}
                     </a>
                 </span>
@@ -30,7 +30,7 @@
                 </span>
                 <span class="comment-date">{{ moment(comment.timestamp).fromNow() }}</span>
 
-
+                {#按钮#}
                 {#            删除#}
                 {% if current_user == comment.author or current_user == post.author %}
                  <a class="icon-btn" href="{{ url_for('.delete_comment', id=comment.id) }}">

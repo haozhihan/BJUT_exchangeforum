@@ -112,7 +112,7 @@ class User(UserMixin, db.Model):
 
     # 用avatar_hash来储存生成头像时产生的MD5散列值
     avatar_hash = db.Column(db.String(32))
-    avatar_img = db.Column(db.String(120), default='/static/assets/default.png', nullable=True)
+    avatar_img = db.Column(db.String(120), nullable=True)
 
     # 发帖、评论与点赞
     posts = db.relationship('Post', backref='author', lazy='dynamic')
@@ -249,7 +249,8 @@ class User(UserMixin, db.Model):
         if not self.is_following(user):
             f = Follow(follower=self, followed=user)
             n = Notification(receiver_id=user.id, timestamp=datetime.utcnow(),
-                             message=self.username+" has followed you!")
+                             username = self.username, action= " has followed ",
+                             object = "you")
             db.session.add(n)
             db.session.add(f)
 
@@ -257,7 +258,8 @@ class User(UserMixin, db.Model):
         if not self.is_liking(post):
             ll = Like(liker=self, liked_post=post)
             n = Notification(receiver_id=post.author_id, timestamp=datetime.utcnow(),
-                             message=self.username + " has liked you post " + post.title)
+                             username = self.username, action = " has liked your posting ",
+                             object = post.title, object_id = post.id)
             db.session.add(n)
             db.session.add(ll)
 
@@ -359,7 +361,6 @@ class Post(db.Model):
             markdown(value, output_format='html'),
             tags=allowed_tags, strip=True, attributes=allowed_attrs))
 
-
 db.event.listen(Post.body, 'set', Post.on_changed_body)
 
 
@@ -373,7 +374,6 @@ class Comment(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     post = db.relationship('Post', back_populates='comments', lazy='joined')
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
-
 
     # 被回复的评论的id
     replied_id = db.Column(db.Integer, db.ForeignKey('comments.id'))
@@ -395,7 +395,12 @@ class Like(db.Model):
 class Notification(db.Model):
     __tablename__ = 'notification'
     id = db.Column(db.Integer, primary_key=True)
-    message = db.Column(db.Text, nullable=False)
+
+    username = db.Column(db.String(64), nullable=False)
+    action = db.Column(db.Text, nullable=False)# has followed \\ has like \\ has comment \\ has reply
+    object = db.Column(db.String(64), nullable=False)# you \\ your posting \\ your comment
+    object_id = db.Column(db.Integer)# posting
+
     is_read = db.Column(db.Boolean, default=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
     receiver_id = db.Column(db.Integer, db.ForeignKey('users.id'))

@@ -16,10 +16,10 @@
 <div class="container">
     <div class="bg-profile" style="height: 280px">
     </div>
-    <div class="container col-sm-12 info" style="height: 300px;">
+    <div class="container col-sm-12 info">
 
 
-        <div class="col-md-2" style="padding: 0; margin: 20px 60px 20px 50px">
+        <div class="col-md-2" style="padding: 0; margin: 20px 20px 20px 110px">
             <div class="photo">
                 {% if user.avatar_img %}
                     <img class="img-rounded profile-thumbnail" src="{{ user.avatar_img }}" alt="avatar"  style="width: 130px; height: 130px">
@@ -40,9 +40,9 @@
                 <div class="follow">
                         <a href="{{ url_for('.followers', username=user.username) }}">Followers: <span class="badge">{{ user.followers.count() - 1 }}</span></a>&nbsp;
                         <a href="{{ url_for('.followed_by', username=user.username) }}">Following: <span class="badge">{{ user.following.count() - 1 }}</span></a>
-                        {% if current_user.is_authenticated and user != current_user and user.is_following(current_user) %}
-                        | <span class="label label-default">Follows you</span>
-                        {% endif %}
+<!--                        {% if current_user.is_authenticated and user != current_user and user.is_following(current_user) %}-->
+<!--                        | <span class="label label-default">Follows you</span>-->
+<!--                        {% endif %}-->
                 </div>
 
             </div>
@@ -50,15 +50,15 @@
 
 
 
-        <div class=" col-md-5" style="margin-top: 35px;">
+        <div class="col-sm-offset-2 col-md-6" style="margin-top: 35px;margin-left: 80px;">
             <ul class="list-group">
                 <li class="list-group-item info-box">
                     <h3 style="display: inline;">{{ user.username }}</h3>
                      {% if current_user.can(Permission.FOLLOW) and user != current_user %}
                             {% if not current_user.is_following(user) %}
-                            <a href="{{ url_for('.follow', username=user.username) }}" class="btn btn-primary">Follow</a>
+                            <a href="{{ url_for('.follow', username=user.username) }}" class="btn btn-follow">Follow</a>
                             {% else %}
-                            <a href="{{ url_for('.unfollow', username=user.username) }}" class="btn btn-default">Unfollow</a>
+                            <a href="{{ url_for('.unfollow', username=user.username) }}" class="btn btn-unfollow" id="unfollow">Followed</a>
                             {% endif %}
                      {% endif %}
                 </li>
@@ -78,20 +78,40 @@
                     <div class="col-sm-10">{{ user.college }}</div>
                 </li>
             </ul>
+        </div>
         {% if user == current_user %}
-            <div class="col-sm-offset-11 btn-group btn-group-sm" >
+            <div class="btn-group btn-group-sm set-info" >
                 <button type="button" class="btn btn-default" href="/edit-profile">
                     <a href="/edit-profile">Change my information</a>
                 </button>
             </div>
         {% endif %}
-        </div>
     </div>
 
     <div class="container col-sm-12 info">
 
 {#<!--         <p>{{ user.posts.count() }} blog posts.</p>-->#}
-        {% include '_postsInprofile.html' %}
+        <div class="tabbable">
+				<ul class="nav post-nav">
+					<li class="active" id="btn-1">
+						 <a href="#panel-1" data-toggle="tab">Posts</a>
+					</li>
+					<li id="btn-2">
+						 <a href="#panel-2" data-toggle="tab">Likes</a>
+					</li>
+				</ul>
+				<div class="tab-content">
+					<div class="tab-pane active" id="panel-1">
+						{% include '_postsInprofile.html' %}
+					</div>
+					<div class="tab-pane" id="panel-2">
+						<p>
+							Howdy, I'm in Section 2.
+						</p>
+					</div>
+				</div>
+			</div>
+
         {% if pagination %}
         <div class="pagination">
             {{ macros.pagination_widget(pagination, '.user', username=user.username) }}
@@ -100,4 +120,35 @@
     </div>
 </div>
 
+<script>
+    var l1 = document.getElementById('btn-1')
+    var l2 = document.getElementById('btn-2')
+    var content1 = document.getElementById('panel-1')
+    var content2 = document.getElementById('panel-2')
+
+    l1.onclick = function () {
+        this.className = 'active'
+        content1.className = 'active'
+        l2.className = ''
+        content2.className = 'tab-pane'
+    }
+
+    l2.onclick = function () {
+        this.className = 'active'
+        content2.className = 'active'
+        l1.className = ''
+        content1.className = 'tab-pane'
+    }
+</script>
+<script>
+    var btn = document.getElementById('unfollow')
+
+    btn.onmouseover = function () {
+        btn.innerHTML = "Unfollow"
+    }
+
+    btn.onmouseout = function () {
+        btn.innerHTML = "Followed"
+    }
+</script>
 {% endblock %}
