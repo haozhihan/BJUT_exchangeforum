@@ -13,110 +13,6 @@ from ..models import Permission, User, Post, Comment, Notification, Like
 from ..decorators import permission_required
 
 
-@main.route('/query-post', methods=['GET', 'POST'])
-def query_post():
-    if request.method == 'GET':
-        return render_template('querypost.html')
-    if request.method == 'POST':
-        post_inf = request.form["post"]
-        search_post = "%" + post_inf + "%"
-        result = Post.query.filter(or_(Post.title.like(search_post), Post.body.like(search_post)))
-        for item in result:
-            item.important = 0
-            sentence = item.title + item.body
-            counts = 0
-            list1 = sentence.split(" ")
-            for y in range(len(list1)):
-                if list1[y].find(post_inf) != -1:
-                    counts = counts + 1
-            item.important = counts
-        page = request.args.get('page', 1, type=int)
-        show_newest = False
-        show_hottest = False
-        show_relevance = False
-        if current_user.is_authenticated:
-            show_newest = bool(request.cookies.get('show_newest', ''))
-            show_hottest = bool(request.cookies.get('show_hottest', ''))
-            show_relevance = bool(request.cookies.get('show_relevance', ''))
-        if show_relevance and not show_newest and not show_hottest:
-            pagination = result.order_by(Post.important.desc()).paginate(
-                page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-                error_out=False)
-        elif show_newest and not show_hottest and not show_relevance:
-            pagination = result.order_by(Post.timestamp.desc()).paginate(
-                page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-                error_out=False)
-        elif show_hottest and not show_relevance and not show_newest:
-            for item in result:
-                item.important = 0
-                com_num = db.session.query(func.count(Comment.id)).filter_by(post_id=item.id).scalar()
-                item.important = com_num
-            pagination = result.order_by(Post.important.desc()).paginate(
-                page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-                error_out=False)
-        else:
-            for item in result:
-                item.important = 0
-                sentence = item.title + item.body
-                counts = 0
-                list1 = sentence.split(" ")
-                for y in range(len(list1)):
-                    if list1[y].find(post_inf) != -1:
-                        counts = counts + 1
-                com_num = db.session.query(func.count(Comment.id)).filter_by(post_id=item.id).scalar()
-                li_num = db.session.query(func.count(Like.liker_id)).filter_by(liked_post_id=item.id).scalar()
-                item.important = counts * 4 + 3 * com_num + 3 * li_num
-                print("post: " + str(item.id) + "importance" + str(item.important))
-            pagination = result.order_by(Post.important.desc()).paginate(
-                page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-                error_out=False)
-        posts = pagination.items
-        print(show_newest + show_relevance + show_hottest)
-        for item in result:
-            item.important = 0
-        return render_template('querypost.html', posts=posts, title="Result of query", pagination=pagination)
-
-
-@main.route('/newest')
-@login_required
-def show_newest():
-    resp = make_response(redirect(url_for('.query_post')))
-    resp.set_cookie('show_relevance', '', max_age=30 * 24 * 60 * 60)
-    resp.set_cookie('show_newest', '1', max_age=30 * 24 * 60 * 60)
-    resp.set_cookie('show_hottest', '', max_age=30 * 24 * 60 * 60)
-    return resp
-
-
-@main.route('/hottest')
-@login_required
-def show_hottest():
-    resp = make_response(redirect(url_for('.query_post')))
-    resp.set_cookie('show_relevance', '', max_age=30 * 24 * 60 * 60)
-    resp.set_cookie('show_newest', '', max_age=30 * 24 * 60 * 60)
-    resp.set_cookie('show_hottest', '1', max_age=30 * 24 * 60 * 60)
-    return resp
-
-
-@main.route('/relevance')
-@login_required
-def show_relevance():
-    resp = make_response(redirect(url_for('.query_post')))
-    resp.set_cookie('show_relevance', '1', max_age=30 * 24 * 60 * 60)
-    resp.set_cookie('show_newest', '', max_age=30 * 24 * 60 * 60)
-    resp.set_cookie('show_hottest', '', max_age=30 * 24 * 60 * 60)
-    return resp
-
-
-@main.route('/information')
-@login_required
-def show_information():
-    resp = make_response(redirect(url_for('.query_post')))
-    resp.set_cookie('show_relevance', '', max_age=30 * 24 * 60 * 60)
-    resp.set_cookie('show_newest', '', max_age=30 * 24 * 60 * 60)
-    resp.set_cookie('show_hottest', '', max_age=30 * 24 * 60 * 60)
-    return resp
-
-
 @main.route('/', methods=['GET', 'POST'])
 def index():
     form = PostForm()
@@ -143,6 +39,126 @@ def index():
                            show_followed=show_followed, pagination=pagination)
 
 
+@main.route('/query-post', methods=['GET', 'POST'])
+def query():
+    if request.method == 'GET':
+        return render_template('querypost.html')
+    if request.method == 'POST':
+        inf = request.form["inf"]
+        search_result = "%" + inf + "%"
+        result = Post.query.filter(or_(Post.title.like(search_result), Post.body.like(search_result)))
+        page = request.args.get('page', 1, type=int)
+        for item in result:
+            item.important = 0
+            sentence = item.title + item.body
+            counts = 0
+            list1 = sentence.split(" ")
+            for y in range(len(list1)):
+                if list1[y].find(inf) != -1:
+                    counts = counts + 1
+            com_num = db.session.query(func.count(Comment.id)).filter_by(post_id=item.id).scalar()
+            li_num = db.session.query(func.count(Like.liker_id)).filter_by(liked_post_id=item.id).scalar()
+            item.important = counts * 4 + 3 * com_num + 3 * li_num
+        pagination = result.order_by(Post.important.desc()).paginate(
+            page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+            error_out=False)
+        posts = pagination.items
+        for item in result:
+            item.important = 0
+        return render_template('querypost.html', posts=posts, title="Result of query", pagination=pagination)
+
+
+# @main.route('/query_combination/<inf>')
+# def query_combination(inf):
+#     # if request.method == 'GET':
+#     #     inf = request.form["inf"]
+#     #     # return render_template('querypost.html', inf=inf)
+#     search_result = "%" + inf + "%"
+#     result = Post.query.filter(or_(Post.title.like(search_result), Post.body.like(search_result)))
+#     page = request.args.get('page', 1, type=int)
+#     for item in result:
+#         item.important = 0
+#         sentence = item.title + item.body
+#         counts = 0
+#         list1 = sentence.split(" ")
+#         for y in range(len(list1)):
+#             if list1[y].find(search_result) != -1:
+#                 counts = counts + 1
+#         com_num = db.session.query(func.count(Comment.id)).filter_by(post_id=item.id).scalar()
+#         li_num = db.session.query(func.count(Like.liker_id)).filter_by(liked_post_id=item.id).scalar()
+#         item.important = counts * 4 + 3 * com_num + 3 * li_num
+#         print("post: " + str(item.id) + "importance" + str(item.important))
+#     pagination = result.order_by(Post.important.desc()).paginate(
+#         page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+#         error_out=False)
+#     posts = pagination.items
+#     for item in result:
+#         item.important = 0
+#     return render_template('querypost.html', posts=posts, title="Result of query", pagination=pagination)
+
+
+@main.route('/query_newest/<inf>')
+def query_newest(inf):
+    search_result = "%" + inf + "%"
+    result = Post.query.filter(or_(Post.title.like(search_result), Post.body.like(search_result)))
+    page = request.args.get('page', 1, type=int)
+    pagination = result.order_by(Post.timestamp.desc()).paginate(
+        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+        error_out=False)
+    posts = pagination.items
+    return render_template('querypost.html', posts=posts, title="Result of query", pagination=pagination)
+
+
+@main.route('/query_hottest/<inf>')
+def query_hottest(inf):
+    search_result = "%" + inf + "%"
+    result = Post.query.filter(or_(Post.title.like(search_result), Post.body.like(search_result)))
+    page = request.args.get('page', 1, type=int)
+    for item in result:
+        item.important = item.comments.count()
+    pagination = result.order_by(Post.important.desc()).paginate(
+        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+        error_out=False)
+    posts = pagination.items
+    for item in result:
+        item.important = 0
+    return render_template('querypost.html', posts=posts, title="Result of query", pagination=pagination)
+
+
+@main.route('/query_relevance/<inf>')
+def query_relevance(inf):
+    search_result = "%" + inf + "%"
+    result = Post.query.filter(or_(Post.title.like(search_result), Post.body.like(search_result)))
+    page = request.args.get('page', 1, type=int)
+    for item in result:
+        sentence = item.title + item.body
+        counts = 0
+        list1 = sentence.split(" ")
+        for y in range(len(list1)):
+            if list1[y].find(inf) != -1:
+                counts = counts + 1
+        item.important = counts
+    pagination = result.order_by(Post.important.desc()).paginate(
+        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+        error_out=False)
+    posts = pagination.items
+    for item in result:
+        item.important = 0
+    return render_template('querypost.html', posts=posts, title="Result of query", pagination=pagination)
+
+
+@main.route('/query-user/<inf>')
+def query_user(inf):
+    search_result = "%" + inf + "%"
+    result = User.query.filter(or_(User.username.like(search_result), User.student_id.like(search_result)))
+    page = request.args.get('page', 1, type=int)
+    pagination = result.order_by(User.username.desc()).paginate(
+        page, per_page=current_app.config['FLASKY_FOLLOWERS_PER_PAGE'],
+        error_out=False)
+    posts = pagination.items
+    return render_template('queryuser.html', posts=posts, title="Result of query", pagination=pagination)
+
+
 @main.route('/user/<username>')
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
@@ -164,6 +180,16 @@ def notification():
     notices = pagination.items
     return render_template('table/notifications.html', notices=notices,
                            pagination=pagination)
+
+@main.route('/change_read/<int:id>')
+def change_read(id):
+    notice = Notification.query.filter_by(id=id).first()
+    notice.is_read = True
+    db.session.add(notice)
+    db.session.commit()
+    flash("You have read one notification")
+    return redirect(url_for('.notification'))
+
 
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
@@ -226,7 +252,8 @@ def post(id):
                           author=current_user._get_current_object(),
                           replied_id=request.args.get('reply'))
         n = Notification(receiver_id=post.author_id, timestamp=datetime.utcnow(),
-                         message=current_user.username + " has commented on you post " + post.title)
+                         username = current_user.username, action=" has commented on your posting",
+                         object=post.title, object_id=post.id)
         if comment.replied_id:
             replied = Comment.query.get_or_404(comment.replied_id)
             comment.replied = replied
@@ -245,7 +272,8 @@ def reply_comment(comment_id):
     comment = Comment.query.get_or_404(comment_id)
     post1 = comment.post
     n = Notification(receiver_id=comment.author_id, timestamp=datetime.utcnow(),
-                     message=current_user.username + " has replied on you comment " + post1.title)
+                     username=current_user.username, action=" has replied to your comment in the posting ",
+                     object=post1.title, object_id=post1.id)
     db.session.add(n)
     db.session.commit()
     return redirect(url_for('.post', id=comment.post.id, reply=comment_id, author=comment.author))
@@ -257,9 +285,6 @@ def delete_comment(id):
     comment = Comment.query.get_or_404(id)
     posts = Post.query.filter_by(id=comment.post_id).first()
     users = User.query.filter_by(id=posts.author_id).first()
-    print(users.username)
-    print(comment.author.username)
-    print(current_user.username)
     if current_user == comment.author or current_user == users:
         db.session.delete(comment)
         db.session.commit()
