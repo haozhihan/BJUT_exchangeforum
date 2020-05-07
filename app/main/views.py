@@ -260,7 +260,7 @@ def reply_comment(comment_id):
                      object=post1.title, object_id=post1.id)
     db.session.add(n)
     db.session.commit()
-    return redirect(url_for('.post', id=comment.post.id, reply=comment_id, author=comment.author))
+    return redirect(url_for('.post', id=comment.post.id, reply=comment_id, author=comment.author.username))
 
 
 @main.route('/delete_comment/<int:id>')

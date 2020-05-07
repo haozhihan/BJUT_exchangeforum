@@ -109,9 +109,9 @@
         {% if current_user.can(Permission.COMMENT) %}
             <div class="comment-form">
                 {% if request.args.get('reply') %}
-                    <div class="alert alert-dark">
+                    <div class="alert alert-warning alert-dismissible" role="alert">
                         Reply to <b>{{ request.args.get('author') }}</b>
-                        <a class="float-right" href="{{ url_for('.post', id=post.id) }}">Cancel</a>
+                    <a style="float: right" href="{{ url_for('.post', id=post.id) }}">Cancel</a>
                     </div>
                 {% endif %}
 
