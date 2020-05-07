@@ -32,8 +32,10 @@
     <script>
         var comment = document.getElementById('body')
         comment.className = 'form-control'
+        comment.style = "margin:30px; height:100px; width:730px; overflow:auto; resize: none;";
         var submit = document.getElementById('submit')
-        submit.className = 'btn btn-warning btn-block';
+        submit.className = 'btn btn-warning';
+        submit.style = "margin-top: 90px; margin-left: 40px ";
     </script>
 
 {%endblock%}
@@ -114,16 +116,20 @@
 
         {% if current_user.can(Permission.COMMENT) %}
             <div class="comment-form">
-                {% if request.args.get('reply') %}
-                    <div class="alert alert-warning alert-dismissible" role="alert">
-                        Reply to <b>{{ request.args.get('author') }}</b>
-                    <a style="float: right" href="{{ url_for('.post', id=post.id) }}">Cancel</a>
-                    </div>
-                {% endif %}
-
 
                 <form role="form" class="form-signin"  method="post">
+
+
+
                     <div class="col-md-12">
+
+                         {% if request.args.get('reply') %}
+                            <div class="alert alert-warning alert-dismissible" style="margin-top: 20px;margin-bottom: 0px;" id="reply" role="alert">
+                                Reply to <b>{{ request.args.get('author') }}</b>
+                            <a style="float: right" href="{{ url_for('.post', id=post.id) }}">Cancel</a>
+                            </div>
+                         {% endif %}
+
                         <div class="col-md-10" style="padding:0;">
                             {{ form.csrf_token }}
                             {{ form.body}}
@@ -149,8 +155,4 @@
 {% endblock %}
 
 textarea{
-margin:30px;
-height:50px;
-width:950px;
-overflow:auto;
 }
