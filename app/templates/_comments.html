@@ -2,7 +2,7 @@
     {% for comment in comments %}
     <li class="comment">
         <div class="comment-content col-sm-12">
-             {% if comment.replied %}
+
                  <div class="comment-footer">
                         <span class="comment-thumbnail">
                             <a href="{{ url_for('.user', username=comment.author.username) }}">
@@ -15,11 +15,22 @@
                         </span>
                         <span class="comment-author">
                             <a href="{{ url_for('.user', username=comment.author.username) }}">{{ comment.author.username }}</a>
-                            <h5 style="display: inline"><small>reply</small></h5>
-                            <h5 style="display: inline">{{ comment.replied.author.username }}</h5>
                         </span>
                         <span class="comment-date">{{ moment(comment.timestamp).fromNow() }}</span>
+                  </div>
 
+                 {% if comment.replied %}
+                     <div class="alert refer-box" role="alert">
+                         <a href="{{ url_for('.user', username=comment.replied.author.username) }}">
+                             @{{ comment.replied.author.username }} :
+                         </a>
+                         <br>{{ comment.replied.body }}
+                     </div>
+                 {% endif %}
+                <div class="comment-body">
+                    {{ comment.body }}
+
+                    <div class="footer">
                         {#按钮#}
                         {#            删除#}
                         {% if current_user == comment.author or current_user == post.author %}
@@ -33,50 +44,8 @@
                             <span class="glyphicon glyphicon-share"></span>
                             <span>reply</span>
                         </a>
-                  </div>
-
-                 <div class="alert alert-info" style="margin-left: 40px; margin-right: 30px;" role="alert">
-                     <h5 style="display: inline">{{ comment.replied.author.username }} :</h5>
-                     <br>{{ comment.replied.body }}
-                 </div>
-                <div class="comment-body">
-                    {{ comment.body }}
+                    </div>
                 </div>
-
-             {% else %}
-                <div class="comment-footer">
-                    <span class="comment-thumbnail">
-                        <a href="{{ url_for('.user', username=comment.author.username) }}">
-                            {% if comment.author.avatar_img %}
-                                <img class="img-rounded profile-thumbnail" src="{{ comment.author.avatar_img }}" alt="avatar"  style="width: 25px; height: 25px">
-                            {% else %}
-                                <img class="img-rounded profile-thumbnail" src="{{ comment.author.gravatar(size=25) }}" alt="avatar">
-                            {% endif %}
-                        </a>
-                    </span>
-                    <span class="comment-author">
-                        <a href="{{ url_for('.user', username=comment.author.username) }}">{{ comment.author.username }}</a>
-                    </span>
-                    <span class="comment-date">{{ moment(comment.timestamp).fromNow() }}</span>
-
-                    {#按钮#}
-                    {#删除#}
-                    {% if current_user == comment.author or current_user == post.author %}
-                     <a class="icon-btn" href="{{ url_for('.delete_comment', id=comment.id) }}">
-                         <span class="glyphicon glyphicon-trash"></span>
-                         <span>delete</span>
-                     </a>
-                    {% endif %}
-                    <!--回复-->
-                    <a class="icon-btn" href="{{ url_for('.reply_comment', comment_id=comment.id) }}#comments">
-                        <span class="glyphicon glyphicon-share"></span>
-                        <span>reply</span>
-                    </a>
-                </div>
-                <div class="comment-body">
-                    {{ comment.body }}
-                </div>
-            {% endif %}
         </div>
     </li>
     {% endfor %}
