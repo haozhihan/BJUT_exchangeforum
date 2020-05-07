@@ -167,8 +167,15 @@ def user(username):
         page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
     posts = pagination.items
-    return render_template('user.html', user=user, posts=posts,
-                           pagination=pagination)
+    result = Like.query.filter_by(liker_id=user.id)
+    page = request.args.get('page', 1, type=int)
+    pagination2 = result.order_by(Like.timestamp).paginate(
+        page, per_page=current_app.config['FLASKY_LIKER_PER_PAGE'],
+        error_out=False)
+    liking_posts = [{'post': item.liked_post, 'timestamp': item.timestamp}
+                    for item in pagination2.items]
+    return render_template('user.html', user=user, posts=posts, liking_posts=liking_posts,
+                           pagination=pagination, pagination2=pagination2)
 
 
 @main.route('/notification')
@@ -181,6 +188,7 @@ def notification():
     return render_template('table/notifications.html', notices=notices,
                            pagination=pagination)
 
+
 @main.route('/change_read/<int:id>')
 def change_read(id):
     notice = Notification.query.filter_by(id=id).first()
@@ -189,7 +197,6 @@ def change_read(id):
     db.session.commit()
     flash("You have read one notification")
     return redirect(url_for('.notification'))
-
 
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
@@ -252,7 +259,7 @@ def post(id):
                           author=current_user._get_current_object(),
                           replied_id=request.args.get('reply'))
         n = Notification(receiver_id=post.author_id, timestamp=datetime.utcnow(),
-                         username = current_user.username, action=" has commented on your posting",
+                         username=current_user.username, action=" has commented on your posting",
                          object=post.title, object_id=post.id)
         if comment.replied_id:
             replied = Comment.query.get_or_404(comment.replied_id)
@@ -331,7 +338,7 @@ def delete_post_inProfile(id):
         page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
     posts = pagination.items
-    return render_template('user.html', user=user, posts=posts,pagination=pagination)
+    return render_template('user.html', user=user, posts=posts, pagination=pagination)
 
 
 @main.route('/follow/<username>')
@@ -449,7 +456,7 @@ def liked_by(post_id):
         page, per_page=current_app.config['FLASKY_LIKER_PER_PAGE'],
         error_out=False)
     liker = [{'user': item.liker, 'timestamp': item.timestamp}
-               for item in pagination.items]
+             for item in pagination.items]
     return render_template('table/liker.html', post=post, title="The liker of",
                            endpoint='.liked_by', pagination=pagination,
                            liker=liker)

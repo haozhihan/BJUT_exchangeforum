@@ -249,8 +249,8 @@ class User(UserMixin, db.Model):
         if not self.is_following(user):
             f = Follow(follower=self, followed=user)
             n = Notification(receiver_id=user.id, timestamp=datetime.utcnow(),
-                             username = self.username, action= " has followed ",
-                             object = "you")
+                             username=self.username, action=" has followed ",
+                             object="you")
             db.session.add(n)
             db.session.add(f)
 
@@ -258,8 +258,8 @@ class User(UserMixin, db.Model):
         if not self.is_liking(post):
             ll = Like(liker=self, liked_post=post)
             n = Notification(receiver_id=post.author_id, timestamp=datetime.utcnow(),
-                             username = self.username, action = " has liked your posting ",
-                             object = post.title, object_id = post.id)
+                             username=self.username, action=" has liked your posting ",
+                             object=post.title, object_id=post.id)
             db.session.add(n)
             db.session.add(ll)
 
@@ -361,6 +361,7 @@ class Post(db.Model):
             markdown(value, output_format='html'),
             tags=allowed_tags, strip=True, attributes=allowed_attrs))
 
+
 db.event.listen(Post.body, 'set', Post.on_changed_body)
 
 
@@ -397,9 +398,9 @@ class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     username = db.Column(db.String(64), nullable=False)
-    action = db.Column(db.Text, nullable=False)# has followed \\ has like \\ has comment \\ has reply
-    object = db.Column(db.String(64), nullable=False)# you \\ your posting \\ your comment
-    object_id = db.Column(db.Integer)# posting
+    action = db.Column(db.Text, nullable=False)  # has followed \\ has like \\ has comment \\ has reply
+    object = db.Column(db.String(64), nullable=False)  # you \\ your posting \\ your comment
+    object_id = db.Column(db.Integer)  # posting
 
     is_read = db.Column(db.Boolean, default=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
