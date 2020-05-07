@@ -1,0 +1,38 @@
+<ul class="posts list-unstyled">
+    {% for liking in liking_posts %}
+    <li class="post">
+        <div class="post-box">
+
+            <div class="post-content">
+                <h3 class="post-title">
+                    <a href="{{ url_for('.post', id=liking.id) }}">{{ liking.title }}</a>
+                </h3>
+                <div class="post-body">
+                   <p>
+                        {% if liking.body_html %}
+                            {{ liking.body_html |safe|striptags|truncate(260,killwords=Flase,leeway=0) }}
+                        {% else %}
+                            {{ liking.body |truncate(200,killwords=Flase,leeway=0)}}
+                        {% endif %}
+                        <small><a href="{{ url_for('.post', id=liking.id) }}"><B>Read More</B></a></small>
+                   </p>
+                </div>
+                <div class="post-footer">
+                    <span class="post-date">
+                        <span class="glyphicon glyphicon-time"></span>
+                        {{ moment(liking.timestamp).fromNow() }}
+                    </span>
+                    {% if current_user == liking.author %}
+                        {#            删除#}
+                            <a class="icon-btn" href="{{ url_for('main.delete_post_inProfile', id=liking.id)}}">
+                                <span class="glyphicon glyphicon-trash"></span>
+                                <span>delete</span>
+                            </a>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </li>
+    {% endfor %}
+</ul>
