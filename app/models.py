@@ -382,6 +382,7 @@ class Post(db.Model):
     important = db.Column(db.INT, default=0)
     comments = db.relationship('Comment', back_populates='post', cascade='all, delete-orphan', lazy='dynamic')
     liker = db.relationship('Like', back_populates='liked_post', lazy='dynamic', cascade='all')
+    is_anonymous = db.Column(db.Boolean, default=False)
 
     def like(self, user):
         if not self.is_liked_by(user):
@@ -412,6 +413,7 @@ class Post(db.Model):
         target.body_html = bleach.linkify(bleach.clean(
             markdown(value, output_format='html'),
             tags=allowed_tags, strip=True, attributes=allowed_attrs))
+
 
 db.event.listen(Post.body, 'set', Post.on_changed_body)
 
@@ -449,9 +451,9 @@ class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     username = db.Column(db.String(64), nullable=False)
-    action = db.Column(db.Text, nullable=False)# has followed \\ has like \\ has comment \\ has reply
-    object = db.Column(db.String(64), nullable=False)# you \\ your posting \\ your comment
-    object_id = db.Column(db.Integer)# posting
+    action = db.Column(db.Text, nullable=False)  # has followed \\ has like \\ has comment \\ has reply
+    object = db.Column(db.String(64), nullable=False)  # you \\ your posting \\ your comment
+    object_id = db.Column(db.Integer)  # posting
 
     is_read = db.Column(db.Boolean, default=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)

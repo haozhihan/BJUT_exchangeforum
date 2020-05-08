@@ -31,12 +31,22 @@ def posts(count=200):
     user_count = User.query.count()
     for i in range(count):
         u = User.query.offset(randint(0, user_count - 1)).first()
-        p = Post(body=fake.text(1000),
+        p = Post(body=fake.text(8000),
                  title=fake.sentence(),
                  timestamp=fake.past_date(),
                  author=u)
         db.session.add(p)
     db.session.commit()
+
+    salt = int(count*0.1)
+    for i in range(salt):
+        u = User.query.offset(randint(0, user_count - 1)).first()
+        p = Post(body=fake.text(),
+                 title=fake.sentence(),
+                 timestamp=fake.past_date(),
+                 author=u,
+                 is_anonymous=True)
+        db.session.add(p)
 
 
 def comments(count=300):

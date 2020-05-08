@@ -58,7 +58,7 @@
         {% if current_user.can(Permission.WRITE) %}
             <form method="post">
 
-                <div class="col-md-offset-3 col-md-4">
+                <div class="col-md-offset-3 col-md-8">
                     <label class="WriteIndex-titleInput Input-wrapper Input-wrapper--multiline">
                         <textarea  id="title" name="title" rows="1" class="Input" maxlength="20"
                                    placeholder="           请输入标题（最多 20 个字）"
@@ -82,13 +82,20 @@
                                         height: 44px;"></textarea>
                     </label>
                 </div>
-                <div class="col-md-offset-3 col-md-2">
-                    <button type="submit" class="btn btn-primary form-control" style="margin-top: 10px">提交</button>
-                </div>
+
                 {{form.hidden_tag()}}
 
                 <div id="test-editormd" class="form-control col-md-12">
                     {{form.body(class="form-control",style="display:none;",id="ts")}}
+                </div>
+
+                <div class="col-md-offset-8 col-md-4" >
+                    <div id="anonymous" class="checkbox" style="display: inline-block;">
+                        <label>
+                          <input type="checkbox"> anonymous
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 120px;margin: 20px">submit</button>
                 </div>
 
             </form>
