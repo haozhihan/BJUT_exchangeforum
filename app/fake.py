@@ -16,7 +16,7 @@ def users(count=100):
                  password='password',
                  confirmed=True,
                  role_id=1,
-                 about_me=fake.text(),
+                 about_me=fake.sentence(),
                  member_since=fake.past_date())
         db.session.add(u)
         try:
@@ -31,7 +31,7 @@ def posts(count=200):
     user_count = User.query.count()
     for i in range(count):
         u = User.query.offset(randint(0, user_count - 1)).first()
-        p = Post(body=fake.text(),
+        p = Post(body=fake.text(1000),
                  title=fake.sentence(),
                  timestamp=fake.past_date(),
                  author=u)

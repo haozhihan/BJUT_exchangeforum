@@ -8,7 +8,7 @@ from wtforms.validators import DataRequired, Length, Email, EqualTo
 
 # 重置密码的界面1
 class PasswordResetRequestForm(FlaskForm):
-  email = StringField('Email', render_kw={"placeholder": "Your Email"},
+  email = StringField('Email', render_kw={"placeholder":"Your Email"},
                       validators=[DataRequired(), Length(1, 64), Email()])
   submit = SubmitField('Reset Password')
 
@@ -18,6 +18,18 @@ class PasswordResetRequestForm(FlaskForm):
 class PasswordResetForm(FlaskForm):
   password = PasswordField('New Password', render_kw={"placeholder":"New Password"},
              validators=[DataRequired(), EqualTo('password2', message='Passwords must match')])
-  password2 = PasswordField('Confirm password', render_kw={"placeholder": "Confirm password"},
+  password2 = PasswordField('Confirm password', render_kw={"placeholder":"Confirm password"},
                             validators=[DataRequired()])
   submit = SubmitField('Reset Password')
+
+
+class RegisterOrganizationForm(FlaskForm):
+    name = StringField('Organization name', validators=[DataRequired(), Length(1,64)])
+    teacher = StringField('Teacher', validators=[DataRequired(), Length(1, 64)])
+    leader = StringField('Leader', validators=[DataRequired(), Length(1, 64)])
+    phone = StringField('Phone number', validators=[DataRequired(), Length(1, 64)])
+    college = StringField('College', validators=[DataRequired(), Length(1, 64)])
+    email = StringField('Email', render_kw={"placeholder": "Your Email"},
+                        validators=[DataRequired(), Length(1, 64), Email()])
+    submit = SubmitField('Submit')
+

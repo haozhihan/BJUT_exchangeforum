@@ -199,6 +199,7 @@ def change_read(id):
     return redirect(url_for('.notification'))
 
 
+
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
 

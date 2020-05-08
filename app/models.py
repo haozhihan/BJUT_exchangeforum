@@ -249,8 +249,8 @@ class User(UserMixin, db.Model):
         if not self.is_following(user):
             f = Follow(follower=self, followed=user)
             n = Notification(receiver_id=user.id, timestamp=datetime.utcnow(),
-                             username=self.username, action=" has followed ",
-                             object="you")
+                             username = self.username, action= " has followed ",
+                             object = "you")
             db.session.add(n)
             db.session.add(f)
 
@@ -258,8 +258,8 @@ class User(UserMixin, db.Model):
         if not self.is_liking(post):
             ll = Like(liker=self, liked_post=post)
             n = Notification(receiver_id=post.author_id, timestamp=datetime.utcnow(),
-                             username=self.username, action=" has liked your posting ",
-                             object=post.title, object_id=post.id)
+                             username = self.username, action = " has liked your posting ",
+                             object = post.title, object_id = post.id)
             db.session.add(n)
             db.session.add(ll)
 
@@ -298,6 +298,58 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.username
+
+
+class Organization(UserMixin, db.Model):
+    __tablename__ = 'organizations'
+    # 以下是关于用户的基本信息，用于注册、登录以及编辑个人主页
+    id = db.Column(db.Integer, primary_key=True)
+    confirmed = db.Column(db.Boolean, default=False)
+    email = db.Column(db.String(64), unique=True, index=True)
+    name = db.Column(db.String(64), unique=True, index=True)
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+    password_hash = db.Column(db.String(128))
+
+    # 以下添加的信息是显示在用户个人主页的信息
+    college = db.Column(db.String(64))
+
+    # 以下两个变量用于刷新用户访问时间
+    member_since = db.Column(db.DateTime(), default=datetime.utcnow)
+    last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
+
+    # 用avatar_hash来储存生成头像时产生的MD5散列值
+    avatar_hash = db.Column(db.String(32))
+    avatar_img = db.Column(db.String(120), nullable=True)
+    @property
+    def password(self):
+        raise AttributeError('password is not a readable attribute')
+
+    @password.setter
+    def password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def verify_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    def generate_confirmation_token(self, expiration=3600):
+        s = Serializer(current_app.config['SECRET_KEY'], expiration)
+        return s.dumps({'confirm': self.id}).decode('utf-8')
+
+    def confirm(self, token):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token.encode('utf-8'))
+        except:
+            return False
+        if data.get('confirm') != self.id:
+            return False
+        self.confirmed = True
+        db.session.add(self)
+        return True
+
+    def generate_reset_token(self, expiration=3600):
+        s = Serializer(current_app.config['SECRET_KEY'], expiration)
+        return s.dumps({'reset': self.id}).decode('utf-8')
 
 
 class AnonymousUser(AnonymousUserMixin):
@@ -361,7 +413,6 @@ class Post(db.Model):
             markdown(value, output_format='html'),
             tags=allowed_tags, strip=True, attributes=allowed_attrs))
 
-
 db.event.listen(Post.body, 'set', Post.on_changed_body)
 
 
@@ -398,9 +449,9 @@ class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     username = db.Column(db.String(64), nullable=False)
-    action = db.Column(db.Text, nullable=False)  # has followed \\ has like \\ has comment \\ has reply
-    object = db.Column(db.String(64), nullable=False)  # you \\ your posting \\ your comment
-    object_id = db.Column(db.Integer)  # posting
+    action = db.Column(db.Text, nullable=False)# has followed \\ has like \\ has comment \\ has reply
+    object = db.Column(db.String(64), nullable=False)# you \\ your posting \\ your comment
+    object_id = db.Column(db.Integer)# posting
 
     is_read = db.Column(db.Boolean, default=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
