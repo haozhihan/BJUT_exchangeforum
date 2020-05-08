@@ -27,7 +27,19 @@
 
 
               <div class="panel-footer">
+                  {% if post.is_anonymous %}
                     <div class="post-thumbnail">
+                        <span class="head-photo">
+                            <img class="img-rounded profile-thumbnail" src="{{ url_for('static',filename='Image/anonymous.png') }}" alt="avatar" style="width: 25px; height: 25px">
+                        </span>
+
+                        <span class="post-author">
+                            <span> anonymous </span>
+                        </span>
+                        <span class="post-date"><small>{{ moment(post.timestamp).fromNow() }}</small></span>
+                    </div>
+                  {% else %}
+                   <div class="post-thumbnail">
 
                         <a class="head-photo" href="{{ url_for('.user', username=post.author.username) }}">
                             {% if post.author.avatar_img %}
@@ -43,6 +55,7 @@
                         <span class="post-date"><small>{{ moment(post.timestamp).fromNow() }}</small></span>
 
                     </div>
+                  {% endif %}
 
                     <div class="post-footer">
 

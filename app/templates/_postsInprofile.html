@@ -1,5 +1,6 @@
 <ul class="posts list-unstyled">
     {% for post in posts %}
+    {% if post.is_anonymous==False %}
     <li class="post">
         <div class="post-box">
 
@@ -34,5 +35,6 @@
 
         </div>
     </li>
+    {% endif %}
     {% endfor %}
 </ul>

@@ -199,7 +199,6 @@ def change_read(id):
     return redirect(url_for('.notification'))
 
 
-
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
 
@@ -485,6 +484,7 @@ def new_post():
     if request.method == 'POST':
         title = request.form.get('title')
         text = request.form.get('text1')
+        is_anonymous = request.form.get('')
         if title == "":
             flash("Title cannot be None!")
             return render_template('new_posting/new_post.html')
@@ -508,6 +508,10 @@ def new_post_md():
     if current_user.can(Permission.WRITE) and form.validate_on_submit():
         title = request.form.get('title')
         body = form.body.data
+        if request.form.get('anonymous')=="on":
+            is_anonymous = True
+        else:
+            is_anonymous = False
         if title == "":
             flash("Title cannot be None!")
             return render_template('new_posting/new_mdpost.html', form=form)
@@ -515,10 +519,15 @@ def new_post_md():
         post = Post(title=title,
                     body=body,
                     body_html=body_html,
+                    is_anonymous=is_anonymous,
                     author=current_user._get_current_object())
+        print(post.is_anonymous)
         db.session.add(post)
         db.session.commit()
-        flash("You have just posted a posting", 'success')
+        if post.is_anonymous==True:
+            flash("You have just posted a posting anonymously", 'success')
+        else:
+            flash("You have just posted a posting", 'success')
         return redirect(url_for('.index'))
     return render_template('new_posting/new_mdpost.html', form=form)
 
