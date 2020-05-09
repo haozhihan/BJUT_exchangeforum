@@ -1,7 +1,8 @@
 {% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 
 
-{% block title %}Login{% endblock %}
+{% block title %}Send Register Result{% endblock %}
 
 
 {% block head %}
@@ -18,9 +19,8 @@
 {% endblock %}
 
 
-
-
 {% block body %}
+
 <div class="onepage">
         <div class = "onepage-bg" id = "onepagebg">
 
@@ -41,7 +41,7 @@
                     <div class="collapse navbar-collapse">
 
                         <div class="nav navbar-nav navbar-right">
-                            <li>
+                            <li class="chose">
                                  <a class="btn ref-signup chose" href="/auth/register">
                                  Register
                                  </a>
@@ -50,11 +50,12 @@
 
                         <div class="nav navbar-nav navbar-right">
                             <li class="chose">
-                                <a  class="btn btn-warning  disabled ref-signup chose" >
+                                <a  class="btn ref-signup chose" href="/auth/login">
                                     Signin
                                 </a>
                             </li>
                         </div>
+
                     </div>
 
                 </div>
@@ -76,54 +77,11 @@
                 {% endfor %}
 
                 <form role="form" class="form-signin" method="post" style="margin: 120px auto 0px auto;">
-                    <h2 class="form-signin-heading">Please sign in</h2>
-
-                    <label for="inputName" class="sr-only">Email address</label>
-                    <input type="text" id="inputName" class="form-control" placeholder="Student number" name="user" required autofocus>
-                    <p id="p1"></p>
-
-                    <label for="inputPassword" class="sr-only">Password</label>
-                    <input type="password" id="inputPassword" class="form-control" name="pwd" placeholder="Password" required autofocus>
-                    <p id="p2" class="text-danger"></p>
-
-                    <div>
-                        <h4><small>
-                            Forgot your password?
-                            <a href="/auth/reset">Click here to reset it</a>
-                        </small></h4>
-
-                    </div>
-
-
-                    <button class="btn btn-lg btn-warning btn-block chose" id="submit" disabled="disabled" type="submit">Sign in</button>
+                    <h2 class="form-signin-heading">Send Result Email</h2>
+                    <a class="btn btn-lg btn-warning btn-block chose" href="{{ url_for('organization.register_success', oid=oid) }}">Register Success</a>
+                    <a class="btn btn-lg btn-warning btn-block chose" href="{{ url_for('organization.result_fail', oid=oid) }}">Register Fail</a>
                 </form>
             </div>
         </div>
 </div>
-
-<script>
-        var stuID = document.getElementById('inputName');
-        var info = document.getElementById('p1');
-        var pwd = document.getElementById('inputPassword');
-        //学号
-        stuID.onblur = function () {
-            var stuid = this.value;
-            var reg = /^\d{8}$/;
-            // 不符合规则的话
-            if(!reg.test(stuid)){
-                info.innerHTML = '请输入8位数字的学号';
-                info.className = 'text-danger';
-                document.getElementById("submit").disabled=true;
-            }
-            else{
-                info.innerHTML = '';
-                info.className = 'text-success';
-            }
-            if(info.className == 'text-success'){
-                document.getElementById("submit").disabled = false;
-            }
-        }
-</script>
-
-
 {% endblock %}

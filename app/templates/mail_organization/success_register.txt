@@ -1,0 +1,11 @@
+Dear {{ user.username }},
+Welcome to Student Exchange Forum of BJUT!
+Congratulations on your successful registration of SOFB official organization account
+<p>The following is your login information
+
+Organization ID: {{ user.student_id }}
+Organization Password: {{ user.student_id }}
+Thank you for your cooperation.
+
+Sincerely,
+Student Exchange Forum of BJUT

@@ -2,9 +2,9 @@ from flask import render_template, redirect, request, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from . import auth
 from .. import db
-from ..models import User, Students, Organization
+from ..models import User, Students
 from ..email import send_email
-from .forms import  PasswordResetRequestForm, PasswordResetForm, RegisterOrganizationForm
+from .forms import PasswordResetRequestForm, PasswordResetForm
 # This file is to write the route and some response to the user in different conditions
 
 
@@ -102,7 +102,7 @@ def register():
                 db.session.add(isstudent)
                 db.session.add(user)
                 db.session.commit()
-                #注册时发送邮箱认证
+                # 注册时发送邮箱认证
                 token = user.generate_confirmation_token()
                 send_email(user.email, 'Confirm Your Account',
                            'mail/confirm', user=user, token=token)
@@ -111,19 +111,6 @@ def register():
         return render_template('auth/register.html')
 
 
-@auth.route('/register_organization', methods=['GET', 'POST'])
-def register_organization():
-    form = RegisterOrganizationForm()
-    if form.validate_on_submit():
-        organization = Organization(email=form.email.data.lower())
-        db.session.add(organization)
-        db.session.commit()
-        token = organization.generate_confirmation_token()
-        send_email(organization.email, 'Confirm Your Account',
-                   'auth/mail/confirm', organization=organization, token=token)
-        flash('A confirmation email has been sent to you by email.')
-        return redirect(url_for('auth.login'))
-    return render_template('auth/register2.html', form=form)
 
 
 # 没有确认邮件时， 登入

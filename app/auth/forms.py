@@ -23,13 +23,4 @@ class PasswordResetForm(FlaskForm):
   submit = SubmitField('Reset Password')
 
 
-class RegisterOrganizationForm(FlaskForm):
-    name = StringField('Organization name', validators=[DataRequired(), Length(1,64)])
-    teacher = StringField('Teacher', validators=[DataRequired(), Length(1, 64)])
-    leader = StringField('Leader', validators=[DataRequired(), Length(1, 64)])
-    phone = StringField('Phone number', validators=[DataRequired(), Length(1, 64)])
-    college = StringField('College', validators=[DataRequired(), Length(1, 64)])
-    email = StringField('Email', render_kw={"placeholder": "Your Email"},
-                        validators=[DataRequired(), Length(1, 64), Email()])
-    submit = SubmitField('Submit')
 
