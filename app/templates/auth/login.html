@@ -92,6 +92,10 @@
                             <a href="/auth/reset">Click here to reset it</a>
                         </small></h4>
 
+                        <h4><small>
+                            Register Organization Account
+                            <a href="/organization/register">Click here to register it</a>
+                        </small></h4>
                     </div>
 
 
@@ -108,10 +112,11 @@
         //学号
         stuID.onblur = function () {
             var stuid = this.value;
-            var reg = /^\d{8}$/;
+            var reg = /[0-9]{1,4}/;
+            {#var reg = /^\d{1，8}$/;#}
             // 不符合规则的话
             if(!reg.test(stuid)){
-                info.innerHTML = '请输入8位数字的学号';
+                info.innerHTML = '请输入8位数字的学号或者1-8位的组织ID';
                 info.className = 'text-danger';
                 document.getElementById("submit").disabled=true;
             }
@@ -122,7 +127,7 @@
             if(info.className == 'text-success'){
                 document.getElementById("submit").disabled = false;
             }
-        }
+         }
 </script>
 
 

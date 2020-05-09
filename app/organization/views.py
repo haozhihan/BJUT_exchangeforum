@@ -6,7 +6,7 @@ from ..email import send_email
 from .forms import RegisterOrganizationForm
 
 
-@organization.route('/register1', methods=['GET', 'POST'])
+@organization.route('/register', methods=['GET', 'POST'])
 def register_organization():
     form = RegisterOrganizationForm()
     if form.validate_on_submit():
@@ -15,7 +15,8 @@ def register_organization():
                                     leader_student=form.leader.data,
                                     phone=form.phone.data,
                                     college=form.college.data,
-                                    email=form.email.data)
+                                    email=form.email.data,
+                                    avatar_img='/static/Image/ico.jpeg')
         db.session.add(organization)
         db.session.commit()
         token = organization.generate_confirmation_token()
