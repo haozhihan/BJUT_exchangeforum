@@ -228,6 +228,11 @@ def edit_profile():
         return render_template('edit_profile.html', form=form)
     if request.method == 'POST':
         # 读取前端数据
+        usernamefind = User.query.filter_by(username=request.form["username"]).first()
+        if usernamefind is not None:
+            flash("Your new username already exists, please change your username")
+            return render_template('edit_profile.html', form=form)
+
         current_user.username = request.form["username"]
         current_user.college = request.form["collage"]
         current_user.grade = request.form["grade"]

@@ -306,12 +306,12 @@ class Organization(UserMixin, db.Model):
     confirmed = db.Column(db.Boolean, default=False)
 
     # 以下添加的信息是显示在用户个人主页的信息
-    name = db.Column(db.String(64), unique=True)
+    name = db.Column(db.String(64))
     teacher = db.Column(db.String(128))
     leader_student = db.Column(db.String(128))
     phone = db.Column(db.String(128))
     college = db.Column(db.String(256))
-    email = db.Column(db.String(64), unique=True)
+    email = db.Column(db.String(64))
 
     def generate_confirmation_token(self, expiration=3600):
         s = Serializer(current_app.config['SECRET_KEY'], expiration)

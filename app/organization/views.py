@@ -10,13 +10,20 @@ from .forms import RegisterOrganizationForm
 def register_organization():
     form = RegisterOrganizationForm()
     if form.validate_on_submit():
+        emailfind = User.query.filter_by(email=form.email.data).first()
+        if emailfind is not None:
+            flash("Your email has been registered, please change your email")
+            return render_template('organization/register2.html', form=form)
+        usernamefind = User.query.filter_by(username=form.name.data).first()
+        if usernamefind is not None:
+            flash("Your organization name has been registered, please change your username")
+            return render_template('organization/register2.html', form=form)
         organization = Organization(name=form.name.data,
                                     teacher=form.teacher.data,
                                     leader_student=form.leader.data,
                                     phone=form.phone.data,
                                     college=form.college.data,
-                                    email=form.email.data,
-                                    avatar_img='/static/Image/ico.jpeg')
+                                    email=form.email.data)
         db.session.add(organization)
         db.session.commit()
         token = organization.generate_confirmation_token()
@@ -41,7 +48,8 @@ def register_success(oid):
                 email=organization.email,
                 username=organization.name,
                 password='password',
-                role_id=2
+                role_id=2,
+                avatar_img='/static/Image/ico.jpeg'
                 )
 
     db.session.add(user)
