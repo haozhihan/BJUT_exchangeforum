@@ -42,25 +42,32 @@
             <div class="panel panel-info">
         {% endif %}
                 <div class="panel-heading">
-                <a href="{{ url_for('.change_read', id = notice.id) }}">
-                    {% if notice.action == ' has followed ' %}
-                        <h3 class="panel-title" style="display:inline;">Followers</h3>
-                    {% elif notice.action == ' has liked your posting ' %}
-                        <h3 class="panel-title" style="display:inline;">Likers</h3>
-                    {% elif notice.action == ' has commented on your posting' %}
-                        <h3 class="panel-title" style="display:inline;">Comments</h3>
-                    {% elif notice.action == ' has replied to your comment in the posting ' %}
-                        <h3 class="panel-title" style="display:inline;">Reply Your Comments</h3>
-                    {% endif %}
-                </a>
+                    <a href="{{ url_for('.change_read', id = notice.id) }}">
+                        {% if notice.action == ' has followed ' %}
+                            <h3 class="panel-title" style="display:inline;">Followers</h3>
+                        {% elif notice.action == ' has liked your posting ' %}
+                            <h3 class="panel-title" style="display:inline;">Likers</h3>
+                        {% elif notice.action == ' has commented on your posting' %}
+                            <h3 class="panel-title" style="display:inline;">Comments</h3>
+                        {% elif notice.action == ' has replied to your comment in the posting ' %}
+                            <h3 class="panel-title" style="display:inline;">Reply Your Comments</h3>
+                        {% endif %}
+                    </a>
 
                     <p style="float: right">{{ moment(notice.timestamp).format('L') }}</p>
                 </div>
 
                 <div class="panel-body" >
-                    <a href="{{ url_for('.user', username=notice.username) }}" style="float:left; display: inline; margin-right: 4px">
-                        <h5>{{ notice.username }} </h5>
-                    </a>
+                    {% if notice.username == 'Anonymous' %}
+                        <h5 style="float:left; display: inline; margin-right: 4px">
+                            Anonymous user
+                        </h5>
+                    {% else %}
+                        <a href="{{ url_for('.user', username=notice.username) }}" style="float:left; display: inline; margin-right: 4px">
+                            <h5>{{ notice.username }} </h5>
+                        </a>
+                    {% endif %}
+
                     <h5 style="float:left;display: inline"> {{ notice.action }} </h5>
 
                     {% if notice.object_id %}

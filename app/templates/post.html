@@ -34,8 +34,8 @@
         comment.className = 'form-control'
         comment.style = "margin:30px; height:100px; width:730px; overflow:auto; resize: none;";
         var submit = document.getElementById('submit')
-        submit.className = 'btn btn-warning';
-        submit.style = "margin-top: 90px; margin-left: 40px ";
+        submit.className = 'btn btn-primary';
+        submit.style = "margin-left: 40px";
     </script>
 
 {%endblock%}
@@ -140,7 +140,8 @@
                              {% if request.args.get('reply') %}
                                 <div class="alert alert-warning alert-dismissible" style="margin-top: 20px;margin-bottom: 0px;" id="reply" role="alert">
                                     Reply to <b>{{ request.args.get('author') }}</b>
-                                <a style="float: right" href="{{ url_for('.post', id=post.id) }}">Cancel</a>
+
+                                    <a style="float: right" href="{{ url_for('.post', id=post.id) }}">Cancel</a>
                                 </div>
                              {% endif %}
 
@@ -149,6 +150,11 @@
                                 {{ form.body}}
                             </div>
                             <div class="col-md-2 submit" style="padding:0;" >
+                                <div class="checkbox">
+                                    <label>
+                                        <input name="anonymous" type="checkbox"> Anonymous
+                                    </label>
+                                </div>
                                 {{ form.submit }}
                             </div>
                         </div>
