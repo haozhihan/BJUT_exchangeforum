@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% import "_macros.html" as macros %}
+
+{% block title %}Flasky -- Transaction Center{% endblock %}
+
+
+{% block page_content %}
+<div class="page-header">
+    <h1>Transaction Center</h1>
+</div>
+<ul class="transaction list-unstyled">
+    {% for transaction in transactions %}
+    <li class="transaction" id="{{ transaction.id }}">
+        <div class="panel panel-default">
+              <div class="panel-name">
+                  <div class="item-content col-sm-12">
+                        <h3 class="item-name" style="margin-top: 7px">
+                            <a>
+                                {{ transaction.item_name }}
+                            </a>
+                        </h3>
+                      <div class="item-description">
+                        <p>
+                            {{ transaction.item_describe }}
+                        </p>
+                      </div>
+                      <div class="link">
+                        <p>
+                            {{ transaction.link }}
+                        </p>
+                      </div>
+                      <div class="mode">
+                        <p>
+                            {{ transaction.transaction_mode }}
+                        </p>
+                      </div>
+                         <div class="contract">
+                        <p>
+                            {{ transaction.seller_WeChat }}
+                        </p>
+                      </div>
+                  </div>
+              </div>
+
+
+
+              <div class="panel-footer">
+                   <div class="post-thumbnail">
+
+                        <a class="head-photo" href="{{ url_for('.user', username=transaction.seller.username) }}">
+                            {% if transaction.seller.avatar_img %}
+                                <img class="img-rounded profile-thumbnail" src="{{ transaction.seller.avatar_img }}" alt="avatar"  style="width: 25px; height: 25px">
+                            {% else %}
+                                <img class="img-rounded profile-thumbnail" src="{{ transaction.seller.gravatar(size=25) }}" alt="avatar">
+                            {% endif %}
+                        </a>
+
+                        <span class="post-author">
+                            <a href="{{ url_for('.user', username=transaction.seller.username) }}"> {{ transaction.seller.username }} </a>
+                        </span>
+                        <span class="post-date"><small>{{ moment(transaction.timestamp).fromNow() }}</small></span>
+
+                    </div>
+              </div>
+        </div>
+</ul>
+
+
+{% endfor %}
+{% endblock %}

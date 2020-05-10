@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 from . import main
 from .forms import PostForm, UploadPhotoForm, CommentForm, PostMdForm
 from .. import db
-from ..models import Permission, User, Post, Comment, Notification, Like
+from ..models import Permission, User, Post, Comment, Notification, Like, Transaction
 from ..decorators import permission_required
 
 
@@ -585,3 +585,36 @@ def moderate_disable(id):
     db.session.commit()
     return redirect(url_for('.moderate',
                             page=request.args.get('page', 1, type=int)))
+
+
+@main.route('/transaction', methods=['GET', 'POST'])
+@login_required
+def transaction():
+    if request.method == 'GET':
+        return render_template('transaction.html')
+    if request.method == 'POST':
+        trans = Transaction(item_name=request.form["item_name"],
+                            item_describe=request.form["item_describe"],
+                            link=request.form["link"],
+                            transaction_mode=request.form["transaction_mode"],
+                            seller_WeChat=request.form["seller_WeChat"],
+                            seller_id=current_user.id,
+                            seller=current_user
+                            )
+        db.session.add(trans)
+        db.session.commit()
+        flash('Your transaction request has been sent!')
+        return redirect(url_for('.index'))
+
+
+@main.route('/transaction-list', methods=['GET', 'POST'])
+@login_required
+def show_transaction():
+    page = request.args.get('page', 1, type=int)
+    pagination = Transaction.query.order_by(Transaction.timestamp.desc()).paginate(
+        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+        error_out=False)
+    transactions = pagination.items
+    return render_template('transaction_center.html', transactions=transactions,
+                           pagination=pagination)
+

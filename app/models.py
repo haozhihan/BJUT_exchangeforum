@@ -126,6 +126,8 @@ class User(UserMixin, db.Model):
     liked_post = db.relationship('Like', back_populates='liker', lazy='dynamic', cascade='all')
     # 消息中心
     notifications = db.relationship('Notification', back_populates='receiver', lazy='dynamic')
+    # 交易
+    transactions = db.relationship('Transaction', back_populates='seller', lazy='dynamic')
 
     @staticmethod
     def add_self_follows():
@@ -426,3 +428,18 @@ class Notification(db.Model):
     timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
     receiver_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     receiver = db.relationship('User', back_populates='notifications', lazy='joined')
+
+
+class Transaction(db.Model):
+    __tablename__ = 'transaction'
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    item_name = db.Column(db.String(64), nullable=False)
+    item_describe = db.Column(db.Text, nullable=False)
+    link = db.Column(db.Text, nullable=False)
+    transaction_mode = db.Column(db.String(64), nullable=False)
+    is_sold = db.Column(db.Boolean, default=False)
+    seller_WeChat = db.Column(db.Text, nullable=False)
+    seller_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    seller = db.relationship('User', back_populates='transactions', lazy='joined')
+

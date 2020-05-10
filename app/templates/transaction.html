@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Transaction Center{% endblock %}
+
+{% block page_content %}
+
+<div class="container">
+    <form class="form-transaction" method="post" style="margin: 75px auto 0 auto;">
+        <h1 class="form-transaction-heading">Transaction</h1>
+        <label for="item_name" class="sr-only">Item Name</label>
+        <div class="col-sm-7">
+            <input name="item_name" id="item_name" type="text" class="form-control" placeholder="Item Name">
+        </div>
+        <label for="item_describe" class="sr-only">Item description</label>
+        <div class="col-sm-7">
+            <input name="item_describe" id="item_describe" type="text" class="form-control" placeholder="Describe your item here">
+        </div>
+        <label for="link" class="sr-only">SaltFish Link</label>
+        <div class="col-sm-7">
+            <input name="link" id="link" type="text" class="form-control" placeholder="Your SaltFish link">
+        </div>
+        <label for="transaction_mode" class="sr-only">Transaction Mode</label>
+        <div class="col-sm-7">
+            <input name="transaction_mode" id="transaction_mode" type="text" class="form-control" placeholder="Transaction Mode">
+        </div>
+        <label for="seller_WeChat" class="sr-only">Seller WeChat</label>
+        <div class="col-sm-7">
+            <input name="seller_WeChat" id="seller_WeChat" type="text" class="form-control" placeholder="Seller WeChat">
+        </div>
+        <div class="col-sm-offset-5 col-sm-7 submit ">
+            <button type="submit" class="btn btn-success" >Submit</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
