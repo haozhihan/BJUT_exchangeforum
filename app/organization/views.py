@@ -59,7 +59,7 @@ def register_success(oid):
     send_email(organization.email, 'Register Organization Success',
                'mail_organization/success_register', user=user, token=token)
     flash('A register_success email has been sent to organization by email.')
-    return render_template('auth/login.html')
+    return redirect(url_for('auth.login'))
 
 
 @organization.route('/register_fail/<oid>', methods=['GET'])
@@ -69,4 +69,4 @@ def result_fail(oid):
     send_email(organization.email, 'Register Organization Fail',
                'mail_organization/fail_register', token=token)
     flash('A register_fail email has been sent to organization by email.')
-    return render_template('auth/login.html')
+    return redirect(url_for('auth.login'))
