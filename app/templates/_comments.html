@@ -3,6 +3,17 @@
     <li class="comment">
         <div class="comment-content col-sm-12">
 
+            {% if comment.is_anonymous %}
+                <div class="comment-footer">
+                        <span class="comment-thumbnail">
+                            <span class="head-photo">
+                                <img class="img-rounded profile-thumbnail" src="{{ url_for('static',filename='Image/anonymous.png') }}" alt="avatar" style="width: 25px; height: 25px">
+                            </span>
+                        </span>
+                        <span class="comment-author"> anonymous </span>
+                        <span class="comment-date">{{ moment(comment.timestamp).fromNow() }}</span>
+                  </div>
+            {% else %}
                  <div class="comment-footer">
                         <span class="comment-thumbnail">
                             <a href="{{ url_for('.user', username=comment.author.username) }}">
@@ -17,16 +28,26 @@
                             <a href="{{ url_for('.user', username=comment.author.username) }}">{{ comment.author.username }}</a>
                         </span>
                         <span class="comment-date">{{ moment(comment.timestamp).fromNow() }}</span>
-                  </div>
+                 </div>
+            {% endif %}
 
-                 {% if comment.replied %}
-                     <div class="alert refer-box" role="alert">
-                         <a href="{{ url_for('.user', username=comment.replied.author.username) }}">
-                             @{{ comment.replied.author.username }} :
-                         </a>
-                         <br>{{ comment.replied.body }}
-                     </div>
-                 {% endif %}
+                     {% if comment.replied %}
+                         <div class="alert refer-box" role="alert">
+                             {% if comment.replied.is_anonymous %}
+                                <span>
+                                    @Anonymous :
+                                </span>
+                             {% else %}
+                                 <a href="{{ url_for('.user', username=comment.replied.author.username) }}">
+                                     @{{ comment.replied.author.username }} :
+                                 </a>
+                             {% endif %}
+                             <br>{{ comment.replied.body }}
+                         </div>
+                     {% endif %}
+
+
+
                 <div class="comment-body">
                     {{ comment.body }}
 

@@ -394,6 +394,7 @@ class Comment(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     post = db.relationship('Post', back_populates='comments', lazy='joined')
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+    is_anonymous = db.Column(db.Boolean, default=False)
 
     # 被回复的评论的id
     replied_id = db.Column(db.Integer, db.ForeignKey('comments.id'))

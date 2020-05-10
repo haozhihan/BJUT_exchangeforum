@@ -61,4 +61,17 @@ def comments(count=300):
             post=Post.query.get(randint(0, post_count - 1))
         )
         db.session.add(comment)
+
+    salt = int(count * 0.1)
+    for i in range(salt):
+        comment = Comment(
+            author=User.query.get(randint(0, user_count - 1)),
+            body=fake.text(),
+            timestamp=fake.past_date(),
+            post=Post.query.get(randint(0, post_count - 1)),
+            is_anonymous=True
+        )
+        db.session.add(comment)
+
+
     db.session.commit()

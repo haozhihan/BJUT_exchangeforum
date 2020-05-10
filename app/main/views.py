@@ -254,21 +254,35 @@ def post(id):
     """发表评论与回复"""
     if form.validate_on_submit():
         body = form.body.data
+        if request.form.get('anonymous') == "on":
+            is_anonymous = True
+            username = "Anonymous"
+        else:
+            is_anonymous = False
+            username = current_user.username
         comment = Comment(body=body,
                           post=post,
                           author=current_user._get_current_object(),
-                          replied_id=request.args.get('reply'))
-        n = Notification(receiver_id=post.author_id, timestamp=datetime.utcnow(),
-                         username=current_user.username, action=" has commented on your posting",
-                         object=post.title, object_id=post.id)
+                          replied_id=request.args.get('reply'),
+                          is_anonymous=is_anonymous)
         if comment.replied_id:
             replied = Comment.query.get_or_404(comment.replied_id)
             comment.replied = replied
+            action = " has replied to your comment in the posting "
+        else:
+            action = " has commented on your posting"
+        """传入通知信息"""
+        n = Notification(receiver_id=post.author_id, timestamp=datetime.utcnow(),
+                         username=username, action=action,
+                         object=post.title, object_id=post.id)
         db.session.add(comment)
         db.session.add(n)
         db.session.commit()
-        flash('Comment published successfully')
-        """此处应该设置消息提醒"""
+
+        if comment.is_anonymous:
+            flash('Comment published anonymously')
+        else:
+            flash('Comment published successfully')
         return redirect(url_for('.post', id=post.id))
     return render_template('post.html', posts=[post], form=form,
                            comments=comments, pagination=pagination)
@@ -276,14 +290,14 @@ def post(id):
 
 @main.route('/reply/comment/<int:comment_id>')
 def reply_comment(comment_id):
+    """作为中转函数通过URL传递被回复评论信息"""
     comment = Comment.query.get_or_404(comment_id)
     post1 = comment.post
-    n = Notification(receiver_id=comment.author_id, timestamp=datetime.utcnow(),
-                     username=current_user.username, action=" has replied to your comment in the posting ",
-                     object=post1.title, object_id=post1.id)
-    db.session.add(n)
+    author = comment.author.username
+    if comment.is_anonymous:
+        author = "anonymous"
     db.session.commit()
-    return redirect(url_for('.post', id=comment.post.id, reply=comment_id, author=comment.author.username))
+    return redirect(url_for('.post', id=comment.post.id, reply=comment_id, author=author))
 
 
 @main.route('/delete_comment/<int:id>')
@@ -508,7 +522,7 @@ def new_post_md():
     if current_user.can(Permission.WRITE) and form.validate_on_submit():
         title = request.form.get('title')
         body = form.body.data
-        if request.form.get('anonymous')=="on":
+        if request.form.get('anonymous') == "on":
             is_anonymous = True
         else:
             is_anonymous = False
@@ -521,10 +535,9 @@ def new_post_md():
                     body_html=body_html,
                     is_anonymous=is_anonymous,
                     author=current_user._get_current_object())
-        print(post.is_anonymous)
         db.session.add(post)
         db.session.commit()
-        if post.is_anonymous==True:
+        if post.is_anonymous == True:
             flash("You have just posted a posting anonymously", 'success')
         else:
             flash("You have just posted a posting", 'success')
