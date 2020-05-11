@@ -1,7 +1,9 @@
-from flask import render_template, redirect, url_for, flash
+from flask import render_template, redirect, url_for, flash, request
+from flask_login import current_user
+
 from . import organization
 from .. import db
-from ..models import Organization, User
+from ..models import Organization, User, Activity
 from ..email import send_email
 from .forms import RegisterOrganizationForm
 
@@ -23,7 +25,8 @@ def register_organization():
                                     leader_student=form.leader.data,
                                     phone=form.phone.data,
                                     college=form.college.data,
-                                    email=form.email.data)
+                                    email=form.email.data
+                                    )
         db.session.add(organization)
         db.session.commit()
         token = organization.generate_confirmation_token()
@@ -70,3 +73,26 @@ def result_fail(oid):
                'mail_organization/fail_register', token=token)
     flash('A register_fail email has been sent to organization by email.')
     return redirect(url_for('auth.login'))
+
+
+@organization.route('/new_activity', methods=['GET', 'POST'])
+def organization_activity():
+    if request.method == 'GET':
+        return render_template('organization/new_organization.html')
+    if request.method == 'POST':
+        if request.form["is"] == "Yes":
+            is_Agree = True
+        else:
+            is_Agree = False
+        acti = Activity(activity_name=request.form["activity_name"],
+                        activity_time=request.form["activity_time"],
+                        activity_place=request.form["activity_place"],
+                        activity_describe=request.form["activity_describe"],
+                        Organizer=request.form["organizer"],
+                        is_schoolAgree=is_Agree,
+                        announcer_id=current_user.id
+                        )
+        db.session.add(acti)
+        db.session.commit()
+        flash('Your Activity Announcement has been released!')
+        return redirect(url_for('main.index'))

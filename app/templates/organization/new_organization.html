@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+
+{% block title %}New Organization Activity{% endblock %}
+
+
+
+{% block body %}
+
+            <div class="container">
+
+                <form class="form-transaction" method="post" style="margin: 75px auto 0 auto;">
+                    <h1 class="form-transaction-heading">Activity Information</h1>
+                    <label class="sr-only">Activity Name</label>
+                    <div class="col-sm-7">
+                        <input name="activity_name" id="activity_name" type="text" class="form-control" placeholder="Activity Name">
+                    </div>
+                    <label class="sr-only">Activity Time</label>
+                    <div class="col-sm-7">
+                        <input name="activity_time" id="activity_time" type="text" class="form-control" placeholder="Activity Time">
+                    </div>
+                    <label class="sr-only">Activity Place</label>
+                    <div class="col-sm-7">
+                        <input name="activity_place" id="activity_place" type="text" class="form-control" placeholder="Activity Place">
+                    </div>
+                    <label class="sr-only">Activity Describe</label>
+                    <div class="col-sm-7">
+                        <input name="activity_describe" id="activity_describe" type="text" class="form-control" placeholder="Activity Describe">
+                    </div>
+                    <label class="sr-only">Organizer</label>
+                    <div class="col-sm-7">
+                        <input name="organizer" id="organizer" type="text" class="form-control" placeholder="Organizer">
+                    </div>
+
+                    <label >Whether approved by the school</label>
+                    <select name="is" id="is">
+                                    <option selected="selected" value=""></option>
+                                    <option>Yes</option>
+                                    <option>No</option>
+                    </select>
+
+                    <div class="col-sm-offset-5 col-sm-7 submit ">
+                        <button type="submit" class="btn btn-success" >Submit</button>
+                    </div>
+                </form>
+
+
+            </div>
+
+{% endblock %}

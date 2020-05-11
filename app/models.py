@@ -128,6 +128,8 @@ class User(UserMixin, db.Model):
     notifications = db.relationship('Notification', back_populates='receiver', lazy='dynamic')
     # 交易
     transactions = db.relationship('Transaction', back_populates='seller', lazy='dynamic')
+    # Activity
+    activities = db.relationship('Activity', back_populates='announcer', lazy='dynamic')
 
     @staticmethod
     def add_self_follows():
@@ -442,4 +444,21 @@ class Transaction(db.Model):
     seller_WeChat = db.Column(db.Text, nullable=False)
     seller_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     seller = db.relationship('User', back_populates='transactions', lazy='joined')
+
+
+class Activity(db.Model):
+    __tablename__ = 'Activity'
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+
+    activity_name = db.Column(db.String(256), nullable=False)
+    activity_time = db.Column(db.String(256), nullable=False)
+    activity_place = db.Column(db.String(256), nullable=False)
+    activity_describe = db.Column(db.String(256), nullable=False)
+    Organizer = db.Column(db.String(256), nullable=False)
+    is_schoolAgree = db.Column(db.Boolean, nullable=False)
+
+    announcer_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    announcer = db.relationship('User', back_populates='activities', lazy='joined')
+
 

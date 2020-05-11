@@ -591,7 +591,7 @@ def moderate_disable(id):
 @login_required
 def transaction():
     if request.method == 'GET':
-        return render_template('transaction.html')
+        return render_template('transaction/transaction.html')
     if request.method == 'POST':
         trans = Transaction(item_name=request.form["item_name"],
                             item_describe=request.form["item_describe"],
@@ -615,6 +615,6 @@ def show_transaction():
         page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
     transactions = pagination.items
-    return render_template('transaction_center.html', transactions=transactions,
+    return render_template('transaction/transaction_center.html', transactions=transactions,
                            pagination=pagination)
 
