@@ -27,20 +27,20 @@
 <div class="post-tabs">
         <ul class="nav nav-tabs">
             <li>
-                <a href="{{ url_for('.query') }}">AllInformation</a>
+                <a href="{{ url_for('.query_combination') }}">Combination</a>
             </li>
             <li>
-                <a href="{{ url_for('.query_relevance', inf=request.form["inf"]) }}">Relevance</a>
+                <a href="{{ url_for('.query_relevance') }}">Relevance</a>
             </li>
             <li>
-                <a href="{{ url_for('.query_newest', inf=request.form["inf"]) }}">Newest</a>
+                <a href="{{ url_for('.query_newest') }}">Newest</a>
             </li>
             <li>
-                <a href="{{ url_for('.query_hottest', inf=request.form["inf"]) }}">Hottest</a>
+                <a href="{{ url_for('.query_hottest') }}">Hottest</a>
             </li>
-            <li>
-                <a href="{{ url_for('.query_user', inf=request.form["inf"]) }}">User</a>
-            </li>
+{#            <li>#}
+{#                <a href="{{ url_for('.query_user') }}">User</a>#}
+{#            </li>#}
         </ul>
     {% include '_posts.html' %}
 </div>

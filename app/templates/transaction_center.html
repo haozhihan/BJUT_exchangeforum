@@ -39,6 +39,9 @@
                             {{ transaction.seller_WeChat }}
                         </p>
                       </div>
+                      {% if transaction.is_sold %}
+                            <div>This item has been sold!</div>
+                      {% endif %}
                   </div>
               </div>
 
@@ -59,6 +62,13 @@
                             <a href="{{ url_for('.user', username=transaction.seller.username) }}"> {{ transaction.seller.username }} </a>
                         </span>
                         <span class="post-date"><small>{{ moment(transaction.timestamp).fromNow() }}</small></span>
+
+                        {% if current_user == transaction.seller %}
+{#                            <a class="icon-btn" style="float:right; margin-right: 15px" href="{{ url_for('main.sold_item', item_id=transaction.id)}}">#}
+                            <a href="{{ url_for('main.sold_item', item_id=transaction.id)}}">
+                                <span>sold</span>
+                            </a>
+                        {% endif %}
 
                     </div>
               </div>
