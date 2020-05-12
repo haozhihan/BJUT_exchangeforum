@@ -350,6 +350,7 @@ class Post(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     important = db.Column(db.INT, default=0)
+    recent_activity = db.Column(db.DateTime, index=True, default=datetime.utcnow())
     comments = db.relationship('Comment', back_populates='post', cascade='all, delete-orphan', lazy='dynamic')
     liker = db.relationship('Like', back_populates='liked_post', lazy='dynamic', cascade='all')
     is_anonymous = db.Column(db.Boolean, default=False)
