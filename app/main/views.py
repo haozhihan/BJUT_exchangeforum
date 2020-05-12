@@ -273,17 +273,29 @@ def post(id):
         if comment.replied_id:
             replied = Comment.query.get_or_404(comment.replied_id)
             comment.replied = replied
-            action = " has replied to your comment in the posting "
+            action1 = " has replied<"+comment.body+"> to your comment<"+comment.replied.body+"> in the posting "
+
+            n1 = Notification(receiver_id=comment.replied.author_id, timestamp=datetime.utcnow(),
+                             username=username, action=action1,
+                             object=post.title, object_id=post.id)
+            db.session.add(n1)
+            db.session.commit()
+            action2 = " has commented<" + comment.body + "> on your posting"
+            n2 = Notification(receiver_id=post.author_id, timestamp=datetime.utcnow(),
+                             username=username, action=action2,
+                             object=post.title, object_id=post.id)
+            db.session.add(n2)
+            db.session.commit()
         else:
-            action = " has commented on your posting"
-        """传入通知信息"""
-        n = Notification(receiver_id=post.author_id, timestamp=datetime.utcnow(),
+            action = " has commented<"+comment.body+"> on your posting"
+            """传入通知信息"""
+            n = Notification(receiver_id=post.author_id, timestamp=datetime.utcnow(),
                          username=username, action=action,
                          object=post.title, object_id=post.id)
-        db.session.add(comment)
-        db.session.add(n)
-        db.session.commit()
+            db.session.add(n)
+            db.session.commit()
 
+        db.session.add(comment)
         if comment.is_anonymous:
             flash('Comment published anonymously')
         else:

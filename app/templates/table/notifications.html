@@ -47,10 +47,8 @@
                             <h3 class="panel-title" style="display:inline;">Followers</h3>
                         {% elif notice.action == ' has liked your posting ' %}
                             <h3 class="panel-title" style="display:inline;">Likers</h3>
-                        {% elif notice.action == ' has commented on your posting' %}
+                        {% else %}
                             <h3 class="panel-title" style="display:inline;">Comments</h3>
-                        {% elif notice.action == ' has replied to your comment in the posting ' %}
-                            <h3 class="panel-title" style="display:inline;">Reply Your Comments</h3>
                         {% endif %}
                     </a>
 
