@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 from operator import or_
-from flask import render_template, redirect, url_for, abort, flash, request, \
+from flask import render_template, redirect, url_for, flash, request, \
     current_app, make_response
 from flask_login import login_required, current_user
 from sqlalchemy.sql.functions import func
@@ -15,35 +15,87 @@ from ..decorators import permission_required
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
-    form = PostForm()
-    if current_user.can(Permission.WRITE) and form.validate_on_submit():
-        post = Post(title=form.title.data,
-                    body=form.body.data,
-                    author=current_user._get_current_object())
-        post.recent_activity = datetime.utcnow()
-        db.session.add(post)
-        db.session.commit()
-        return redirect(url_for('.index'))
-    page = request.args.get('page', 1, type=int)
-    show_followed = False
-    if current_user.is_authenticated:
-        show_followed = bool(request.cookies.get('show_followed', ''))
-    if show_followed:
-        query = current_user.followed_posts
-    else:
-        query = Post.query
-    pagination = query.order_by(Post.recent_activity.desc()).paginate(
-        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-        error_out=False)
-    posts = pagination.items
-    return render_template('index.html', form=form, posts=posts,
-                           show_followed=show_followed, pagination=pagination)
-
-
-@main.route('/query', methods=['GET', 'POST'])
-def query():
     if request.method == 'GET':
-        return render_template('querypost.html')
+        page = request.args.get('page', 1, type=int)
+        show_followed = False
+        if current_user.is_authenticated:
+            show_followed = bool(request.cookies.get('show_followed', ''))
+        if show_followed:
+            query = current_user.followed_posts
+        else:
+            query = Post.query
+        pagination = query.order_by(Post.recent_activity.desc()).paginate(
+            page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+            error_out=False)
+        posts = pagination.items
+        return render_template('index.html', posts=posts, show_followed=show_followed, pagination=pagination)
+    else :
+        inf = request.form["search"]
+        print(inf)
+        return redirect(url_for('.query', content=inf))
+
+
+
+@main.route('/query/<content>', methods=['GET', 'POST'])
+def query(content):
+    if request.method == 'GET':
+        print("get")
+        inf = content
+        search_result = "%" + inf + "%"
+        result = Post.query.filter(or_(Post.title.like(search_result), Post.body.like(search_result)))
+        for item in result:
+            item.important = 0
+            sentence = item.title + item.body
+            counts = 0
+            list1 = sentence.split(" ")
+            for y in range(len(list1)):
+                if list1[y].find(inf) != -1:
+                    counts = counts + 1
+            item.important = counts
+        page = request.args.get('page', 1, type=int)
+        show_newest = False
+        show_hottest = False
+        show_relevance = False
+        if current_user.is_authenticated:
+            show_newest = bool(request.cookies.get('show_newest', ''))
+            show_hottest = bool(request.cookies.get('show_hottest', ''))
+            show_relevance = bool(request.cookies.get('show_relevance', ''))
+        if show_relevance and not show_newest and not show_hottest:
+            pagination = result.order_by(Post.important.desc()).paginate(
+                page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+                error_out=False)
+        elif show_newest and not show_hottest and not show_relevance:
+            pagination = result.order_by(Post.timestamp.desc()).paginate(
+                page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+                error_out=False)
+        elif show_hottest and not show_relevance and not show_newest:
+            for item in result:
+                item.important = 0
+                com_num = db.session.query(func.count(Comment.id)).filter_by(post_id=item.id).scalar()
+                item.important = com_num
+            pagination = result.order_by(Post.important.desc()).paginate(
+                page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+                error_out=False)
+        else:
+            for item in result:
+                item.important = 0
+                sentence = item.title + item.body
+                counts = 0
+                list1 = sentence.split(" ")
+                for y in range(len(list1)):
+                    if list1[y].find(inf) != -1:
+                        counts = counts + 1
+                com_num = db.session.query(func.count(Comment.id)).filter_by(post_id=item.id).scalar()
+                li_num = db.session.query(func.count(Like.liker_id)).filter_by(liked_post_id=item.id).scalar()
+                item.important = counts * 4 + 3 * com_num + 3 * li_num
+            pagination = result.order_by(Post.important.desc()).paginate(
+                page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+                error_out=False)
+        posts = pagination.items
+        print(show_newest + show_relevance + show_hottest)
+        for item in result:
+            item.important = 0
+        return render_template('querypost.html', posts=posts, title="Result of query", inf=content, pagination=pagination)
     if request.method == 'POST':
         inf = request.form["inf"]
         search_result = "%" + inf + "%"
@@ -100,39 +152,39 @@ def query():
         print(show_newest + show_relevance + show_hottest)
         for item in result:
             item.important = 0
-        return render_template('querypost.html', posts=posts, title="Result of query", pagination=pagination)
+        return render_template('querypost.html', posts=posts, title="Result of query",inf=inf, pagination=pagination)
 
 
-@main.route('/query_combination')
-def query_combination():
-    resp = make_response(redirect(url_for('.query')))
+@main.route('/query_combination/<inf>')
+def query_combination(inf):
+    resp = make_response(redirect(url_for('.query', content=inf)))
     resp.set_cookie('show_relevance', '', max_age=30 * 24 * 60 * 60)
     resp.set_cookie('show_newest', '', max_age=30 * 24 * 60 * 60)
     resp.set_cookie('show_hottest', '', max_age=30 * 24 * 60 * 60)
     return resp
 
 
-@main.route('/query_newest')
-def query_newest():
-    resp = make_response(redirect(url_for('.query')))
+@main.route('/query_newest/<inf>')
+def query_newest(inf):
+    resp = make_response(redirect(url_for('.query', content=inf)))
     resp.set_cookie('show_relevance', '', max_age=30 * 24 * 60 * 60)
     resp.set_cookie('show_newest', '1', max_age=30 * 24 * 60 * 60)
     resp.set_cookie('show_hottest', '', max_age=30 * 24 * 60 * 60)
     return resp
 
 
-@main.route('/query_hottest')
-def query_hottest():
-    resp = make_response(redirect(url_for('.query')))
+@main.route('/query_hottest/<inf>')
+def query_hottest(inf):
+    resp = make_response(redirect(url_for('.query',content=inf)))
     resp.set_cookie('show_relevance', '', max_age=30 * 24 * 60 * 60)
     resp.set_cookie('show_newest', '', max_age=30 * 24 * 60 * 60)
     resp.set_cookie('show_hottest', '1', max_age=30 * 24 * 60 * 60)
     return resp
 
 
-@main.route('/query_relevance')
-def query_relevance():
-    resp = make_response(redirect(url_for('.query')))
+@main.route('/query_relevance/<inf>')
+def query_relevance(inf):
+    resp = make_response(redirect(url_for('.query',content=inf)))
     resp.set_cookie('show_relevance', '1', max_age=30 * 24 * 60 * 60)
     resp.set_cookie('show_newest', '', max_age=30 * 24 * 60 * 60)
     resp.set_cookie('show_hottest', '', max_age=30 * 24 * 60 * 60)

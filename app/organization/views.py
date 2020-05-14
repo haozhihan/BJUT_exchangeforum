@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, flash, request
+from flask import render_template, redirect, url_for, flash, request, current_app
 from flask_login import current_user
 
 from . import organization
@@ -96,3 +96,13 @@ def organization_activity():
         db.session.commit()
         flash('Your Activity Announcement has been released!')
         return redirect(url_for('main.index'))
+
+@organization.route('/activity-list', methods=['GET', 'POST'])
+def show_transaction():
+    page = request.args.get('page', 1, type=int)
+    pagination = Activity.query.order_by(Activity.timestamp.desc()).paginate(
+        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+        error_out=False)
+    transactions = pagination.items
+    return render_template('organization/activity_center.html', transactions=transactions,
+                           pagination=pagination)

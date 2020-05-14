@@ -6,8 +6,10 @@
 
 
 {% block page_content %}
+
 <div class="page-header">
     <h1>{{ title }}</h1>
+    <h1>{{ inf }}</h1>
 </div>
 
 
@@ -16,7 +18,7 @@
         <div class="form-group" style="margin-top: 15px; ">
             <label for="post" class="col-sm-2 control-label text-left">Query</label>
             <div class="col-sm-10">
-                <input name="inf" type="text" class="form-control " id="inf" placeholder="Search">
+                <input name="inf" value="{{ inf }}" type="text" class="form-control " id="inf" placeholder="Search" >
             </div>
         </div>
         <button type="submit" class="btn btn-default">Submit</button>
@@ -27,67 +29,18 @@
 <div class="post-tabs">
         <ul class="nav nav-tabs">
             <li>
-                <a href="{{ url_for('.query_combination') }}">Combination</a>
+                <a href="{{ url_for('.query_combination',inf = inf ) }}">Combination</a>
             </li>
             <li>
-                <a href="{{ url_for('.query_relevance') }}">Relevance</a>
+                <a href="{{ url_for('.query_relevance',inf = inf ) }}">Relevance</a>
             </li>
             <li>
-                <a href="{{ url_for('.query_newest') }}">Newest</a>
+                <a href="{{ url_for('.query_newest',inf = inf ) }}">Newest</a>
             </li>
             <li>
-                <a href="{{ url_for('.query_hottest') }}">Hottest</a>
+                <a href="{{ url_for('.query_hottest',inf = inf) }}">Hottest</a>
             </li>
-{#            <li>#}
-{#                <a href="{{ url_for('.query_user') }}">User</a>#}
-{#            </li>#}
         </ul>
     {% include '_posts.html' %}
 </div>
-
-{#<table class="table table-hover results">#}
-{#    <thead><tr><th>Result</th><th>Since</th></tr></thead>#}
-{#    {% for item in query %}#}
-{#    <tr>#}
-{#        <td>#}
-{#            <div class="post-box">#}
-{#                <div class="post-thumbnail col-sm-2">#}
-{#                    <a class="head-photo" href="{{ url_for('.user', username=item.author.username) }}">#}
-{#                        <img class="img-rounded profile-thumbnail" src="{{ item.author.gravatar(size=40) }}">#}
-{#                    </a>#}
-{#                    <div class="post-author">#}
-{#                        <a href="{{ url_for('.user', username=item.author.username) }}">{{ item.author.username }}</a>#}
-{#                    </div>#}
-{#                    <div class="post-date">{{ moment(item.timestamp).fromNow() }}</div>#}
-{#                </div>#}
-{#                <div class="post-content col-sm-offset-1 col-sm-9">#}
-{#                    <h4 class="title">{{ item.title }}</h4>#}
-{#                    <div class="post-body">#}
-{#                        {% if item.body_html %}#}
-{#                            {{ item.body_html | safe }}#}
-{#                        {% else %}#}
-{#                            {{ item.body }}#}
-{#                        {% endif %}#}
-{#                    </div>#}
-{#                    <div class="post-footer col-sm-offset-10">#}
-{#                        {% if current_user == item.author %}#}
-{#                        <a href="{{ url_for('.edit', id=item.id) }}">#}
-{#                            <span class="label label-primary">Edit</span>#}
-{#                        </a>#}
-{#                        {% endif %}#}
-{#                        <a href="{{ url_for('.post', id=item.id) }}">#}
-{#                            <span class="label label-default">Permalink</span>#}
-{#                        </a>#}
-{#                        <a href="{{ url_for('.post', id=item.id) }}#comments">#}
-{#                            <span class="label label-primary">#}
-{#                                Comments#}
-{#                            </span>#}
-{#                        </a>#}
-{#                    </div>#}
-{#                </div>#}
-{#            </div>#}
-{#        </td>#}
-{#    </tr>#}
-{#    {% endfor %}#}
-{#</table>#}
 {% endblock %}
