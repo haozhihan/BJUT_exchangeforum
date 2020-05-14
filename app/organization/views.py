@@ -34,7 +34,7 @@ def register_organization():
                    'mail_organization/To_administrator', organization=organization, token=token)
         flash('A register organization-account email has been sent to administrator.')
         return redirect(url_for('auth.login'))
-    return render_template('organization/register2.html', form=form)
+    return render_template('organization/organization_register.html', form=form)
 
 
 @organization.route('/send_result/<oid>', methods=['GET', 'POST'])
@@ -98,7 +98,7 @@ def organization_activity():
         return redirect(url_for('main.index'))
 
 @organization.route('/activity-list', methods=['GET', 'POST'])
-def show_transaction():
+def show_activity():
     page = request.args.get('page', 1, type=int)
     pagination = Activity.query.order_by(Activity.timestamp.desc()).paginate(
         page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],

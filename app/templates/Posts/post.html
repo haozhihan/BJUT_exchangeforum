@@ -126,7 +126,7 @@
             <h3 id="comments">Comments</h3>
 
 
-            {% include '_comments.html' %}
+            {% include 'Posts/_comments.html' %}
 
             {% if current_user.can(Permission.COMMENT) %}
                 <div class="comment-form">

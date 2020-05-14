@@ -349,7 +349,7 @@ def post(id):
         else:
             flash('Comment published successfully')
         return redirect(url_for('.post', id=post.id))
-    return render_template('post.html', posts=[post], form=form,
+    return render_template('Posts/post.html', posts=[post], form=form,
                            comments=comments, pagination=pagination)
 
 
@@ -653,7 +653,7 @@ def moderate_disable(id):
 @login_required
 def transaction():
     if request.method == 'GET':
-        return render_template('transaction/transaction.html')
+        return render_template('transaction/new_transaction.html')
     if request.method == 'POST':
         trans = Transaction(item_name=request.form["item_name"],
                             item_describe=request.form["item_describe"],

@@ -89,6 +89,7 @@
 
 {#<!--         <p>{{ user.posts.count() }} blog posts.</p>-->#}
         <div class="tabbable">
+
 				<ul class="nav post-nav">
 					<li class="active" id="btn-1">
 						 <a href="#panel-1" data-toggle="tab">Posts</a>
@@ -96,54 +97,117 @@
 					<li id="btn-2">
 						 <a href="#panel-2" data-toggle="tab">Likes</a>
 					</li>
+                    {% if current_user.can(Permission.ACTIVITY) %}
+                        <li id="btn-4">
+                            <a href="#panel-4" data-toggle="tab">Announcements</a>
+					    </li>
+                    {% else %}
+                        <li id="btn-3">
+                            <a href="#panel-3" data-toggle="tab">Transactions</a>
+                        </li>
+                    {% endif %}
 				</ul>
+
 				<div class="tab-content">
 					<div class="tab-pane active" id="panel-1">
-						{% include '_postsInprofile.html' %}
+						{% include 'Posts/_postsInprofile.html' %}
 					</div>
 					<div class="tab-pane" id="panel-2">
-                        {% include '_postsLikingInProfile.html' %}
+                        {% include 'Posts/_postsLikingInProfile.html' %}
 					</div>
+
+                    {% if current_user.can(Permission.ACTIVITY) %}
+                        <div class="tab-pane" id="panel-4">
+                            {% include 'organization/_activitiesInProfile.html' %}
+                        </div>
+                    {% else %}
+                        <div class="tab-pane" id="panel-3">
+                            {% include 'transaction/_transactionsInProfile.html' %}
+                        </div>
+                    {% endif %}
+
 				</div>
 			</div>
-
         {% if pagination %}
         <div class="pagination">
             {{ macros.pagination_widget(pagination, '.user', username=user.username) }}
         </div>
         {% endif %}
+
     </div>
 </div>
 
-<script>
-    var l1 = document.getElementById('btn-1')
-    var l2 = document.getElementById('btn-2')
-    var content1 = document.getElementById('panel-1')
-    var content2 = document.getElementById('panel-2')
+    <script>
+        var l1 = document.getElementById('btn-1')
+        var l2 = document.getElementById('btn-2')
+        var l3 = document.getElementById('btn-3')
+        var l4 = document.getElementById('btn-4')
+        var content1 = document.getElementById('panel-1')
+        var content2 = document.getElementById('panel-2')
+        var content3 = document.getElementById('panel-3')
+        var content4 = document.getElementById('panel-4')
 
-    l1.onclick = function () {
-        this.className = 'active'
-        content1.className = 'active'
-        l2.className = ''
-        content2.className = 'tab-pane'
-    }
+        l1.onclick = function () {
+            this.className = 'active'
+            content1.className = 'active'
 
-    l2.onclick = function () {
-        this.className = 'active'
-        content2.className = 'active'
-        l1.className = ''
-        content1.className = 'tab-pane'
-    }
-</script>
-<script>
-    var btn = document.getElementById('unfollow')
+            l2.className = ''
+            content2.className = 'tab-pane'
+            l3.className = ''
+            content3.className = 'tab-pane'
+            l4.className = ''
+            content4.className = 'tab-pane'
+        }
 
-    btn.onmouseover = function () {
-        btn.innerHTML = "Unfollow"
-    }
+        l2.onclick = function () {
+            this.className = 'active'
+            content2.className = 'active'
 
-    btn.onmouseout = function () {
-        btn.innerHTML = "Followed"
-    }
-</script>
+            l1.className = ''
+            content1.className = 'tab-pane'
+            l3.className = ''
+            content3.className = 'tab-pane'
+            l4.className = ''
+            content4.className = 'tab-pane'
+        }
+
+        l3.onclick = function () {
+            this.className = 'active'
+            content3.className = 'active'
+
+            l1.className = ''
+            content1.className = 'tab-pane'
+            l2.className = ''
+            content2.className = 'tab-pane'
+            l4.className = ''
+            content4.className = 'tab-pane'
+        }
+
+        l4.onclick = function () {
+            this.className = 'active'
+            content4.className = 'active'
+
+            l1.className = ''
+            content1.className = 'tab-pane'
+            l2.className = ''
+            content2.className = 'tab-pane'
+            l3.className = ''
+            content3.className = 'tab-pane'
+        }
+
+
+    </script>
+
+    <script>
+        var btn = document.getElementById('unfollow')
+
+        btn.onmouseover = function () {
+            btn.innerHTML = "Unfollow"
+        }
+
+        btn.onmouseout = function () {
+            btn.innerHTML = "Followed"
+        }
+    </script>
+
 {% endblock %}
