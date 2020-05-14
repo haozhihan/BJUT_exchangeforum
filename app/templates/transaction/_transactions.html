@@ -1,31 +1,67 @@
+
 {% for transaction in transactions %}
     <li class="transaction" id="{{ transaction.id }}">
+
+
+            <div class="panel panel-warning">
+                <!-- Default panel contents -->
+                <div class="panel-heading">
+                    <h3 class="item-name" style="display: inline">
+                        <a>
+                            <strong>Item Name:</strong> {{ transaction.item_name }}
+                        </a>
+                    </h3>
+                    {% if transaction.is_sold %}
+                            <h3 style="display: inline; float: right">Already Sold!</h3>
+                    {% endif %}
+                </div>
+                <div class="panel-body">
+                    <p><strong>Item Describe:</strong> {{ transaction.item_describe }}
+                        Some default panel content here. Nulla vitae elit libero, a pharetra augue.
+                        Aenean lacinia bibendum nulla sed consectetur. Aenean eu leo quam.
+                        Pellentesque ornare sem lacinia quam venenatis vestibulum.
+                        Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+                </div>
+
+              <!-- List group -->
+                <ul class="list-group">
+                    <li class="list-group-item">Transaction Link: {{ transaction.link }}</li>
+                    <li class="list-group-item">Transaction Mode: {{ transaction.transaction_mode }}</li>
+                    <li class="list-group-item">Seller WeChat: {{ transaction.seller_WeChat }}</li>
+                </ul>
+            </div>
+
+
+
+
+
+
         <div class="panel panel-default">
               <div class="panel-name">
                   <div class="item-content col-sm-12">
                         <h3 class="item-name" style="margin-top: 7px">
                             <a>
-                                {{ transaction.item_name }}
+                               Item Name: {{ transaction.item_name }}
                             </a>
                         </h3>
                       <div class="item-description">
                         <p>
-                            {{ transaction.item_describe }}
+                            Item Describe: {{ transaction.item_describe }}
                         </p>
                       </div>
                       <div class="link">
                         <p>
-                            {{ transaction.link }}
+                            Transaction Link: {{ transaction.link }}
                         </p>
                       </div>
                       <div class="mode">
                         <p>
-                            {{ transaction.transaction_mode }}
+                            Transaction Mode: {{ transaction.transaction_mode }}
                         </p>
                       </div>
                          <div class="contract">
                         <p>
-                            {{ transaction.seller_WeChat }}
+                            Seller WeChat: {{ transaction.seller_WeChat }}
                         </p>
                       </div>
                       {% if transaction.is_sold %}
@@ -62,5 +98,5 @@
                     </div>
               </div>
         </div>
-</ul>
+    </li>
 {% endfor %}

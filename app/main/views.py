@@ -29,9 +29,8 @@ def index():
             error_out=False)
         posts = pagination.items
         return render_template('index.html', posts=posts, show_followed=show_followed, pagination=pagination)
-    else :
+    else:
         inf = request.form["search"]
-        print(inf)
         return redirect(url_for('.query', content=inf))
 
 
