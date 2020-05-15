@@ -86,7 +86,7 @@ def query(content):
         for item in result:
             item.important = 0
         return render_template('querypost.html', relevance=relevance, newest=newest, hottest=hottest,
-                               combination=combination, title="Result of query", inf=content, pagination1=pagination1,
+                               combination=combination, title="Result of query", inf=inf, pagination1=pagination1,
                                pagination2=pagination2, pagination3=pagination3, pagination4=pagination4)
     if request.method == 'POST':
         inf = request.form["inf"]
@@ -137,7 +137,7 @@ def query(content):
         for item in result:
             item.important = 0
         return render_template('querypost.html', relevance=relevance, newest=newest, hottest=hottest,
-                               combination=combination, title="Result of query", inf=content, pagination1=pagination1,
+                               combination=combination, title="Result of query", inf=inf, pagination1=pagination1,
                                pagination2=pagination2, pagination3=pagination3, pagination4=pagination4)
 
 
