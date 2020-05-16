@@ -1,36 +1,65 @@
 {% extends "base.html" %}
 
 {% block title %}Transaction Center{% endblock %}
+{% block head %}
+{{ super() }}
+<!--     Custom styles for this template -->
+    <link href="{{ url_for('static',filename='new-transaction.css') }}" rel="stylesheet">
+{% endblock %}
 
 {% block page_content %}
 
 <div class="container">
-    <form class="form-transaction" method="post" style="margin: 75px auto 0 auto;">
-        <h1 class="form-transaction-heading">Transaction</h1>
-        <label for="item_name" class="sr-only">Item Name</label>
-        <div class="col-sm-7">
-            <input name="item_name" id="item_name" type="text" class="form-control" placeholder="Item Name">
+    <div class="col-md-12">
+<!--        左侧图片-->
+        <div class="col-md-6 decorate-photo">
         </div>
-        <label for="item_describe" class="sr-only">Item description</label>
-        <div class="col-sm-7">
-            <input name="item_describe" id="item_describe" type="text" class="form-control" placeholder="Describe your item here">
+<!--        右侧表单-->
+        <div class="col-md-6">
+            <form class="form-transaction form-horizontal" method="post" style="margin: 75px auto 0 auto;">
+                <h1 class="form-transaction-heading">Transaction</h1>
+<!--                商品名-->
+                <div class="form-group">
+                    <label for="item_name" class="col-sm-3">Item Name</label>
+                    <div class="col-sm-8">
+                        <input name="item_name" id="item_name" type="text" class="form-control" placeholder="Item Name">
+                    </div>
+                </div>
+<!--                商品描述-->
+                <div class="form-group">
+                    <label for="item_describe" class="col-sm-3">Item description</label>
+                    <div class="col-sm-8">
+                        <textarea name="item_describe" id="item_describe" class="form-control describe" rows="4" placeholder="Describe your item here"></textarea>
+                    </div>
+                </div>
+<!--                商品链接-->
+                <div class="form-group">
+                    <label for="link" class="col-sm-3">SaltFish Link</label>
+                    <div class="col-sm-8">
+                        <input name="link" id="link" type="text" class="form-control" placeholder="Your SaltFish link">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="transaction_mode" class="col-sm-3">Transaction Mode</label>
+                    <div class="col-sm-8">
+                        <input name="transaction_mode" id="transaction_mode" type="text" class="form-control" placeholder="Transaction Mode">
+                    </div>
+                </div>
+<!--                联系方式-->
+                <div class="form-group">
+                    <label for="seller_WeChat" class="col-sm-3">Contact Way</label>
+                    <div class="col-sm-8">
+                        <input name="seller_WeChat" id="seller_WeChat" type="text" class="form-control" placeholder="WeChat, QQ...">
+                    </div>
+                </div>
+<!--                提交表单-->
+                <div class="col-sm-offset-3 col-sm-7">
+                    <button type="submit" class="btn btn-success trans-submit" >Submit</button>
+                </div>
+            </form>
         </div>
-        <label for="link" class="sr-only">SaltFish Link</label>
-        <div class="col-sm-7">
-            <input name="link" id="link" type="text" class="form-control" placeholder="Your SaltFish link">
-        </div>
-        <label for="transaction_mode" class="sr-only">Transaction Mode</label>
-        <div class="col-sm-7">
-            <input name="transaction_mode" id="transaction_mode" type="text" class="form-control" placeholder="Transaction Mode">
-        </div>
-        <label for="seller_WeChat" class="sr-only">Seller WeChat</label>
-        <div class="col-sm-7">
-            <input name="seller_WeChat" id="seller_WeChat" type="text" class="form-control" placeholder="Seller WeChat">
-        </div>
-        <div class="col-sm-offset-5 col-sm-7 submit ">
-            <button type="submit" class="btn btn-success" >Submit</button>
-        </div>
-    </form>
+    </div>
 </div>
 
 {% endblock %}
