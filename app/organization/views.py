@@ -78,7 +78,7 @@ def result_fail(oid):
 @organization.route('/new_activity', methods=['GET', 'POST'])
 def organization_activity():
     if request.method == 'GET':
-        return render_template('organization/new_organization.html')
+        return render_template('organization/new_activity.html')
     if request.method == 'POST':
         if request.form["is"] == "Yes":
             is_Agree = True
@@ -103,6 +103,6 @@ def show_activity():
     pagination = Activity.query.order_by(Activity.timestamp.desc()).paginate(
         page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
-    transactions = pagination.items
-    return render_template('organization/activity_center.html', transactions=transactions,
+    activity = pagination.items
+    return render_template('organization/activity_center.html', activities=activity,
                            pagination=pagination)

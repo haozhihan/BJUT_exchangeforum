@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 from . import main
 from .forms import PostForm, UploadPhotoForm, CommentForm, PostMdForm
 from .. import db
-from ..models import Permission, User, Post, Comment, Notification, Like, Transaction
+from ..models import Permission, User, Post, Comment, Notification, Like, Transaction, Activity
 from ..decorators import permission_required
 
 
@@ -17,18 +17,28 @@ from ..decorators import permission_required
 def index():
     if request.method == 'GET':
         page = request.args.get('page', 1, type=int)
-        show_followed = False
-        if current_user.is_authenticated:
-            show_followed = bool(request.cookies.get('show_followed', ''))
-        if show_followed:
-            query = current_user.followed_posts
-        else:
-            query = Post.query
-        pagination = query.order_by(Post.recent_activity.desc()).paginate(
+        query1 = Post.query
+        query2 = Transaction.query
+        query3 = Activity.query
+        query4 = current_user.followed_posts
+        pagination1 = query1.order_by(Post.recent_activity.desc()).paginate(
             page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
             error_out=False)
-        posts = pagination.items
-        return render_template('index.html', posts=posts, show_followed=show_followed, pagination=pagination)
+        pagination2 = query2.order_by(Transaction.timestamp.desc()).paginate(
+            page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+            error_out=False)
+        pagination3 = query3.order_by(Activity.timestamp.desc()).paginate(
+            page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+            error_out=False)
+        pagination4 = query4.order_by(Post.recent_activity.desc()).paginate(
+            page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+            error_out=False)
+        posts1 = pagination1.items
+        transactions = pagination2.items
+        activities = pagination3.items
+        posts4 = pagination4.items
+        return render_template('index.html', posts1=posts1, transactions=transactions, activities=activities, posts4=posts4,
+                               pagination1=pagination1, pagination2=pagination2, pagination3=pagination3, pagination4=pagination4)
     else:
         inf = request.form["search"]
         return redirect(url_for('.query', content=inf))
@@ -623,16 +633,6 @@ def transaction():
         return redirect(url_for('.index'))
 
 
-@main.route('/transaction-list', methods=['GET', 'POST'])
-@login_required
-def show_transaction():
-    page = request.args.get('page', 1, type=int)
-    pagination = Transaction.query.order_by(Transaction.timestamp.desc()).paginate(
-        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-        error_out=False)
-    transactions = pagination.items
-    return render_template('transaction/transaction_center.html', transactions=transactions,
-                           pagination=pagination)
 
 
 @main.route('/sold/<item_id>')

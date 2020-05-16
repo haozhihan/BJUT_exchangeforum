@@ -1,15 +1,9 @@
-
-{% for transaction in transactions %}
     <li class="transaction" id="{{ transaction.id }}">
-
-
         <div class="panel panel-warning">
             <!-- Default panel contents -->
             <div class="panel-heading">
                 <h3 class="item-name" style="display: inline">
-                    <a>
-                        <strong>Item Name:</strong> {{ transaction.item_name }}
-                    </a>
+                    <strong>Item Name:</strong> {{ transaction.item_name }}
                 </h3>
                 {% if transaction.is_sold %}
                         <h2 style="display: inline; float: right">Already Sold!</h2>
@@ -41,16 +35,12 @@
                     <a href="{{ url_for('.user', username=transaction.seller.username) }}"> {{ transaction.seller.username }} </a>
                 </span>
 
-
-                <span class="post-date" style="float: right">{{ moment(transaction.timestamp).fromNow() }}</span>
-                {% if current_user == transaction.seller and not transaction.is_sold  %}
+                <span class="post-date">{{ moment(transaction.timestamp).fromNow() }}</span>
+{#                {% if current_user == transaction.seller and not transaction.is_sold  %}#}
                     <a href="{{ url_for('main.sold_item', item_id=transaction.id)}}" style="float: right">
-                        <span>sold</span>
+                        <span>Already Sold</span>
                     </a>
-                {% endif %}
-
+{#                {% endif %}#}
             </div>
         </div>
-
     </li>
-{% endfor %}

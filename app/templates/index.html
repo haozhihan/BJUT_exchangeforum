@@ -12,40 +12,95 @@
 {% endblock %}
 
 {% block page_content %}
-<!--        帖子浏览界面        -->
-<div class="col-md-8">
-    <div class="page-header">
-        <h1>Hello,
-            {% if current_user.is_authenticated %}
-                {{ current_user.username }}
-            {% else %}
-                Stranger
-            {% endif %}
-            !
-        </h1>
+    <!--        帖子浏览界面        -->
+    <div class="col-md-8">
+
+        <div class="page-header">
+            <h1>Hello,
+                {% if current_user.is_authenticated %}
+                    {{ current_user.username }}
+                {% else %}
+                    Stranger
+                {% endif %}
+                !
+            </h1>
+        </div>
+
+        <div class="tabbable">
+            <ul class="nav nav-tabs">
+                <li class="active" id="btn-1">
+                     <a href="#panel-1" data-toggle="tab">Posts</a>
+                </li>
+                <li id="btn-2">
+                    <a href="#panel-2" data-toggle="tab">Transactions</a>
+                </li>
+                <li id="btn-3">
+                    <a href="#panel-3" data-toggle="tab">Announcements</a>
+                </li>
+
+                {% if current_user.is_authenticated %}
+                <li id="btn-4">
+                     <a href="#panel-4" data-toggle="tab">Follows</a>
+                </li>
+                {% endif %}
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane active" id="panel-1">
+                    <ul class="posts list-unstyled">
+                        {% for post in posts1 %}
+                            {% include 'Posts/_posts.html' %}
+                        {% endfor %}
+                    </ul>
+                    {% if pagination1 %}
+                        <div class="pagination">
+                            {{ macros.pagination_widget(pagination1, '.index') }}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="tab-pane" id="panel-2">
+                    <ul class="posts list-unstyled">
+                        {% for transaction in transactions %}
+                            {% include 'transaction/_transactions.html' %}
+                        {% endfor %}
+                    </ul>
+                    {% if pagination2 %}
+                        <div class="pagination">
+                            {{ macros.pagination_widget(pagination2, '.index') }}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="tab-pane" id="panel-3">
+                    <ul class="posts list-unstyled">
+                        {% for avtivity in activities %}
+                            {% include 'organization/_activities.html' %}
+                        {% endfor %}
+                    </ul>
+                    {% if pagination3 %}
+                        <div class="pagination">
+                            {{ macros.pagination_widget(pagination3, '.index') }}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="tab-pane" id="panel-4">
+                    <ul class="posts list-unstyled">
+                        {% for post in posts4 %}
+                            {% include 'Posts/_posts.html' %}
+                        {% endfor %}
+                    </ul>
+                    {% if pagination4 %}
+                        <div class="pagination">
+                            {{ macros.pagination_widget(pagination4, '.index') }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
 
 
-    <div class="post-tabs">
-        <ul class="nav nav-tabs">
-                <li{% if not show_followed %} class="active"{% endif %}><a href="{{ url_for('.show_all') }}">All</a></li>
-            {% if current_user.is_authenticated %}
-                <li{% if show_followed %} class="active"{% endif %}><a href="{{ url_for('.show_followed') }}">Followers</a></li>
-            {% endif %}
-        </ul>
-        {% include 'Posts/_posts.html' %}
-    </div>
-
-    {% if pagination %}
-    <div class="pagination">
-        {{ macros.pagination_widget(pagination, '.index') }}
-    </div>
-    {% endif %}
-</div>
-
-
+    {#    登录用户的个人资料卡及互动功能#}
     {% if current_user.is_authenticated %}
-        {#    登录用户的个人资料卡及互动功能#}
           <div class="col-md-offset-2 outer">
 
               <div class="thumbnail inner1 col-sm-12">
@@ -70,7 +125,7 @@
               </div>
 
               <div class="inner2  col-sm-12">
-<!--                  发表新帖-->
+                <!--                  发表新帖-->
                   <div class="new-posts col-sm-3">
                       <div>
                           <a href="{{ url_for('.new_post_md')}}">
@@ -84,7 +139,7 @@
                       </div>
                       <div class="icon-word">new post</div>
                   </div>
-<!--                发布二手交易帖子-->
+                <!--                发布二手交易帖子-->
                   <div class="new-transaction col-sm-3">
                       <div>
                           <a href="{{ url_for('.transaction')}}">
@@ -100,7 +155,7 @@
                       </div>
                       <div class="icon-word">transaction</div>
                   </div>
-<!--                  发布活动-->
+                <!--                  发布活动-->
                    <div class="new-activity col-sm-3">
                       <div>
                           <a href="{{ url_for('organization.organization_activity')}}">
@@ -113,52 +168,72 @@
                       <div class="icon-word">activity</div>
                   </div>
               </div>
-
-<!--              二手交易帖子中心-->
-              <div class="inner2  col-sm-12">
-                  <div class="new-post col-sm-2">
-                      <div>
-                          <a href="{{ url_for('.show_transaction')}}">
-                              <svg class="icon" viewBox="0 0 1024 1024" version="1.1" width="40" height="40">
-                                <defs><style type="text/css"></style></defs>
-                                <path d="M824 921H184c-52.9 0-96-43.1-96-96V185c0-52.9 43.1-96 96-96h640c52.9 0 96 43.1 96 96v640c0 52.9-43.1 96-96 96zM184 153c-17.6 0-32 14.4-32 32v640c0 17.6 14.4 32 32 32h640c17.6 0 32-14.4 32-32V185c0-17.6-14.4-32-32-32H184z" fill="#3688FF" p-id="1446"></path>
-                                <path d="M285.9 750.9c-8.4 0-16.5-3.3-22.6-9.4-8.4-8.4-11.5-20.8-7.9-32.2l49.3-157.1c1.5-4.9 4.3-9.4 7.9-13l328.8-328.8c6-6 14.1-9.4 22.6-9.4s16.6 3.4 22.6 9.4l107.8 107.8c12.5 12.5 12.5 32.8 0 45.3L465.6 692.2c-3.6 3.6-8.1 6.4-13 7.9l-157.1 49.3c-3.2 1-6.4 1.5-9.6 1.5z m77.5-172L334.8 670l91.2-28.6 300.6-300.6-62.6-62.5-300.6 300.6z" fill="#3688FF" p-id="1447"></path>
-                                <path d="M486.4 640.3c-8.2 0-16.4-3.1-22.6-9.4L374 541.1c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l89.8 89.8c12.5 12.5 12.5 32.8 0 45.3-6.4 6.3-14.5 9.4-22.7 9.4z" fill="#3688FF" p-id="1448"></path>
-                              </svg>
-                          </a>
-                      </div>
-                      <div class="icon-word">Transaction Center</div>
-                  </div>
-              </div>
-
-
-              <div class="inner2  col-sm-12">
-
-              </div>
-
-              <div class="inner2  col-sm-12">
-                  <div class="new-post col-sm-2">
-                      <div>
-                          <a href="{{ url_for('organization.show_activity')}}">
-                              <svg class="icon" viewBox="0 0 1024 1024" version="1.1" width="40" height="40">
-                                <defs><style type="text/css"></style></defs>
-                                <path d="M824 921H184c-52.9 0-96-43.1-96-96V185c0-52.9 43.1-96 96-96h640c52.9 0 96 43.1 96 96v640c0 52.9-43.1 96-96 96zM184 153c-17.6 0-32 14.4-32 32v640c0 17.6 14.4 32 32 32h640c17.6 0 32-14.4 32-32V185c0-17.6-14.4-32-32-32H184z" fill="#3688FF" p-id="1446"></path>
-                                <path d="M285.9 750.9c-8.4 0-16.5-3.3-22.6-9.4-8.4-8.4-11.5-20.8-7.9-32.2l49.3-157.1c1.5-4.9 4.3-9.4 7.9-13l328.8-328.8c6-6 14.1-9.4 22.6-9.4s16.6 3.4 22.6 9.4l107.8 107.8c12.5 12.5 12.5 32.8 0 45.3L465.6 692.2c-3.6 3.6-8.1 6.4-13 7.9l-157.1 49.3c-3.2 1-6.4 1.5-9.6 1.5z m77.5-172L334.8 670l91.2-28.6 300.6-300.6-62.6-62.5-300.6 300.6z" fill="#3688FF" p-id="1447"></path>
-                                <path d="M486.4 640.3c-8.2 0-16.4-3.1-22.6-9.4L374 541.1c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l89.8 89.8c12.5 12.5 12.5 32.8 0 45.3-6.4 6.3-14.5 9.4-22.7 9.4z" fill="#3688FF" p-id="1448"></path>
-                              </svg>
-                          </a>
-                      </div>
-                      <div class="icon-word">活动中心</div>
-                  </div>
-              </div>
-
           </div>
+
     {% endif %}
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
+    <script>
+        var l1 = document.getElementById('btn-1')
+        var l2 = document.getElementById('btn-2')
+        var l3 = document.getElementById('btn-3')
+        var l4 = document.getElementById('btn-4')
+        var content1 = document.getElementById('panel-1')
+        var content2 = document.getElementById('panel-2')
+        var content3 = document.getElementById('panel-3')
+        var content4 = document.getElementById('panel-4')
+
+        l1.onclick = function () {
+            this.className = 'active'
+            content1.className = 'active'
+
+            l2.className = ''
+            content2.className = 'tab-pane'
+            l3.className = ''
+            content3.className = 'tab-pane'
+            l4.className = ''
+            content4.className = 'tab-pane'
+        }
+
+        l2.onclick = function () {
+            this.className = 'active'
+            content2.className = 'active'
+
+            l1.className = ''
+            content1.className = 'tab-pane'
+            l3.className = ''
+            content3.className = 'tab-pane'
+            l4.className = ''
+            content4.className = 'tab-pane'
+        }
+
+        l3.onclick = function () {
+            this.className = 'active'
+            content3.className = 'active'
+
+            l1.className = ''
+            content1.className = 'tab-pane'
+            l2.className = ''
+            content2.className = 'tab-pane'
+            l4.className = ''
+            content4.className = 'tab-pane'
+        }
+
+        l4.onclick = function () {
+            this.className = 'active'
+            content4.className = 'active'
+
+            l1.className = ''
+            content1.className = 'tab-pane'
+            l2.className = ''
+            content2.className = 'tab-pane'
+            l3.className = ''
+            content3.className = 'tab-pane'
+        }
+
+
+    </script>
 {{ pagedown.include_pagedown() }}
-
-
 {% endblock %}

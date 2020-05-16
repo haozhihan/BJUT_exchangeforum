@@ -1,56 +1,45 @@
-
-{% for transaction in transactions %}
-    <li class="transaction" id="{{ transaction.id }}">
-
-
-        <div class="panel panel-warning">
-            <!-- Default panel contents -->
-            <div class="panel-heading">
-                <h3 class="item-name" style="display: inline">
-                    <a>
-                        <strong>Item Name:</strong> {{ transaction.item_name }}
-                    </a>
-                </h3>
-                {% if transaction.is_sold %}
-                        <h2 style="display: inline; float: right">Already Sold!</h2>
-                {% endif %}
-            </div>
-            <div class="panel-body">
-                <p><strong>Item Describe:</strong>{{ transaction.item_describe }}
-                    Some default panel content here. Nulla vitae elit libero, a pharetra augue.
-                    Aenean lacinia bibendum nulla sed consectetur. Aenean eu leo quam.
-                    Pellentesque ornare sem lacinia quam venenatis vestibulum.
-                    Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-            </div>
-          <!-- List group -->
-            <ul class="list-group">
-                <li class="list-group-item"><strong>Transaction Link:</strong> {{ transaction.link }}</li>
-                <li class="list-group-item"><strong>Transaction Mode:</strong> {{ transaction.transaction_mode }}</li>
-                <li class="list-group-item"><strong>Seller WeChat:</strong> {{ transaction.seller_WeChat }}</li>
-            </ul>
-
-            <div class="panel-footer">
-                 <a class="head-photo" href="{{ url_for('.user', username=transaction.seller.username) }}">
-                     {% if transaction.seller.avatar_img %}
-                         <img class="img-rounded profile-thumbnail" src="{{ transaction.seller.avatar_img }}" alt="avatar"  style="width: 25px; height: 25px">
-                     {% else %}
-                         <img class="img-rounded profile-thumbnail" src="{{ transaction.seller.gravatar(size=25) }}" alt="avatar">
-                     {% endif %}
+<li class="avtivity" id="{{  avtivity.id }}">
+    <div class="panel panel-warning">
+        <!-- Default panel contents -->
+        <div class="panel-heading">
+            <h3 class="item-name" style="display: inline">
+                <a>
+                    {{ avtivity.activity_name }}
                 </a>
-                <span class="post-author">
-                    <a href="{{ url_for('.user', username=transaction.seller.username) }}"> {{ transaction.seller.username }} </a>
-                </span>
+            </h3>
 
-
-                <span class="post-date" style="float: right">{{ moment(transaction.timestamp).fromNow() }}</span>
-                {% if current_user == transaction.seller and not transaction.is_sold  %}
-                    <a href="{{ url_for('main.sold_item', item_id=transaction.id)}}" style="float: right">
-                        <span>sold</span>
-                    </a>
-                {% endif %}
-
-            </div>
         </div>
+        <div class="panel-body">
+            <p><strong>Details:</strong>{{ avtivity.activity_describe }}
+                Some default panel content here. Nulla vitae elit libero, a pharetra augue.
+                Aenean lacinia bibendum nulla sed consectetur. Aenean eu leo quam.
+                Pellentesque ornare sem lacinia quam venenatis vestibulum.
+                Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+        </div>
+      <!-- List group -->
+        <ul class="list-group">
+            <li class="list-group-item"><strong>Time</strong> {{ avtivity.activity_time }}</li>
+            <li class="list-group-item"><strong>Place</strong> {{ avtivity.activity_place }}</li>
+            <li class="list-group-item"><strong>Seller WeChat:</strong> {{ avtivity.seller_WeChat }}</li>
+        </ul>
 
-    </li>
-{% endfor %}
+        <div class="panel-footer">
+             <a class="head-photo" href="{{ url_for('.user', username=avtivity.seller.username) }}">
+                 {% if transaction.seller.avatar_img %}
+                     <img class="img-rounded profile-thumbnail" src="{{ avtivity.seller.avatar_img }}" alt="avatar"  style="width: 25px; height: 25px">
+                 {% else %}
+                     <img class="img-rounded profile-thumbnail" src="{{ avtivity.seller.gravatar(size=25) }}" alt="avatar">
+                 {% endif %}
+            </a>
+            <span class="post-author">
+                <a href="{{ url_for('.user', username=avtivity.seller.username) }}"> {{ avtivity.seller.username }} </a>
+            </span>
+            <span class="post-date" style="float: right">{{ moment(avtivity.timestamp).fromNow() }}</span>
+{#            {% if current_user == avtivity.seller and not avtivity.is_sold  %}#}
+{#                <a href="{{ url_for('main.sold_item', item_id=avtivity.id)}}" style="float: right">#}
+{#                    <span>sold</span>#}
+{#                </a>#}
+{#            {% endif %}#}
+        </div>
+    </div>
+</li>
