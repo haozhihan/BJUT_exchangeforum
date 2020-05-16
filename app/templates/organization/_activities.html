@@ -1,13 +1,10 @@
 <li class="avtivity" id="{{  avtivity.id }}">
-    <div class="panel panel-warning">
+    <div class="panel panel-info">
         <!-- Default panel contents -->
         <div class="panel-heading">
             <h3 class="item-name" style="display: inline">
-                <a>
-                    {{ avtivity.activity_name }}
-                </a>
+                {{ avtivity.activity_name }}
             </h3>
-
         </div>
         <div class="panel-body">
             <p><strong>Details:</strong>{{ avtivity.activity_describe }}
@@ -16,30 +13,36 @@
                 Pellentesque ornare sem lacinia quam venenatis vestibulum.
                 Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
         </div>
-      <!-- List group -->
+        <!-- List group -->
         <ul class="list-group">
             <li class="list-group-item"><strong>Time</strong> {{ avtivity.activity_time }}</li>
             <li class="list-group-item"><strong>Place</strong> {{ avtivity.activity_place }}</li>
-            <li class="list-group-item"><strong>Seller WeChat:</strong> {{ avtivity.seller_WeChat }}</li>
+            <li class="list-group-item"><strong>Organizer:</strong> {{ avtivity.Organizer }}</li>
+            <li class="list-group-item"><strong>Whether it is approved by the school:</strong>
+                {% if avtivity.is_schoolAgree %}
+                    Yes!
+                {% else %}
+                    No
+                {% endif %}
+            </li>
         </ul>
 
         <div class="panel-footer">
-             <a class="head-photo" href="{{ url_for('.user', username=avtivity.seller.username) }}">
-                 {% if transaction.seller.avatar_img %}
-                     <img class="img-rounded profile-thumbnail" src="{{ avtivity.seller.avatar_img }}" alt="avatar"  style="width: 25px; height: 25px">
+             <a class="head-photo" href="{{ url_for('.user', username=avtivity.announcer.username) }}">
+                 {% if avtivity.announcer.avatar_img %}
+                     <img class="img-rounded profile-thumbnail" src="{{ avtivity.announcer.avatar_img }}" alt="avatar"  style="width: 25px; height: 25px">
                  {% else %}
-                     <img class="img-rounded profile-thumbnail" src="{{ avtivity.seller.gravatar(size=25) }}" alt="avatar">
+                     <img class="img-rounded profile-thumbnail" src="{{ avtivity.announcer.gravatar(size=25) }}" alt="avatar">
                  {% endif %}
             </a>
             <span class="post-author">
-                <a href="{{ url_for('.user', username=avtivity.seller.username) }}"> {{ avtivity.seller.username }} </a>
+                <a href="{{ url_for('.user', username=avtivity.announcer.username) }}"> {{ avtivity.announcer.username }} </a>
             </span>
-            <span class="post-date" style="float: right">{{ moment(avtivity.timestamp).fromNow() }}</span>
-{#            {% if current_user == avtivity.seller and not avtivity.is_sold  %}#}
-{#                <a href="{{ url_for('main.sold_item', item_id=avtivity.id)}}" style="float: right">#}
-{#                    <span>sold</span>#}
-{#                </a>#}
-{#            {% endif %}#}
+            <span class="post-date">{{ moment(avtivity.timestamp).fromNow() }}</span>
+
+            <a href="#" style="float: right">
+                <span>WantToGo</span>
+            </a>
         </div>
     </div>
 </li>

@@ -124,19 +124,11 @@
         {#        评论区#}
         <div class="container col-sm-offset-1 col-sm-10 comment-cont">
             <h3 id="comments">Comments</h3>
-
-
             {% include 'Posts/_comments.html' %}
-
             {% if current_user.can(Permission.COMMENT) %}
                 <div class="comment-form">
-
                     <form role="form" class="form-signin"  method="post">
-
-
-
                         <div class="col-md-12">
-
                              {% if request.args.get('reply') %}
                                 <div class="alert alert-warning alert-dismissible" style="margin-top: 20px;margin-bottom: 0px;" id="reply" role="alert">
                                     Reply to <b>{{ request.args.get('author') }}</b>
@@ -144,7 +136,6 @@
                                     <a style="float: right" href="{{ url_for('.post', id=post.id) }}">Cancel</a>
                                 </div>
                              {% endif %}
-
                             <div class="col-md-10" style="padding:0;">
                                 {{ form.csrf_token }}
                                 {{ form.body}}

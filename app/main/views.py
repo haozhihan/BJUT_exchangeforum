@@ -20,7 +20,7 @@ def index():
         query1 = Post.query
         query2 = Transaction.query
         query3 = Activity.query
-        query4 = current_user.followed_posts
+
         pagination1 = query1.order_by(Post.recent_activity.desc()).paginate(
             page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
             error_out=False)
@@ -30,15 +30,20 @@ def index():
         pagination3 = query3.order_by(Activity.timestamp.desc()).paginate(
             page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
             error_out=False)
-        pagination4 = query4.order_by(Post.recent_activity.desc()).paginate(
-            page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-            error_out=False)
         posts1 = pagination1.items
         transactions = pagination2.items
         activities = pagination3.items
-        posts4 = pagination4.items
-        return render_template('index.html', posts1=posts1, transactions=transactions, activities=activities, posts4=posts4,
+        if current_user.is_authenticated:
+            query4 = current_user.followed_posts
+            pagination4 = query4.order_by(Post.recent_activity.desc()).paginate(
+                page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+                error_out=False)
+            posts4 = pagination4.items
+            return render_template('index.html', posts1=posts1, transactions=transactions, activities=activities, posts4=posts4,
                                pagination1=pagination1, pagination2=pagination2, pagination3=pagination3, pagination4=pagination4)
+        else:
+            return render_template('index.html', posts1=posts1, transactions=transactions, activities=activities,
+                                   pagination1=pagination1, pagination2=pagination2, pagination3=pagination3)
     else:
         inf = request.form["search"]
         return redirect(url_for('.query', content=inf))
@@ -169,21 +174,30 @@ def query_user():
 
 @main.route('/user/<username>')
 def user(username):
-    user = User.query.filter_by(username=username).first_or_404()
     page = request.args.get('page', 1, type=int)
-    pagination = user.posts.order_by(Post.timestamp.desc()).paginate(
+    user = User.query.filter_by(username=username).first_or_404()
+    liking = Like.query.filter_by(liker_id=user.id)
+
+    pagination1 = user.posts.order_by(Post.timestamp.desc()).paginate(
         page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
-    posts = pagination.items
-    result = Like.query.filter_by(liker_id=user.id)
-    page = request.args.get('page', 1, type=int)
-    pagination2 = result.order_by(Like.timestamp).paginate(
+    pagination2 = liking.order_by(Like.timestamp).paginate(
         page, per_page=current_app.config['FLASKY_LIKER_PER_PAGE'],
         error_out=False)
-    liking_posts = [{'post': item.liked_post, 'timestamp': item.timestamp}
-                    for item in pagination2.items]
+    pagination3 = user.transactions.order_by(Transaction.timestamp.desc()).paginate(
+        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+        error_out=False)
+    pagination4 = user.activities.order_by(Activity.timestamp.desc()).paginate(
+        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+        error_out=False)
+
+    posts = pagination1.items
+    liking_posts = [{'post': item.liked_post, 'timestamp': item.timestamp} for item in pagination2.items]
+    transactions = pagination3.items
+    activities = pagination4.items
     return render_template('user.html', user=user, posts=posts, liking_posts=liking_posts,
-                           pagination=pagination, pagination2=pagination2)
+                           activities=activities, transactionsInProfile=transactions, pagination1=pagination1,
+                           pagination2=pagination2, pagination3=pagination3, pagination4=pagination4)
 
 
 @main.route('/notification')
@@ -311,7 +325,7 @@ def post(id):
         else:
             flash('Comment published successfully')
         return redirect(url_for('.post', id=post.id))
-    return render_template('Posts/post.html', posts=[post], form=form,
+    return render_template('post.html', posts=[post], form=form,
                            comments=comments, pagination=pagination)
 
 

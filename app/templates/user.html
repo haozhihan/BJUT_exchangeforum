@@ -18,7 +18,6 @@
     </div>
     <div class="container col-sm-12 info">
 
-
         <div class="col-md-2" style="padding: 0; margin: 20px 20px 20px 110px">
             <div class="photo">
                 {% if user.avatar_img %}
@@ -44,8 +43,6 @@
 
             </div>
         </div>
-
-
 
         <div class="col-sm-offset-2 col-md-6" style="margin-top: 35px;margin-left: 80px;">
             <ul class="list-group">
@@ -87,7 +84,6 @@
 
     <div class="container col-sm-12 info">
 
-{#<!--         <p>{{ user.posts.count() }} blog posts.</p>-->#}
         <div class="tabbable">
 
 				<ul class="nav post-nav">
@@ -111,27 +107,42 @@
 				<div class="tab-content">
 					<div class="tab-pane active" id="panel-1">
 						{% include 'Posts/_postsInprofile.html' %}
+                        {% if pagination1 %}
+                            <div class="pagination">
+                                {{ macros.pagination_widget(pagination1, '.user', username=user.username) }}
+                            </div>
+                        {% endif %}
 					</div>
 					<div class="tab-pane" id="panel-2">
                         {% include 'Posts/_postsLikingInProfile.html' %}
+                        {% if pagination2 %}
+                            <div class="pagination">
+                                {{ macros.pagination_widget(pagination2, '.user', username=user.username) }}
+                            </div>
+                        {% endif %}
 					</div>
 
                     {% if current_user.can(Permission.ACTIVITY) %}
                         <div class="tab-pane" id="panel-4">
                             {% include 'organization/_activitiesInProfile.html' %}
+                            {% if pagination4 %}
+                                <div class="pagination">
+                                    {{ macros.pagination_widget(pagination4, '.user', username=user.username) }}
+                                </div>
+                            {% endif %}
                         </div>
                     {% else %}
                         <div class="tab-pane" id="panel-3">
                             {% include 'transaction/_transactionsInProfile.html' %}
+                            {% if pagination3 %}
+                                <div class="pagination">
+                                    {{ macros.pagination_widget(pagination3, '.user', username=user.username) }}
+                                </div>
+                            {% endif %}
                         </div>
                     {% endif %}
 				</div>
 			</div>
-        {% if pagination %}
-        <div class="pagination">
-            {{ macros.pagination_widget(pagination, '.user', username=user.username) }}
-        </div>
-        {% endif %}
 
     </div>
 </div>
@@ -152,10 +163,14 @@
 
             l2.className = ''
             content2.className = 'tab-pane'
-            l3.className = ''
-            content3.className = 'tab-pane'
-            l4.className = ''
-            content4.className = 'tab-pane'
+
+            {% if current_user.can(Permission.ACTIVITY) %}
+                l4.className = ''
+                content4.className = 'tab-pane'
+            {% else %}
+                l3.className = ''
+                content3.className = 'tab-pane'
+            {% endif %}
         }
 
         l2.onclick = function () {
@@ -164,13 +179,26 @@
 
             l1.className = ''
             content1.className = 'tab-pane'
-            l3.className = ''
-            content3.className = 'tab-pane'
-            l4.className = ''
-            content4.className = 'tab-pane'
+            {% if current_user.can(Permission.ACTIVITY) %}
+                l4.className = ''
+                content4.className = 'tab-pane'
+            {% else %}
+                l3.className = ''
+                content3.className = 'tab-pane'
+            {% endif %}
         }
+        {% if current_user.can(Permission.ACTIVITY) %}
+            l4.onclick = function () {
+                this.className = 'active'
+                content4.className = 'active'
 
-        l3.onclick = function () {
+                l1.className = ''
+                content1.className = 'tab-pane'
+                l2.className = ''
+                content2.className = 'tab-pane'
+            }
+        {% else %}
+            l3.onclick = function () {
             this.className = 'active'
             content3.className = 'active'
 
@@ -178,23 +206,8 @@
             content1.className = 'tab-pane'
             l2.className = ''
             content2.className = 'tab-pane'
-            l4.className = ''
-            content4.className = 'tab-pane'
         }
-
-        l4.onclick = function () {
-            this.className = 'active'
-            content4.className = 'active'
-
-            l1.className = ''
-            content1.className = 'tab-pane'
-            l2.className = ''
-            content2.className = 'tab-pane'
-            l3.className = ''
-            content3.className = 'tab-pane'
-        }
-
-
+        {% endif %}
     </script>
 
     <script>
