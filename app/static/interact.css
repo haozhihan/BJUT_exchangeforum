@@ -8,6 +8,7 @@
 }
 .inner1 {
     width: 350px;
+    box-shadow: 0 0 10px 3px #ddd;
 }
 .head {
     margin: 30px auto;
@@ -29,6 +30,8 @@
     width: 350px;
     position: relative;
     background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 0 10px 3px #ddd;
  }
 
 .new-post {
