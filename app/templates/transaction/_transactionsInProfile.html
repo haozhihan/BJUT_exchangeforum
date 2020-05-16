@@ -35,7 +35,7 @@
                     </span>
                     {% if current_user == transaction.seller and not transaction.is_sold  %}
                         <a href="{{ url_for('main.sold_item', item_id=transaction.id)}}" style="float: right">
-                            <span>sold</span>
+                            <span>Already Sold</span>
                         </a>
                     {% endif %}
                 </div>
