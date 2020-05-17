@@ -34,7 +34,7 @@
                         {{ moment(transaction.timestamp).fromNow() }}
                     </span>
                     {% if current_user == transaction.seller and not transaction.is_sold  %}
-                        <a href="{{ url_for('main.sold_item', item_id=transaction.id)}}" style="float: right">
+                        <a href="{{ url_for('transaction.sold_item', item_id=transaction.id)}}" style="float: right">
                             <span>Already Sold</span>
                         </a>
                     {% endif %}

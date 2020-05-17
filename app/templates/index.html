@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
 {% import "_macros.html" as macros %}
 
 {% block title %}Student Exchange Forum of BJUT{% endblock %}
@@ -93,7 +92,9 @@
                 <div class="item active">
                     <img src="../static/Image/BJUT.jpeg" style="height: 300px; width: 1200px" alt="...">
                     <div class="carousel-caption">
-                        ...
+                        <h3>{{ activities[0].activity_name }}</h3>
+                        <p>Time: {{ activities[0].activity_time }}; Place: {{ activities[0].activity_place }}</p>
+                        <p>{{ activities[0].activity_describe }}</p>
                     </div>
                 </div>
                 <div class="item">
@@ -137,17 +138,6 @@
     <!--        帖子浏览界面        -->
     <div class="col-md-8">
 
-{#        <div class="page-header">#}
-{#            <h1>Hello,#}
-{#                {% if current_user.is_authenticated %}#}
-{#                    {{ current_user.username }}#}
-{#                {% else %}#}
-{#                    Stranger#}
-{#                {% endif %}#}
-{#                !#}
-{#            </h1>#}
-{#        </div>#}
-
         <div class="col-md-12 content">
             <div class="tabbable">
                 <ul class="nav post-nav">
@@ -166,9 +156,6 @@
                          <a href="#panel-4" data-toggle="tab">Follows</a>
                     </li>
                     {% endif %}
-{#                    <li id="btn-5">#}
-{#                        <a href="#panel-5" data-toggle="tab">Hottest Post</a>#}
-{#                    </li>#}
                 </ul>
 
                 <div class="tab-content">
@@ -220,18 +207,6 @@
                             </div>
                         {% endif %}
                     </div>
-{#                    <div class="tab-pane" id="panel-5">#}
-{#                        <ul class="posts list-unstyled">#}
-{#                            {% for post in posts5 %}#}
-{#                                {% include 'Posts/_posts.html' %}#}
-{#                            {% endfor %}#}
-{#                        </ul>#}
-{#                        {% if pagination5 %}#}
-{#                            <div class="pagination">#}
-{#                                {{ macros.pagination_widget(pagination5, '.index') }}#}
-{#                            </div>#}
-{#                        {% endif %}#}
-{#                    </div>#}
                 </div>
             </div>
         </div>
@@ -281,7 +256,7 @@
                         <!--                发布二手交易帖子-->
                           <div class="new-transaction col-sm-3">
                               <div>
-                                  <a href="{{ url_for('.transaction')}}">
+                                  <a href="{{ url_for('transaction.new_transaction')}}">
                                       <svg class="icon" viewBox="0 0 1024 1024" version="1.1" width="40" height="40">
                                         <defs><style type="text/css"></style></defs>
                                         <path d="M504 953c-60.5 0-119.1-11.8-174.4-35.2-53.4-22.6-101.3-54.9-142.4-96-41.1-41.1-73.4-89-96-142.4C67.8 624.1 56 565.5 56 505s11.8-119.1 35.2-174.4c22.6-53.4 54.9-101.3 96-142.4 41.1-41.1 89-73.4 142.4-96C384.9 68.8 443.5 57 504 57s119.1 11.8 174.4 35.2c53.4 22.6 101.3 54.9 142.4 96 41.1 41.1 73.4 89 96 142.4C940.2 385.9 952 444.5 952 505s-11.8 119.1-35.2 174.4c-22.6 53.4-54.9 101.3-96 142.4-41.1 41.1-89 73.4-142.4 96C623.1 941.2 564.5 953 504 953z m0-832c-211.7 0-384 172.3-384 384s172.3 384 384 384 384-172.3 384-384-172.3-384-384-384z" fill="#3688FF" p-id="1448"></path>
@@ -307,6 +282,45 @@
                               <div class="icon-word">activity</div>
                           </div>
                       </div>
+
+                      <div class="col-sm-12">
+                          <h5>Hottest Posts</h5>
+                          <ul class="posts list-unstyled">
+                              <li><a href="{{ url_for('.post', id=posts5[0].id) }}"><h4>
+                                  <small>{{ posts5[0].title }}</small>
+                              </h4></a></li>
+                              <li><a href="{{ url_for('.post', id=posts5[1].id) }}"><h4>
+                                  <small>{{ posts5[1].title }}</small>
+                              </h4></a></li>
+                              <li><a href="{{ url_for('.post', id=posts5[2].id) }}"><h4>
+                                  <small>{{ posts5[2].title }}</small>
+                              </h4></a></li>
+                              <li><a href="{{ url_for('.post', id=posts5[3].id) }}"><h4>
+                                  <small>{{ posts5[3].title }}</small>
+                              </h4></a></li>
+                              <li><a href="{{ url_for('.post', id=posts5[4].id) }}"><h4>
+                                  <small>{{ posts5[4].title }}</small>
+                              </h4></a></li>
+                              <li><a href="{{ url_for('.post', id=posts5[5].id) }}"><h4>
+                                  <small>{{ posts5[5].title }}</small>
+                              </h4></a></li>
+                              <li><a href="{{ url_for('.post', id=posts5[6].id) }}"><h4>
+                                  <small>{{ posts5[6].title }}</small>
+                              </h4></a></li>
+                              <li><a href="{{ url_for('.post', id=posts5[7].id) }}"><h4>
+                                  <small>{{ posts5[7].title }}</small>
+                              </h4></a></li>
+                              <li><a href="{{ url_for('.post', id=posts5[8].id) }}"><h4>
+                                  <small>{{ posts5[8].title }}</small>
+                              </h4></a></li>
+                              <li><a href="{{ url_for('.post', id=posts5[9].id) }}"><h4>
+                                  <small>{{ posts5[9].title }}</small>
+                              </h4></a></li>
+                          </ul>
+                        </ul>
+                      </div>
+
+
                   </div>
 
             {% endif %}

@@ -25,7 +25,7 @@
                         </span>
                         {% if current_user == post.author %}
                             {#            删除#}
-                                <a class="icon-btn" href="{{ url_for('main.delete_post_inProfile', id=post.id)}}">
+                                <a class="icon-btn" href="{{ url_for('main.delete_post_inProfile', post_id=post.id)}}">
                                     <span class="glyphicon glyphicon-trash"></span>
                                     <span>delete</span>
                                 </a>
