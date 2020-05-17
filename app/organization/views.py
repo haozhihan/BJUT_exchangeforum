@@ -100,7 +100,9 @@ def organization_activity():
                         is_schoolAgree=is_Agree,
                         announcer_id=current_user.id
                         )
+        print("1")
         db.session.add(acti)
         db.session.commit()
+        print("2")
         flash('Your Activity Announcement has been released!')
         return redirect(url_for('main.index'))

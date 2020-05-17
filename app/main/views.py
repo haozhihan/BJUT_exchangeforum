@@ -37,24 +37,6 @@ def index():
         posts1 = pagination1.items
         transactions = pagination2.items
         activities = pagination3.items
-        if current_user.is_authenticated:
-            query4 = current_user.followed_posts
-            pagination4 = query4.order_by(Post.recent_activity.desc()).paginate(
-                page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-                error_out=False)
-            posts4 = pagination4.items
-            return render_template('index.html', posts1=posts1, transactions=transactions, activities=activities, posts4=posts4,
-                               pagination1=pagination1, pagination2=pagination2, pagination3=pagination3, pagination4=pagination4)
-        else:
-            return render_template('index.html', posts1=posts1, transactions=transactions, activities=activities,
-                                   pagination1=pagination1, pagination2=pagination2, pagination3=pagination3)
-        pagination4 = query4.order_by(Post.recent_activity.desc()).paginate(
-            page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-            error_out=False)
-        posts1 = pagination1.items
-        transactions = pagination2.items
-        activities = pagination3.items
-        posts4 = pagination4.items
         for item in query1:
             item.important = 0
             com_num = db.session.query(func.count(Comment.id)).filter_by(post_id=item.id).scalar()
@@ -64,10 +46,22 @@ def index():
             page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
             error_out=False)
         posts5 = pagination5.items
-        return render_template('index.html', posts1=posts1, transactions=transactions, activities=activities,
-                               posts4=posts4, posts5=posts5,
-                               pagination1=pagination1, pagination2=pagination2, pagination3=pagination3,
-                               pagination4=pagination4, pagination5=pagination5)
+        if current_user.is_authenticated:
+            query4 = current_user.followed_posts
+            pagination4 = query4.order_by(Post.recent_activity.desc()).paginate(
+                page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+                error_out=False)
+            posts4 = pagination4.items
+            return render_template('index.html', posts1=posts1, transactions=transactions, activities=activities,
+                                   posts4=posts4, posts5=posts5,
+                                   pagination1=pagination1, pagination2=pagination2, pagination3=pagination3,
+                                   pagination4=pagination4, pagination5=pagination5)
+        else:
+            return render_template('index.html', posts1=posts1, transactions=transactions, activities=activities,
+                                   pagination1=pagination1, pagination2=pagination2, pagination3=pagination3)
+
+
+
     else:
         inf = request.form["search"]
         return redirect(url_for('.query', content=inf))
@@ -349,7 +343,7 @@ def post(id):
         else:
             flash('Comment published successfully')
         return redirect(url_for('.post', id=post.id))
-    return render_template('Posts/post.html', posts=[post], form=form,
+    return render_template('post.html', posts=[post], form=form,
                            comments=comments, pagination=pagination)
 
 
