@@ -166,6 +166,9 @@
                          <a href="#panel-4" data-toggle="tab">Follows</a>
                     </li>
                     {% endif %}
+{#                    <li id="btn-5">#}
+{#                        <a href="#panel-5" data-toggle="tab">Hottest Post</a>#}
+{#                    </li>#}
                 </ul>
 
                 <div class="tab-content">
@@ -217,6 +220,18 @@
                             </div>
                         {% endif %}
                     </div>
+{#                    <div class="tab-pane" id="panel-5">#}
+{#                        <ul class="posts list-unstyled">#}
+{#                            {% for post in posts5 %}#}
+{#                                {% include 'Posts/_posts.html' %}#}
+{#                            {% endfor %}#}
+{#                        </ul>#}
+{#                        {% if pagination5 %}#}
+{#                            <div class="pagination">#}
+{#                                {{ macros.pagination_widget(pagination5, '.index') }}#}
+{#                            </div>#}
+{#                        {% endif %}#}
+{#                    </div>#}
                 </div>
             </div>
         </div>

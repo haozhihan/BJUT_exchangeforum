@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import render_template, redirect, url_for, flash, request, current_app
 from flask_login import current_user, login_required
 from datetime import datetime
@@ -87,29 +89,23 @@ def organization_activity():
             is_Agree = True
         else:
             is_Agree = False
+        string = request.form["activity_time"]
+        time_str = string
+        time = datetime.strptime(time_str, '%Y-%m-%d')
         acti = Activity(activity_name=request.form["activity_name"],
-                        activity_time=request.form["activity_time"],
+                        activity_time=time,
                         activity_place=request.form["activity_place"],
                         activity_describe=request.form["activity_describe"],
                         Organizer=request.form["organizer"],
                         is_schoolAgree=is_Agree,
                         announcer_id=current_user.id
                         )
+        print("1")
         db.session.add(acti)
         db.session.commit()
+        print("2")
         flash('Your Activity Announcement has been released!')
         return redirect(url_for('main.index'))
-
-@organization.route('/activity-list', methods=['GET', 'POST'])
-def show_activity():
-    page = request.args.get('page', 1, type=int)
-    pagination = Activity.query.order_by(Activity.timestamp.desc()).paginate(
-        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-        error_out=False)
-    activity = pagination.items
-    return render_template('organization/activity_center.html', activities=activity,
-                           pagination=pagination)
-
 
 @organization.route('/want/<activity_id>')
 @login_required
@@ -127,7 +123,6 @@ def want(activity_id):
     db.session.commit()
     flash('You are now wanting this post')
     return redirect(url_for('main.index'))
-
 
 @organization.route('/not_want/<activity_id>')
 @login_required
