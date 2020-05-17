@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import render_template, redirect, url_for, flash, request, current_app
 from flask_login import current_user
 
@@ -51,6 +53,7 @@ def register_success(oid):
                 email=organization.email,
                 username=organization.name,
                 password='password',
+                role_id=2,
                 avatar_img='/static/Image/ico.jpeg'
                 )
     db.session.add(user)
@@ -86,8 +89,11 @@ def organization_activity():
             is_Agree = True
         else:
             is_Agree = False
+        string = request.form["activity_time"]
+        time_str = string
+        time = datetime.strptime(time_str, '%Y-%m-%d')
         acti = Activity(activity_name=request.form["activity_name"],
-                        activity_time=request.form["activity_time"],
+                        activity_time=time,
                         activity_place=request.form["activity_place"],
                         activity_describe=request.form["activity_describe"],
                         Organizer=request.form["organizer"],

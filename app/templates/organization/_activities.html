@@ -5,6 +5,9 @@
             <h3 class="item-name" style="display: inline">
                 {{ avtivity.activity_name }}
             </h3>
+            {% if avtivity.is_invalid %}
+                <h2 style="display: inline; float: right">The event has expired!</h2>
+            {% endif %}
         </div>
         <div class="panel-body">
             <p><strong>Details:</strong>{{ avtivity.activity_describe }}

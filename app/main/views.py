@@ -20,7 +20,11 @@ def index():
         query1 = Post.query
         query2 = Transaction.query
         query3 = Activity.query
-
+        for activity in query3:
+            if activity.activity_time < datetime.utcnow():
+                activity.is_invalid = True
+                db.session.add(activity)
+                db.session.commit()
         pagination1 = query1.order_by(Post.recent_activity.desc()).paginate(
             page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
             error_out=False)
@@ -44,6 +48,26 @@ def index():
         else:
             return render_template('index.html', posts1=posts1, transactions=transactions, activities=activities,
                                    pagination1=pagination1, pagination2=pagination2, pagination3=pagination3)
+        pagination4 = query4.order_by(Post.recent_activity.desc()).paginate(
+            page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+            error_out=False)
+        posts1 = pagination1.items
+        transactions = pagination2.items
+        activities = pagination3.items
+        posts4 = pagination4.items
+        for item in query1:
+            item.important = 0
+            com_num = db.session.query(func.count(Comment.id)).filter_by(post_id=item.id).scalar()
+            li_num = db.session.query(func.count(Like.liker_id)).filter_by(liked_post_id=item.id).scalar()
+            item.important = 7 * com_num + 3 * li_num
+        pagination5 = query1.order_by(Post.important.desc()).paginate(
+            page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+            error_out=False)
+        posts5 = pagination5.items
+        return render_template('index.html', posts1=posts1, transactions=transactions, activities=activities,
+                               posts4=posts4, posts5=posts5,
+                               pagination1=pagination1, pagination2=pagination2, pagination3=pagination3,
+                               pagination4=pagination4, pagination5=pagination5)
     else:
         inf = request.form["search"]
         return redirect(url_for('.query', content=inf))
@@ -325,7 +349,7 @@ def post(id):
         else:
             flash('Comment published successfully')
         return redirect(url_for('.post', id=post.id))
-    return render_template('post.html', posts=[post], form=form,
+    return render_template('Posts/post.html', posts=[post], form=form,
                            comments=comments, pagination=pagination)
 
 
@@ -653,8 +677,6 @@ def transaction():
         db.session.commit()
         flash('Your transaction request has been sent!')
         return redirect(url_for('.index'))
-
-
 
 
 @main.route('/sold/<item_id>')
