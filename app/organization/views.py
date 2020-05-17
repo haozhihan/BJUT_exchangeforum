@@ -98,13 +98,3 @@ def organization_activity():
         db.session.commit()
         flash('Your Activity Announcement has been released!')
         return redirect(url_for('main.index'))
-
-@organization.route('/activity-list', methods=['GET', 'POST'])
-def show_activity():
-    page = request.args.get('page', 1, type=int)
-    pagination = Activity.query.order_by(Activity.timestamp.desc()).paginate(
-        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-        error_out=False)
-    activity = pagination.items
-    return render_template('organization/activity_center.html', activities=activity,
-                           pagination=pagination)

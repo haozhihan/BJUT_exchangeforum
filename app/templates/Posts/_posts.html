@@ -74,14 +74,6 @@
                             <span>{{ post.liker.count() }} likes</span>
                         </a>
                     {% endif %}
-
-                {#            删除#}
-{#                    {% if current_user == post.author %}#}
-{#                        <a class="icon-btn" style="float:right; margin-right: 15px" href="{{ url_for('main.delete_post', id=post.id)}}">#}
-{#                            <span class="glyphicon glyphicon-trash"></span>#}
-{#                            <span>delete</span>#}
-{#                        </a>#}
-{#                    {% endif %}#}
                 </div>
           </div>
     </div>

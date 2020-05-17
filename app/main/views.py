@@ -633,11 +633,19 @@ def transaction():
     if request.method == 'GET':
         return render_template('transaction/new_transaction.html')
     if request.method == 'POST':
-        trans = Transaction(item_name=request.form["item_name"],
-                            item_describe=request.form["item_describe"],
-                            link=request.form["link"],
-                            transaction_mode=request.form["transaction_mode"],
-                            seller_WeChat=request.form["seller_WeChat"],
+        name = request.form["item_name"]
+        describe = request.form["item_describe"]
+        link = request.form["link"]
+        mode = request.form["transaction_mode"]
+        wechat = request.form["seller_WeChat"]
+        if name == "" or describe == "" or link == "" or mode == "" or wechat == "":
+            flash("Item information cannot be empty")
+            return render_template('transaction/new_transaction.html')
+        trans = Transaction(item_name=name,
+                            item_describe=describe,
+                            link=link,
+                            transaction_mode=mode,
+                            seller_WeChat=wechat,
                             seller_id=current_user.id,
                             seller=current_user
                             )

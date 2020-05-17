@@ -36,11 +36,11 @@
                 </span>
 
                 <span class="post-date">{{ moment(transaction.timestamp).fromNow() }}</span>
-{#                {% if current_user == transaction.seller and not transaction.is_sold  %}#}
-                    <a href="{{ url_for('main.sold_item', item_id=transaction.id)}}" style="float: right">
+                {% if current_user == transaction.seller and not transaction.is_sold  %}
+                    <a href="{{ url_for('main.sold_item', item_id=transaction.id)}}#panel-2" style="float: right">
                         <span>Already Sold</span>
                     </a>
-{#                {% endif %}#}
+                {% endif %}
             </div>
         </div>
     </li>
