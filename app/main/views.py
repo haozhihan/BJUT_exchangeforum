@@ -444,7 +444,6 @@ def like(post_id):
         return redirect(url_for('.post', id=post_id))
     current_user.like(post)
     post.like(current_user)
-    post.recent_activity = datetime.utcnow()
     db.session.commit()
     flash('You are now liking this post')
     return redirect(url_for('.index', id=post_id))
@@ -466,6 +465,43 @@ def dislike(post_id):
     db.session.commit()
     flash('You are not liking this post')
     return redirect(url_for('.index', id=post_id))
+
+
+@main.route('/collect/<transaction_id>')
+@login_required
+@permission_required(Permission.FOLLOW)
+def collect(transaction_id):
+    transaction = Transaction.query.filter_by(id=transaction_id).first()
+    if transaction is None:
+        flash('Invalid transaction.')
+        return redirect(url_for('.index'))
+    if current_user.is_collecting(transaction):
+        flash('You are already collecting this post.')
+        return redirect(url_for('.index', id=transaction_id))
+    current_user.collect(transaction)
+    transaction.collect(current_user)
+    transaction.recent_activity = datetime.utcnow()
+    db.session.commit()
+    flash('You are now collecting this post')
+    return redirect(url_for('.index', id=transaction_id))
+
+
+@main.route('/not_collect/<transaction_id>')
+@login_required
+@permission_required(Permission.FOLLOW)
+def not_collect(transaction_id):
+    transaction = Transaction.query.filter_by(id=transaction_id).first()
+    if transaction is None:
+        flash('Invalid transaction.')
+        return redirect(url_for('.index'))
+    if not current_user.is_collecting(transaction):
+        flash('You are not collecting this post.')
+        return redirect(url_for('.transaction', id=transaction_id))
+    current_user.not_collect(transaction)
+    transaction.not_collect(current_user)
+    db.session.commit()
+    flash('You are not collecting this post')
+    return redirect(url_for('.index', id=transaction_id))
 
 
 @main.route('/followers/<username>')

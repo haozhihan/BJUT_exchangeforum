@@ -40,9 +40,18 @@
             </span>
             <span class="post-date">{{ moment(avtivity.timestamp).fromNow() }}</span>
 
-            <a href="#" style="float: right">
-                <span>WantToGo</span>
-            </a>
+            {#            喜欢#}
+                    {% if not current_user.is_wanting(avtivity) %}
+                        <a class="icon-btn" style="float:right; margin-right: 15px" href="{{ url_for('organization.want', activity_id=avtivity.id) }}#{{ avtivity.id }}">
+                            <span class="glyphicon glyphicon-heart-empty"></span>
+                            <span>{{ avtivity.wanter.count() }} want</span>
+                        </a>
+                    {% else %}
+                        <a class="icon-btn" style="float:right; margin-right: 15px" href="{{ url_for('organization.not_want', activity_id=avtivity.id) }}#{{ avtivity.id }}">
+                            <span class="glyphicon glyphicon-heart"></span>
+                            <span>{{ avtivity.wanter.count() }} want</span>
+                        </a>
+                    {% endif %}
         </div>
     </div>
 </li>

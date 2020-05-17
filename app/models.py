@@ -130,6 +130,11 @@ class User(UserMixin, db.Model):
     transactions = db.relationship('Transaction', back_populates='seller', lazy='dynamic')
     # Activity
     activities = db.relationship('Activity', back_populates='announcer', lazy='dynamic')
+    #want
+    wanted_Activity = db.relationship('Want', back_populates='wanter', lazy='dynamic', cascade='all')
+    #collect
+    collected_transaction = db.relationship('Collect', back_populates='collecter', lazy='dynamic', cascade='all')
+
 
     @staticmethod
     def add_self_follows():
@@ -266,6 +271,24 @@ class User(UserMixin, db.Model):
             db.session.add(n)
             db.session.add(ll)
 
+    def collect(self, transaction):
+        if not self.is_collecting(transaction):
+            ll = Collect(collecter=self, collected_transaction=transaction)
+            n = Notification(receiver_id=transaction.seller_id, timestamp=datetime.utcnow(),
+                             username=self.username, action=" has collected your posting ",
+                             object=transaction.item_name, object_id=transaction.id)
+            db.session.add(n)
+            db.session.add(ll)
+
+    def want(self, activity):
+        if not self.is_wanting(activity):
+            ll = Want(wanter=self, wanted_Activity=activity)
+            n = Notification(receiver_id=activity.announcer_id, timestamp=datetime.utcnow(),
+                             username=self.username, action=" has wanted your posting ",
+                             object=activity.activity_name, object_id=activity.id)
+            db.session.add(n)
+            db.session.add(ll)
+
     def unfollow(self, user):
         f = self.following.filter_by(followed_id=user.id).first()
         if f:
@@ -273,6 +296,16 @@ class User(UserMixin, db.Model):
 
     def dislike(self, post):
         ll = self.liked_post.filter_by(liked_post_id=post.id).first()
+        if ll:
+            db.session.delete(ll)
+
+    def not_want(self, activity):
+        ll = self.wanted_Activity.filter_by(wanted_Activity_id=activity.id).first()
+        if ll:
+            db.session.delete(ll)
+
+    def not_collect(self, transaction):
+        ll = self.collected_transaction.filter_by(collected_transaction_id=transaction.id).first()
         if ll:
             db.session.delete(ll)
 
@@ -287,6 +320,18 @@ class User(UserMixin, db.Model):
             return False
         return self.liked_post.filter_by(
             liked_post_id=post.id).first() is not None
+
+    def is_collecting(self, transaction):
+        if transaction.id is None:
+            return False
+        return self.collected_transaction.filter_by(
+            collected_transaction_id=transaction.id).first() is not None
+
+    def is_wanting(self, activity):
+        if activity.id is None:
+            return False
+        return self.wanted_Activity.filter_by(
+           wanted_Activity_id=activity.id).first() is not None
 
     def is_followed_by(self, user):
         if user.id is None:
@@ -418,6 +463,24 @@ class Like(db.Model):
     liked_post = db.relationship('Post', back_populates='liker', lazy='joined')
 
 
+class Collect(db.Model):
+    __tablename__ = 'collect'
+    collecter_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    collected_transaction_id = db.Column(db.Integer, db.ForeignKey('transaction.id'), primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    collecter = db.relationship('User', back_populates='collected_transaction', lazy='joined')
+    collected_transaction = db.relationship('Transaction', back_populates='collecter', lazy='joined')
+
+
+class Want(db.Model):
+    __tablename__ = 'want'
+    wanter_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    wanted_Activity_id = db.Column(db.Integer, db.ForeignKey('Activity.id'), primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    wanter = db.relationship('User', back_populates='wanted_Activity', lazy='joined')
+    wanted_Activity = db.relationship('Activity', back_populates='wanter', lazy='joined')
+
+
 class Notification(db.Model):
     __tablename__ = 'notification'
     id = db.Column(db.Integer, primary_key=True)
@@ -447,6 +510,23 @@ class Transaction(db.Model):
 
     seller_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     seller = db.relationship('User', back_populates='transactions', lazy='joined')
+    collecter = db.relationship('Collect', back_populates='collected_transaction', lazy='dynamic', cascade='all')
+
+    def collect(self, user):
+        if not self.is_collected_by(user):
+            ll = Collect(collecter=user, collected_transaction=self)
+            db.session.add(ll)
+
+    def not_collect(self, user):
+        ll = self.collecter.filter_by(collecter_id=user.id).first()
+        if ll:
+            db.session.delete(ll)
+
+    def is_collected_by(self, user):
+        if user.id is None:
+            return False
+        return self.collecter.filter_by(
+            collecter_id=user.id).first() is not None
 
 
 class Activity(db.Model):
@@ -463,5 +543,20 @@ class Activity(db.Model):
 
     announcer_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     announcer = db.relationship('User', back_populates='activities', lazy='joined')
+    wanter = db.relationship('Want', back_populates='wanted_Activity', lazy='dynamic', cascade='all')
 
+    def want(self, user):
+        if not self.is_wanted_by(user):
+            ll = Like(wanter=user, wanted_post=self)
+            db.session.add(ll)
 
+    def not_want(self, user):
+        ll = self.wanter.filter_by(wanter_id=user.id).first()
+        if ll:
+            db.session.delete(ll)
+
+    def is_wanted_by(self, user):
+        if user.id is None:
+            return False
+        return self.wanter.filter_by(
+            wanter_id=user.id).first() is not None

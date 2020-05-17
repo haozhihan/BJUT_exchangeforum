@@ -1,9 +1,10 @@
 from flask import render_template, redirect, url_for, flash, request, current_app
-from flask_login import current_user
-
+from flask_login import current_user, login_required
+from datetime import datetime
 from . import organization
 from .. import db
-from ..models import Organization, User, Activity
+from ..decorators import permission_required
+from ..models import Organization, User, Activity, Permission
 from ..email import send_email
 from .forms import RegisterOrganizationForm
 
@@ -108,3 +109,39 @@ def show_activity():
     activity = pagination.items
     return render_template('organization/activity_center.html', activities=activity,
                            pagination=pagination)
+
+
+@organization.route('/want/<activity_id>')
+@login_required
+@permission_required(Permission.FOLLOW)
+def want(activity_id):
+    activity = Activity.query.filter_by(id=activity_id).first()
+    if activity is None:
+        flash('Invalid activity.')
+        return redirect(url_for('.index'))
+    if current_user.is_wanting(activity):
+        flash('You are already wanting this post.')
+        return redirect(url_for('main.index'))
+    current_user.want(activity)
+    activity.want(current_user)
+    db.session.commit()
+    flash('You are now wanting this post')
+    return redirect(url_for('main.index'))
+
+
+@organization.route('/not_want/<activity_id>')
+@login_required
+@permission_required(Permission.FOLLOW)
+def not_want(activity_id):
+    activity = Activity.query.filter_by(id=activity_id).first()
+    if activity is None:
+        flash('Invalid activity.')
+        return redirect(url_for('.index'))
+    if not current_user.is_wanting(activity):
+        flash('You are not wanting this post.')
+        return redirect(url_for('main.index'))
+    current_user.not_want(activity)
+    activity.not_want(current_user)
+    db.session.commit()
+    flash('You are not wanting this post')
+    return redirect(url_for('main.index', id=activity_id))
