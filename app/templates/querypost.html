@@ -8,6 +8,7 @@
 {% block head %}
 {{ super() }}
     <!-- Custom styles for this template -->
+    <link href="{{ url_for('static',filename='home.css') }}" rel="stylesheet">
     <link href="{{ url_for('static',filename='posts.css') }}" rel="stylesheet">
 
 {% endblock %}
@@ -15,76 +16,77 @@
 
 {% block page_content %}
 
-<div class="page-header">
-    <h1>{{ title }}</h1>
-</div>
+{#    <div class="page-header">#}
+{#        <h1>{{ title }}</h1>#}
+{#    </div>#}
 
 
-<div class="col-sm-12">
-    <form class="form-horizontal" method="post">
-        <div class="form-group" style="margin-top: 15px; ">
-            <label for="post" class="col-sm-2 control-label text-left">Query</label>
-            <div class="col-sm-6">
-                <input name="inf" type="text" value="{{ inf }}" class="form-control " id="inf" placeholder="Search" >
+    <div class="col-sm-12">
+        <form class="form-horizontal" method="post">
+            <div class="form-group" style="margin-top: 15px; ">
+                <label for="post" class="col-sm-2 control-label text-left">Query</label>
+                <div class="col-sm-6">
+                    <input name="inf" type="text" value="{{ inf }}" class="form-control " id="inf" placeholder="Search" >
+                </div>
+                <button type="submit" class="btn btn-default">Submit</button>
             </div>
-            <button type="submit" class="btn btn-default">Submit</button>
-        </div>
-    </form>
-</div>
+        </form>
+    </div>
 
 
+    <div class="content col-md-12">
+        <div class="tabbable">
+            <ul class="nav post-nav">
 
-    <div class="tabbable">
-        <ul class="nav post-nav">
+                <li class="active" id="btn-1">
+                     <a href="#panel-1" data-toggle="tab">Combination</a>
+                </li>
+                <li id="btn-2">
+                     <a href="#panel-2" data-toggle="tab">Newest</a>
+                </li>
 
-            <li class="active" id="btn-1">
-                 <a href="#panel-1" data-toggle="tab">Combination</a>
-            </li>
-            <li id="btn-2">
-                 <a href="#panel-2" data-toggle="tab">Newest</a>
-            </li>
+                <li id="btn-3">
+                    <a href="#panel-3" data-toggle="tab">Hottest</a>
+                </li>
+                <li id="btn-4">
+                    <a href="#panel-4" data-toggle="tab">Relevance</a>
+                </li>
 
-            <li id="btn-3">
-                <a href="#panel-3" data-toggle="tab">Hottest</a>
-            </li>
-            <li id="btn-4">
-                <a href="#panel-4" data-toggle="tab">Relevance</a>
-            </li>
+            </ul>
 
-        </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="panel-1">
+                    <ul class="posts list-unstyled">
+                        {% for post in combination %}
+                            {% include 'Posts/_postsInQuery.html' %}
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="tab-pane" id="panel-2">
+                    <ul class="posts list-unstyled">
+                        {% for post in newest %}
+                            {% include 'Posts/_postsInQuery.html' %}
+                        {% endfor %}
+                    </ul>
+                </div>
 
-        <div class="tab-content">
-            <div class="tab-pane active" id="panel-1">
-                <ul class="posts list-unstyled">
-                    {% for post in combination %}
-                        {% include 'Posts/_postsInQuery.html' %}
-                    {% endfor %}
-                </ul>
+                <div class="tab-pane" id="panel-3">
+                    <ul class="posts list-unstyled">
+                        {% for post in hottest %}
+                            {% include 'Posts/_postsInQuery.html' %}
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="tab-pane" id="panel-4">
+                    <ul class="posts list-unstyled">
+                        {% for post in relevance %}
+                            {% include 'Posts/_postsInQuery.html' %}
+                        {% endfor %}
+                    </ul>
+                </div>
+
             </div>
-            <div class="tab-pane" id="panel-2">
-                <ul class="posts list-unstyled">
-                    {% for post in newest %}
-                        {% include 'Posts/_postsInQuery.html' %}
-                    {% endfor %}
-                </ul>
-            </div>
-
-            <div class="tab-pane" id="panel-3">
-                <ul class="posts list-unstyled">
-                    {% for post in hottest %}
-                        {% include 'Posts/_postsInQuery.html' %}
-                    {% endfor %}
-                </ul>
-            </div>
-
-            <div class="tab-pane" id="panel-4">
-                <ul class="posts list-unstyled">
-                    {% for post in relevance %}
-                        {% include 'Posts/_postsInQuery.html' %}
-                    {% endfor %}
-                </ul>
-            </div>
-
         </div>
     </div>
 
@@ -146,8 +148,6 @@
             l3.className = ''
             content3.className = 'tab-pane'
         }
-
-
     </script>
 
 {% endblock %}

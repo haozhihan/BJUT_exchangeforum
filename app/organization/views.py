@@ -51,11 +51,13 @@ def register_success(oid):
                 email=organization.email,
                 username=organization.name,
                 password='password',
-                role_id=2,
                 avatar_img='/static/Image/ico.jpeg'
                 )
-
     db.session.add(user)
+    db.session.commit()
+    thisUser = User.query.filter_by(ID_number=organization.id).first()
+    thisUser.role_id = 2;
+    db.session.add(thisUser)
     db.session.commit()
     # 注册时发送邮箱认证
     token = organization.generate_confirmation_token()

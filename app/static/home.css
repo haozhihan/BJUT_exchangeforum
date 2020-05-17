@@ -1,6 +1,9 @@
 /*
 二级导航的相关样式
  */
+.my-carousel{
+    margin: 20px auto;
+}
 .content {
     background-color: #fff;
     border-radius: 4px;

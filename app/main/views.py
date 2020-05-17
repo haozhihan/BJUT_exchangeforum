@@ -656,4 +656,4 @@ def sold_item(item_id):
     transaction.is_sold = True
     db.session.add(transaction)
     db.session.commit()
-    return redirect(url_for('.show_transaction'))
+    return redirect(url_for('.index'))
