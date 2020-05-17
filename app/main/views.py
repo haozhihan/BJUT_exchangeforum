@@ -347,40 +347,25 @@ def delete_comment(id):
 @main.route('/delete_post/<int:id>')
 @login_required
 def delete_post(id):
-    posts = Post.query.filter_by(id=id).first()
-    db.session.delete(posts)
-    db.session.commit()
-    flash('The posting has been deleted.')
-    page = request.args.get('page', 1, type=int)
-    show_followed = False
-    if current_user.is_authenticated:
-        show_followed = bool(request.cookies.get('show_followed', ''))
-    if show_followed:
-        query = current_user.followed_posts
+    p = Post.query.filter_by(id=id).first()
+    if current_user == p.author:
+        db.session.delete(p)
+        db.session.commit()
+        flash('The POST has been deleted.')
+        return redirect(url_for('.index'))
     else:
-        query = Post.query
-    pagination = query.order_by(Post.timestamp.desc()).paginate(
-        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-        error_out=False)
-    posts = pagination.items
-    form = PostForm()
-    return render_template('index.html', posts=posts, form=form, show_followed=show_followed, pagination=pagination)
+        flash('你没有删该post的权限')
+        return redirect(url_for('.index'))
 
 
 @main.route('/delete_post_profile/<int:id>')
 @login_required
 def delete_post_inProfile(id):
     post = Post.query.filter_by(id=id).first()
-    user = User.query.filter_by(id=post.author_id).first_or_404()
     db.session.delete(post)
     db.session.commit()
     flash('The posting has been deleted.')
-    page = request.args.get('page', 1, type=int)
-    pagination = user.posts.order_by(Post.timestamp.desc()).paginate(
-        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-        error_out=False)
-    posts = pagination.items
-    return render_template('user.html', user=user, posts=posts, pagination=pagination)
+    return redirect(url_for('.user', username=current_user.username))
 
 
 @main.route('/follow/<username>')
@@ -633,8 +618,6 @@ def transaction():
         return redirect(url_for('.index'))
 
 
-
-
 @main.route('/sold/<item_id>')
 @login_required
 def sold_item(item_id):
@@ -643,3 +626,41 @@ def sold_item(item_id):
     db.session.add(transaction)
     db.session.commit()
     return redirect(url_for('.show_transaction'))
+
+
+
+@main.route('/delete_transaction/<int:id>')
+@login_required
+def delete_transaction(id):
+    tran = Transaction.query.filter_by(id=id).first()
+    if current_user == tran.author:
+        db.session.delete(tran)
+        db.session.commit()
+        flash('The transaction has been deleted.')
+        return redirect(url_for('.index'))
+    else:
+        flash('你没有删该交易的权限')
+        return redirect(url_for('.index'))
+
+
+@main.route('/delete_transaction_profile/<int:id>')
+@login_required
+def delete_transaction_inProfile(id):
+    tran = Transaction.query.filter_by(id=id).first()
+    db.session.delete(tran)
+    db.session.commit()
+    flash('The transacation has been deleted.')
+    return redirect(url_for('.user', username=current_user.username))
+
+@main.route('/delete_activity/<int:id>')
+@login_required
+def delete_activity(id):
+    act = Activity.query.filter_by(id=id).first()
+    if current_user == act.author:
+        db.session.delete(act)
+        db.session.commit()
+        flash('The activity has been deleted.')
+        return redirect(url_for('.index'))
+    else:
+        flash('你没有删该活动信息的权限')
+        return redirect(url_for('.index'))
