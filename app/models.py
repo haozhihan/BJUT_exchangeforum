@@ -453,11 +453,12 @@ class Activity(db.Model):
     timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
 
     activity_name = db.Column(db.String(256), nullable=False)
-    activity_time = db.Column(db.String(256), nullable=False)
+    activity_time = db.Column(db.DateTime, nullable=False)
     activity_place = db.Column(db.String(256), nullable=False)
     activity_describe = db.Column(db.String(256), nullable=False)
     Organizer = db.Column(db.String(256), nullable=False)
     is_schoolAgree = db.Column(db.Boolean, nullable=False)
+    is_invalid = db.Column(db.Boolean, default=False)
 
     announcer_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     announcer = db.relationship('User', back_populates='activities', lazy='joined')

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import render_template, redirect, url_for, flash, request, current_app
 from flask_login import current_user
 
@@ -84,8 +86,11 @@ def organization_activity():
             is_Agree = True
         else:
             is_Agree = False
+        string = request.form["activity_time"]
+        time_str = string
+        time = datetime.strptime(time_str, '%Y-%m-%d')
         acti = Activity(activity_name=request.form["activity_name"],
-                        activity_time=request.form["activity_time"],
+                        activity_time=time,
                         activity_place=request.form["activity_place"],
                         activity_describe=request.form["activity_describe"],
                         Organizer=request.form["organizer"],
@@ -96,6 +101,7 @@ def organization_activity():
         db.session.commit()
         flash('Your Activity Announcement has been released!')
         return redirect(url_for('main.index'))
+
 
 @organization.route('/activity-list', methods=['GET', 'POST'])
 def show_activity():
