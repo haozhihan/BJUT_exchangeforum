@@ -43,7 +43,14 @@
 {#                    </span>#}
                     <span class="post-date">{{ moment(avtivity.timestamp).fromNow() }}</span>
 
-                    <a href="#" style="float: right">
+                    {#            删除#}
+                        <a class="icon-btn" href="#">
+                            <span class="glyphicon glyphicon-trash"></span>
+                            <span>delete</span>
+                        </a>
+
+                    <a class="icon-btn" href="#">
+                        <span class="glyphicon glyphicon-hand-right"></span>
                         <span>WantToGo</span>
                     </a>
                 </div>
