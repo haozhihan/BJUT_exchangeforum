@@ -40,7 +40,7 @@
                     <a href="{{ url_for('main.sold_item', item_id=transaction.id)}}#panel-2" style="float: right">
                         <span>Already Sold</span>
                     </a>
-{#                {% endif %}#}
+                {% endif %}
             {#            喜欢#}
                     {% if not current_user.is_collecting(transaction) %}
                         <a class="icon-btn" style="float:right; margin-right: 15px" href="{{ url_for('.collect', transaction_id=transaction.id) }}#{{ transaction.id }}">
