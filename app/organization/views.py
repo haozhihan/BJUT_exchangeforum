@@ -106,6 +106,7 @@ def organization_activity():
         flash('Your Activity Announcement has been released!')
         return redirect(url_for('main.index'))
 
+
 @organization.route('/want/<activity_id>')
 @login_required
 @permission_required(Permission.FOLLOW)
@@ -123,8 +124,8 @@ def want(activity_id):
     flash('You are now wanting this post')
     return redirect(url_for('main.index'))
 
+
 @organization.route('/not_want/<activity_id>')
-@login_required
 @permission_required(Permission.FOLLOW)
 def not_want(activity_id):
     activity = Activity.query.filter_by(id=activity_id).first()
