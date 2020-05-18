@@ -4,25 +4,45 @@
 .outer {
     position: fixed;
     left: 50%;
-    top: 100px;
+    top: 180px;
 }
 .inner1 {
-    width: 280px;
+    width: 350px;
+    box-shadow: 0 0 10px 3px #ddd;
 }
-
+.head {
+    margin: 30px auto;
+}
+.info {
+    color: #727070;
+}
+.follow{
+    margin-bottom: 5px;
+    border-top: 1px solid #ddd;
+}
+.follow .left-btn {
+    border-right: 1px solid #ddd;
+}
 /*
 互动功能样式
  */
-.new-post {
+.inner2 {
+    width: 350px;
+    position: relative;
     background-color: #fff;
-    width: 60px;
-    height: 80px;
-    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 0 10px 3px #ddd;
+ }
+
+.new-post {
+    padding: 0;
+    background-color: #fff;
 }
 .icon {
-    margin: 5px 10px 0 10px;
+    margin: 5px;
 }
 .icon-word {
+    margin-top: -10px;
     font-size: 12px;
     text-align: center;
 }

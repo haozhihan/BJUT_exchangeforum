@@ -1,0 +1,16 @@
+/*
+作者界面样式
+ */
+
+
+
+/*
+评论区样式
+ */
+.comment-cont{
+    background-color: #fff;
+}
+.submit .checkbox {
+    display: inline-block;
+    margin:60px 0 10px 30px;
+}

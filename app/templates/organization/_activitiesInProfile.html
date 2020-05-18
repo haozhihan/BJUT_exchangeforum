@@ -1,0 +1,46 @@
+<ul class="posts list-unstyled">
+    {% for avtivity in activities %}
+        <li class="avtivity" id="{{  avtivity.id }}">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <!-- Default panel contents -->
+                <div class="panel-heading">
+                    <h3 class="item-name" style="display: inline">
+                        {{ avtivity.activity_name }}
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <p><strong>Details:</strong>{{ avtivity.activity_describe }}
+                        Some default panel content here. Nulla vitae elit libero, a pharetra augue.
+                        Aenean lacinia bibendum nulla sed consectetur. Aenean eu leo quam.
+                        Pellentesque ornare sem lacinia quam venenatis vestibulum.
+                        Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+                </div>
+                <!-- List group -->
+                <ul class="list-group">
+                    <li class="list-group-item"><strong>Time</strong> {{ avtivity.activity_time }}</li>
+                    <li class="list-group-item"><strong>Place</strong> {{ avtivity.activity_place }}</li>
+                    <li class="list-group-item"><strong>Organizer:</strong> {{ avtivity.Organizer }}</li>
+                    <li class="list-group-item"><strong>Whether it is approved by the school:</strong>
+                        {% if avtivity.is_schoolAgree %}
+                            Yes!
+                        {% else %}
+                            No
+                        {% endif %}
+                    </li>
+                </ul>
+
+                <div class="panel-footer">
+                    <span class="post-date">{{ moment(avtivity.timestamp).fromNow() }}</span>
+
+                {#            删除#}
+                    <a class="icon-btn" href="#">
+                        <span class="glyphicon glyphicon-trash"></span>
+                        <span>delete</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        </li>
+    {% endfor %}
+</ul>

@@ -1,0 +1,73 @@
+<ul class="comments list-unstyled">
+    {% for comment in comments %}
+    <li class="comment">
+        <div class="comment-content col-sm-12">
+
+            {% if comment.is_anonymous %}
+                <div class="comment-footer">
+                        <span class="comment-thumbnail">
+                            <span class="head-photo">
+                                <img class="img-rounded profile-thumbnail" src="{{ url_for('static',filename='Image/anonymous.png') }}" alt="avatar" style="width: 25px; height: 25px">
+                            </span>
+                        </span>
+                        <span class="comment-author"> anonymous </span>
+                        <span class="comment-date">{{ moment(comment.timestamp).fromNow() }}</span>
+                  </div>
+            {% else %}
+                 <div class="comment-footer">
+                        <span class="comment-thumbnail">
+                            <a href="{{ url_for('.user', username=comment.author.username) }}">
+                                {% if comment.author.avatar_img %}
+                                    <img class="img-rounded profile-thumbnail" src="{{ comment.author.avatar_img }}" alt="avatar"  style="width: 25px; height: 25px">
+                                {% else %}
+                                    <img class="img-rounded profile-thumbnail" src="{{ comment.author.gravatar(size=25) }}" alt="avatar">
+                                {% endif %}
+                            </a>
+                        </span>
+                        <span class="comment-author">
+                            <a href="{{ url_for('.user', username=comment.author.username) }}">{{ comment.author.username }}</a>
+                        </span>
+                        <span class="comment-date">{{ moment(comment.timestamp).fromNow() }}</span>
+                 </div>
+            {% endif %}
+
+                     {% if comment.replied %}
+                         <div class="alert refer-box" role="alert">
+                             {% if comment.replied.is_anonymous %}
+                                <span>
+                                    @Anonymous :
+                                </span>
+                             {% else %}
+                                 <a href="{{ url_for('.user', username=comment.replied.author.username) }}">
+                                     @{{ comment.replied.author.username }} :
+                                 </a>
+                             {% endif %}
+                             <br>{{ comment.replied.body }}
+                         </div>
+                     {% endif %}
+
+
+
+                <div class="comment-body">
+                    {{ comment.body }}
+
+                    <div class="footer">
+                        {#按钮#}
+                        {#            删除#}
+                        {% if current_user == comment.author or current_user == post.author %}
+                         <a class="icon-btn" href="{{ url_for('.delete_comment', id=comment.id) }}">
+                             <span class="glyphicon glyphicon-trash"></span>
+                             <span>delete</span>
+                         </a>
+                        {% endif %}
+                        <!--                回复-->
+                        <a class="icon-btn" href="{{ url_for('.reply_comment', comment_id=comment.id) }}#reply">
+                            <span class="glyphicon glyphicon-share"></span>
+                            <span>reply</span>
+                        </a>
+                    </div>
+                </div>
+        </div>
+    </li>
+    {% endfor %}
+</ul>

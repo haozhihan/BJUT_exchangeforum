@@ -1,0 +1,33 @@
+/*
+二级导航的相关样式
+ */
+.my-carousel{
+    margin: 20px auto;
+}
+.content {
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 0 10px 3px #dddddd;
+}
+
+.post-nav li a{
+    margin: 10px;
+    float: left;
+    font-size: 16px;
+    color: black;
+
+}
+
+.post-nav .active a{
+    color: #4760e8;
+    background-color: #fff;
+}
+
+.post-nav li a:hover{
+    background-color: #fff;
+    color: #1b34b9;
+}
+
+.post-nav li a:focus {
+    background-color: #fff;
+}

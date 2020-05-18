@@ -1,0 +1,61 @@
+<li class="avtivity" id="{{  avtivity.id }}">
+    <div class="panel panel-warning">
+        <!-- Default panel contents -->
+        <div class="panel-heading">
+            <h3 class="item-name" style="display: inline">
+                {{ avtivity.activity_name }}
+            </h3>
+            {% if avtivity.is_invalid %}
+                <h2 style="display: inline; float: right">The event has expired!</h2>
+            {% endif %}
+        </div>
+        <div class="panel-body">
+            <p><strong>Details:</strong>{{ avtivity.activity_describe }}
+                Some default panel content here. Nulla vitae elit libero, a pharetra augue.
+                Aenean lacinia bibendum nulla sed consectetur. Aenean eu leo quam.
+                Pellentesque ornare sem lacinia quam venenatis vestibulum.
+                Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+        </div>
+        <!-- List group -->
+        <ul class="list-group">
+            <li class="list-group-item"><strong>Time</strong> {{ avtivity.activity_time }}</li>
+            <li class="list-group-item"><strong>Place</strong> {{ avtivity.activity_place }}</li>
+            <li class="list-group-item"><strong>Organizer:</strong> {{ avtivity.Organizer }}</li>
+            <li class="list-group-item"><strong>Whether it is approved by the school:</strong>
+                {% if avtivity.is_schoolAgree %}
+                    Yes!
+                {% else %}
+                    No
+                {% endif %}
+            </li>
+        </ul>
+
+        <div class="panel-footer">
+             <a class="head-photo" href="{{ url_for('.user', username=avtivity.announcer.username) }}">
+                 {% if avtivity.announcer.avatar_img %}
+                     <img class="img-rounded profile-thumbnail" src="{{ avtivity.announcer.avatar_img }}" alt="avatar"  style="width: 25px; height: 25px">
+                 {% else %}
+                     <img class="img-rounded profile-thumbnail" src="{{ avtivity.announcer.gravatar(size=25) }}" alt="avatar">
+                 {% endif %}
+            </a>
+            <span class="post-author">
+                <a href="{{ url_for('.user', username=avtivity.announcer.username) }}"> {{ avtivity.announcer.username }} </a>
+            </span>
+            <span class="post-date">{{ moment(avtivity.timestamp).fromNow() }}</span>
+
+            {% if not current_user.is_wanting(avtivity) %}
+                <a class="icon-btn" style="float:right; margin-right: 15px" href="{{ url_for('organization.want', activity_id=avtivity.id) }}#panel-3">
+{#                    <span class="glyphicon glyphicon-hand-right"></span>#}
+                    <span class="glyphicon glyphicon-heart-empty"></span>
+                    <span>{{ avtivity.wanter.count() }} WantToGo</span>
+                </a>
+            {% else %}
+                <a class="icon-btn" style="float:right; margin-right: 15px" href="{{ url_for('organization.not_want', activity_id=avtivity.id) }}#panel-3">
+{#                    <span class="glyphicon glyphicon-hand-right"></span>#}
+                    <span class="glyphicon glyphicon-heart"></span>
+                    <span>{{ avtivity.wanter.count() }} WantToGo</span>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</li>

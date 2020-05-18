@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+
+{% block title %}New Organization Activity{% endblock %}
+
+
+{% block head %}
+{{ super() }}
+    <!--     Custom styles for this template -->
+    <link href="{{ url_for('static',filename='new-transaction.css') }}" rel="stylesheet">
+{% endblock %}
+
+
+{% block page_content %}
+
+
+
+    <div class="container">
+        <div class="col-md-12">
+
+    <!--        左侧表单-->
+            <div class="col-md-6">
+                <form class="form-transaction" method="post" style="margin: 75px auto 0 auto;">
+                    <h1 class="form-transaction-heading">Activity</h1>
+                    <div class="form-group">
+                        <label for="activity_name" class="col-sm-3">Activity Name</label>
+                        <div class="col-sm-9">
+                            <input name="activity_name" id="activity_name" type="text" class="form-control" placeholder="Activity Name">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="activity_time" class="col-sm-3">Activity Time</label>
+                        <div class="col-sm-9">
+                            <input name="activity_time" id="activity_time" type="text" class="form-control" placeholder="Activity Time">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="activity_place" class="col-sm-3">Activity Place</label>
+                        <div class="col-sm-9">
+                            <input name="activity_place" id="activity_place" type="text" class="form-control" placeholder="Activity Place">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="activity_describe" class="col-sm-3">Activity Describe</label>
+                        <div class="col-sm-9">
+                            <input name="activity_describe" id="activity_describe" type="text" class="form-control" placeholder="Activity Describe">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="organizer" class="col-sm-3">Organizer</label>
+                        <div class="col-sm-9">
+                            <input name="organizer" id="organizer" type="text" class="form-control" placeholder="Organizer">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="is" class="col-sm-3">Whether approved by the school</label>
+                        <select name="is" id="is" class="col-sm-9">
+                                        <option selected="selected" value=""></option>
+                                        <option>Yes</option>
+                                        <option>No</option>
+                        </select>
+                    </div>
+
+                    <div class="col-sm-offset-3 col-sm-7">
+                        <button type="submit" class="btn btn-success trans-submit" id="submit" >Submit</button>
+                    </div>
+                </form>
+            </div>
+
+            <!--        左侧图片-->
+            <div class="col-md-6 decorate-photo">
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

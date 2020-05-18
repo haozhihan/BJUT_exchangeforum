@@ -10,7 +10,9 @@
 {{super()}}
     <link href="{{ url_for('static', filename='editormd/css/editormd.preview.min.css') }}" rel="stylesheet" />
     <link href="{{ url_for('static', filename='editormd/css/editormd.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='single_post.css') }}" rel="stylesheet" />
     <link href="{{ url_for('static', filename='comments.css') }}" rel="stylesheet" />
+
 {%endblock%}
 
 
@@ -27,6 +29,14 @@
         taskList        : true,
     });
     </script>
+    <script>
+        var comment = document.getElementById('body')
+        comment.className = 'form-control'
+        comment.style = "margin:30px; height:100px; width:730px; overflow:auto; resize: none;";
+        var submit = document.getElementById('submit')
+        submit.className = 'btn btn-primary';
+        submit.style = "margin-left: 40px";
+    </script>
 
 {%endblock%}
 
@@ -34,94 +44,122 @@
 {% block page_content %}
     <ul class="posts list-unstyled">
     {% for post in posts %}
-    <li class="post">
-        <div class="post-box">
+        <li class="post">
+            <div class="post-box">
 
-            <div class="post-content col-sm-offset-1 col-sm-9">
-{#                标题#}
-                <h1 align="center" class="post-title">
-                    <a href="{{ url_for('.post', id=post.id) }}">
-                        {{ post.title }}
-                    </a>
-                </h1>
-{#                正文#}
-                <div class="content" id="fancy-content">
-                            {{ post.body_html| safe }}
+                <div class="post-content col-sm-offset-1 col-sm-10">
+    {#                标题#}
+                    <h1 align="center" class="post-title">
+                        <a href="{{ url_for('.post', id=post.id) }}">
+                            {{ post.title }}
+                        </a>
+                    </h1>
+    {#                正文#}
+                    <div class="content" id="fancy-content">
+                                {{ post.body_html| safe }}
+                    </div>
+                </div>
+
+                <div class="col-md-offset-1 col-md-10">
+                    <div class="panel panel-default" style="margin-top: 30px">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Author</h3>
+                        </div>
+                        {% if post.is_anonymous %}
+                        <div class="panel-body">
+                            <div class=" col-sm-2">
+                                <span class="head-photo">
+                                <img class="img-rounded profile-thumbnail" src="{{ url_for('static',filename='Image/anonymous.png') }}" alt="avatar"  style="width: 60px; height: 60px">
+                                </span>
+                            </div>
+                            <div class="post-author col-sm-2">
+                                <h4>
+                                    Anonymous
+                                </h4>
+                            </div>
+                        </div>
+                        {% else %}
+                            <div class="panel-body">
+                                <div class=" col-sm-2">
+                                    <a class="head-photo" href="{{ url_for('.user', username=post.author.username) }}">
+                                    {% if post.author.avatar_img %}
+                                        <img class="img-rounded profile-thumbnail" src="{{ post.author.avatar_img }}" alt="avatar"  style="width: 60px; height: 60px">
+                                    {% else %}
+                                        <img class="img-rounded profile-thumbnail" src="{{ post.author.gravatar(size=60) }}" alt="avatar">
+                                    {% endif %}
+                                    </a>
+                                </div>
+                                <div class="post-author col-sm-2">
+                                    <h4>
+                                        <a href="{{ url_for('.user', username=post.author.username) }}">{{ post.author.username }}</a>
+                                    </h4>
+                                </div>
+                                <div class="col-sm-6">
+                                    <h6>{{ post.author.grade }}</h6>
+                                    <h6>{{ post.author.college }}</h6>
+                                </div>
+                                  {% if current_user.can(Permission.FOLLOW) and post.author != current_user %}
+                                      {% if not current_user.is_following(post.author) %}
+                                          <a align="center" href="{{ url_for('.follow', username=post.author.username) }}" class="btn btn-primary" style="margin-top: 12px">Follow</a>
+                                      {% else %}
+                                          <a align="center" href="{{ url_for('.unfollow', username=post.author.username) }}" class="btn btn-default" style="margin-top: 12px">Unfollow</a>
+                                      {% endif %}
+                                  {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
 
-            <div class="col-md-offset-1 col-md-9">
-                <div class="panel panel-default" style="margin-top: 30px">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Author</h3>
-                    </div>
+        {#    这个也要改哦#}
+        <div class="col-md-offset-4 col-md-6">
+            <div>
+                <a href="{{ url_for('.liked_by', post_id = post.id )}}">
+    {#                All of Likers#}
+                </a>
+            </div>
+        </div>
 
-                    <div class="panel-body">
-                        <div class=" col-sm-2">
-                            <a class="head-photo" href="{{ url_for('.user', username=post.author.username) }}">
-                            {% if post.author.avatar_img %}
-                                <img class="img-rounded profile-thumbnail" src="{{ post.author.avatar_img }}" alt="avatar"  style="width: 60px; height: 60px">
-                            {% else %}
-                                <img class="img-rounded profile-thumbnail" src="{{ post.author.gravatar(size=60) }}" alt="avatar">
-                            {% endif %}
-                            </a>
+
+        {#        评论区#}
+        <div class="container col-sm-offset-1 col-sm-10 comment-cont">
+            <h3 id="comments">Comments</h3>
+            {% include 'Posts/_comments.html' %}
+            {% if current_user.can(Permission.COMMENT) %}
+                <div class="comment-form">
+                    <form role="form" class="form-signin"  method="post">
+                        <div class="col-md-12">
+                             {% if request.args.get('reply') %}
+                                <div class="alert alert-warning alert-dismissible" style="margin-top: 20px;margin-bottom: 0px;" id="reply" role="alert">
+                                    Reply to <b>{{ request.args.get('author') }}</b>
+
+                                    <a style="float: right" href="{{ url_for('.post', id=post.id) }}">Cancel</a>
+                                </div>
+                             {% endif %}
+                            <div class="col-md-10" style="padding:0;">
+                                {{ form.csrf_token }}
+                                {{ form.body}}
+                            </div>
+                            <div class="col-md-2 submit" style="padding:0;" >
+                                <div class="checkbox">
+                                    <label>
+                                        <input name="anonymous" type="checkbox"> Anonymous
+                                    </label>
+                                </div>
+                                {{ form.submit }}
+                            </div>
                         </div>
-                        <div class="post-author col-sm-2">
-                            <h4>
-                                <a href="{{ url_for('.user', username=post.author.username) }}">{{ post.author.username }}</a>
-                            </h4>
-                        </div>
-                        <div class="col-sm-6">
-                            <h6>{{ post.author.grade }}</h6>
-                            <h6>{{ post.author.college }}</h6>
-                        </div>
-                      {% if current_user.can(Permission.FOLLOW) and post.author != current_user %}
-                          {% if not current_user.is_following(post.author) %}
-                              <a align="center" href="{{ url_for('.follow', username=post.author.username) }}" class="btn btn-primary">Follow</a>
-                          {% else %}
-                              <a align="center" href="{{ url_for('.unfollow', username=post.author.username) }}" class="btn btn-default">Unfollow</a>
-                          {% endif %}
-                      {% endif %}
-                    </div>
+                    </form>
                 </div>
-            </div>
+            {% endif %}
+            {% if pagination %}
+                <div class="pagination">
+                    {{ macros.pagination_widget(pagination, '.post', fragment='#comments', id=posts[0].id) }}
+                </div>
+            {% endif %}
         </div>
 
-    {#    这个也要改哦#}
-    <div class="col-md-12">
-        <div>
-            <a href="{{ url_for('.liked_by', post_id = post.id )}}">
-                All of Likers
-            </a>
-        </div>
-    </div>
-
-
-    {#        评论区#}
-    <div class="col-md-12">
-        <h4 id="comments">Comments</h4>
-        {% if current_user.can(Permission.COMMENT) %}
-            <div class="comment-form">
-                {% if request.args.get('reply') %}
-                    <div class="alert alert-dark">
-                        Reply to <b>{{ request.args.get('author') }}</b>
-                        <a class="float-right" href="{{ url_for('.post', id=post.id) }}">Cancel</a>
-                    </div>
-                {% endif %}
-                {{ wtf.quick_form(form) }}
-            </div>
-        {% endif %}
-
-        {% include '_comments.html' %}
-
-        {% if pagination %}
-            <div class="pagination">
-                {{ macros.pagination_widget(pagination, '.post', fragment='#comments', id=posts[0].id) }}
-            </div>
-        {% endif %}
-    </div>
-
-    </li>
+        </li>
     {% endfor %}
 </ul>
 

@@ -1,0 +1,14 @@
+Dear administrator,
+There is a student organization or club applying for an SOFB official account.</p>
+{The following is their information. You need to contact the school to confirm the authenticity of this information.</p>
+
+Organization Name: {{ organization.name }}
+Organization Teacher: {{ organization.teacher }}
+Organization Leader Student: {{ organization.leader_student }}
+Organization Email: {{ organization.email }}
+Contact Number : {{ organization.phone }}
+College: {{ organization.college }}
+After checking the information, click here
+
+Sincerely,
+Student Exchange Forum of BJUT

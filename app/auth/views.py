@@ -4,7 +4,7 @@ from . import auth
 from .. import db
 from ..models import User, Students
 from ..email import send_email
-from .forms import  PasswordResetRequestForm, PasswordResetForm
+from .forms import PasswordResetRequestForm, PasswordResetForm
 # This file is to write the route and some response to the user in different conditions
 
 
@@ -72,23 +72,23 @@ def register():
         # 读取前端的学号数据
         isstudent = Students.query.filter_by(student_id = request.form["BJUT_id"]).first()#学号
         if isstudent is None:
-            flash("很抱歉，您不是BJUT的学生无法注册此账户")
+            flash("Sorry, you are not a BJUT student and cannot sign up for this account.")
             return render_template('auth/register.html')
         if isstudent.id_number != request.form["id_num"]:
-            flash("您的学号与身份证号不匹配，无法注册此账户")
+            flash("Your student ID does not match your ID number, you cannot register for this account.")
             return render_template('auth/register.html')
         if isstudent is not None and isstudent.id_number == request.form["id_num"]:
             if isstudent.confirmed == True:
-                flash("您的学号已被注册，您无法注册第二个SOFB账户")
+                flash("Your student number has been registered, you cannot register for a second SOFB account")
                 return render_template('auth/register.html')
             else:
                 emailfind = User.query.filter_by(email=request.form["email"]).first()
                 if emailfind is not None:
-                    flash("您的邮箱已被注册，请更换您的邮箱")
+                    flash("Your email has been registered, please change your email")
                     return render_template('auth/register.html')
                 usernamefind = User.query.filter_by(username=request.form["user_name"]).first()
                 if usernamefind is not None:
-                    flash("您的用户名已被注册，请更换您的用户名")
+                    flash("Your username has been registered, please change your username")
                     return render_template('auth/register.html')
                 student = Students.query.filter_by(student_id=request.form["BJUT_id"]).first()
                 user = User(email=request.form["email"],
@@ -102,13 +102,14 @@ def register():
                 db.session.add(isstudent)
                 db.session.add(user)
                 db.session.commit()
-                #注册时发送邮箱认证
+                # 注册时发送邮箱认证
                 token = user.generate_confirmation_token()
                 send_email(user.email, 'Confirm Your Account',
                            'mail/confirm', user=user, token=token)
                 flash('A confirmation email has been sent to you by email.', category='info')
                 return redirect(url_for('auth.login'))
         return render_template('auth/register.html')
+
 
 
 
@@ -221,6 +222,12 @@ def change_email_request():
         # 读取前端数据
         email = request.form["email"]
         password = request.form["pwd"]
+        emailfind = User.query.filter_by(email=email).first()
+        # 验证新邮箱有没有被注册
+        if emailfind is not None:
+            flash("Your new email already exists, please change your new email")
+            return render_template('auth/change_email.html')
+
         if current_user.verify_password(password):
             new_email = email.lower()
             token = current_user.generate_email_change_token(new_email)

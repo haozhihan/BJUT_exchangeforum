@@ -15,8 +15,8 @@ class Permission:
     FOLLOW = 1
     COMMENT = 2
     WRITE = 4
-    MODERATE = 8
-    ADMIN = 16
+    ACTIVITY = 8
+    MODERATE = 16
 
 
 class Role(db.Model):
@@ -36,11 +36,10 @@ class Role(db.Model):
     def insert_roles():
         roles = {
             'User': [Permission.FOLLOW, Permission.COMMENT, Permission.WRITE],
-            'Moderator': [Permission.FOLLOW, Permission.COMMENT,
-                          Permission.WRITE, Permission.MODERATE],
+            'Organization': [Permission.FOLLOW, Permission.COMMENT,
+                             Permission.WRITE, Permission.ACTIVITY],
             'Administrator': [Permission.FOLLOW, Permission.COMMENT,
-                              Permission.WRITE, Permission.MODERATE,
-                              Permission.ADMIN],
+                              Permission.WRITE, Permission.MODERATE, ],
         }
         default_role = 'User'
         for r in roles:
@@ -90,16 +89,16 @@ class Follow(db.Model):
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
     # 以下是关于用户的基本信息，用于注册、登录以及编辑个人主页
     ID_number = db.Column(db.Integer, unique=True, index=True)
     student_id = db.Column(db.Integer, unique=True, index=True)
-    id = db.Column(db.Integer, primary_key=True)
     confirmed = db.Column(db.Boolean, default=False)
 
     email = db.Column(db.String(64), unique=True, index=True)
     username = db.Column(db.String(64), unique=True, index=True)
-    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     password_hash = db.Column(db.String(128))
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
 
     # 以下添加的信息是显示在用户个人主页的信息
     grade = db.Column(db.String(4))
@@ -127,6 +126,15 @@ class User(UserMixin, db.Model):
     liked_post = db.relationship('Like', back_populates='liker', lazy='dynamic', cascade='all')
     # 消息中心
     notifications = db.relationship('Notification', back_populates='receiver', lazy='dynamic')
+    # 交易
+    transactions = db.relationship('Transaction', back_populates='seller', lazy='dynamic')
+    # Activity
+    activities = db.relationship('Activity', back_populates='announcer', lazy='dynamic')
+    #want
+    wanted_Activity = db.relationship('Want', back_populates='wanter', lazy='dynamic', cascade='all')
+    #collect
+    collected_transaction = db.relationship('Collect', back_populates='collecter', lazy='dynamic', cascade='all')
+
 
     @staticmethod
     def add_self_follows():
@@ -249,8 +257,8 @@ class User(UserMixin, db.Model):
         if not self.is_following(user):
             f = Follow(follower=self, followed=user)
             n = Notification(receiver_id=user.id, timestamp=datetime.utcnow(),
-                             username = self.username, action= " has followed ",
-                             object = "you")
+                             username=self.username, action=" has followed ",
+                             object="you")
             db.session.add(n)
             db.session.add(f)
 
@@ -258,8 +266,26 @@ class User(UserMixin, db.Model):
         if not self.is_liking(post):
             ll = Like(liker=self, liked_post=post)
             n = Notification(receiver_id=post.author_id, timestamp=datetime.utcnow(),
-                             username = self.username, action = " has liked your posting ",
-                             object = post.title, object_id = post.id)
+                             username=self.username, action=" has liked your posting ",
+                             object=post.title, object_id=post.id)
+            db.session.add(n)
+            db.session.add(ll)
+
+    def collect(self, transaction):
+        if not self.is_collecting(transaction):
+            ll = Collect(collecter=self, collected_transaction=transaction)
+            n = Notification(receiver_id=transaction.seller_id, timestamp=datetime.utcnow(),
+                             username=self.username, action=" has collected your posting ",
+                             object=transaction.item_name, object_id=transaction.id)
+            db.session.add(n)
+            db.session.add(ll)
+
+    def want(self, activity):
+        if not self.is_wanting(activity):
+            ll = Want(wanter=self, wanted_Activity=activity)
+            n = Notification(receiver_id=activity.announcer_id, timestamp=datetime.utcnow(),
+                             username=self.username, action=" has wanted your posting ",
+                             object=activity.activity_name, object_id=activity.id)
             db.session.add(n)
             db.session.add(ll)
 
@@ -270,6 +296,16 @@ class User(UserMixin, db.Model):
 
     def dislike(self, post):
         ll = self.liked_post.filter_by(liked_post_id=post.id).first()
+        if ll:
+            db.session.delete(ll)
+
+    def not_want(self, activity):
+        ll = self.wanted_Activity.filter_by(wanted_Activity_id=activity.id).first()
+        if ll:
+            db.session.delete(ll)
+
+    def not_collect(self, transaction):
+        ll = self.collected_transaction.filter_by(collected_transaction_id=transaction.id).first()
         if ll:
             db.session.delete(ll)
 
@@ -285,6 +321,18 @@ class User(UserMixin, db.Model):
         return self.liked_post.filter_by(
             liked_post_id=post.id).first() is not None
 
+    def is_collecting(self, transaction):
+        if transaction.id is None:
+            return False
+        return self.collected_transaction.filter_by(
+            collected_transaction_id=transaction.id).first() is not None
+
+    def is_wanting(self, activity):
+        if activity.id is None:
+            return False
+        return self.wanted_Activity.filter_by(
+           wanted_Activity_id=activity.id).first() is not None
+
     def is_followed_by(self, user):
         if user.id is None:
             return False
@@ -298,6 +346,25 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.username
+
+
+class Organization(UserMixin, db.Model):
+    __tablename__ = 'organizations'
+    # 以下是关于用户的基本信息，用于注册、登录以及编辑个人主页
+    id = db.Column(db.Integer, primary_key=True)
+    confirmed = db.Column(db.Boolean, default=False)
+
+    # 以下添加的信息是显示在用户个人主页的信息
+    name = db.Column(db.String(64))
+    teacher = db.Column(db.String(128))
+    leader_student = db.Column(db.String(128))
+    phone = db.Column(db.String(128))
+    college = db.Column(db.String(256))
+    email = db.Column(db.String(64))
+
+    def generate_confirmation_token(self, expiration=3600):
+        s = Serializer(current_app.config['SECRET_KEY'], expiration)
+        return s.dumps({'confirm': self.id}).decode('utf-8')
 
 
 class AnonymousUser(AnonymousUserMixin):
@@ -328,8 +395,10 @@ class Post(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     important = db.Column(db.INT, default=0)
+    recent_activity = db.Column(db.DateTime, index=True, default=datetime.utcnow())
     comments = db.relationship('Comment', back_populates='post', cascade='all, delete-orphan', lazy='dynamic')
     liker = db.relationship('Like', back_populates='liked_post', lazy='dynamic', cascade='all')
+    is_anonymous = db.Column(db.Boolean, default=False)
 
     def like(self, user):
         if not self.is_liked_by(user):
@@ -361,6 +430,7 @@ class Post(db.Model):
             markdown(value, output_format='html'),
             tags=allowed_tags, strip=True, attributes=allowed_attrs))
 
+
 db.event.listen(Post.body, 'set', Post.on_changed_body)
 
 
@@ -374,6 +444,7 @@ class Comment(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     post = db.relationship('Post', back_populates='comments', lazy='joined')
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+    is_anonymous = db.Column(db.Boolean, default=False)
 
     # 被回复的评论的id
     replied_id = db.Column(db.Integer, db.ForeignKey('comments.id'))
@@ -392,16 +463,101 @@ class Like(db.Model):
     liked_post = db.relationship('Post', back_populates='liker', lazy='joined')
 
 
+class Collect(db.Model):
+    __tablename__ = 'collect'
+    collecter_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    collected_transaction_id = db.Column(db.Integer, db.ForeignKey('transaction.id'), primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    collecter = db.relationship('User', back_populates='collected_transaction', lazy='joined')
+    collected_transaction = db.relationship('Transaction', back_populates='collecter', lazy='joined')
+
+
+class Want(db.Model):
+    __tablename__ = 'want'
+    wanter_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    wanted_Activity_id = db.Column(db.Integer, db.ForeignKey('Activity.id'), primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    wanter = db.relationship('User', back_populates='wanted_Activity', lazy='joined')
+    wanted_Activity = db.relationship('Activity', back_populates='wanter', lazy='joined')
+
+
 class Notification(db.Model):
     __tablename__ = 'notification'
     id = db.Column(db.Integer, primary_key=True)
 
     username = db.Column(db.String(64), nullable=False)
-    action = db.Column(db.Text, nullable=False)# has followed \\ has like \\ has comment \\ has reply
-    object = db.Column(db.String(64), nullable=False)# you \\ your posting \\ your comment
-    object_id = db.Column(db.Integer)# posting
+    action = db.Column(db.Text, nullable=False)  # has followed \\ has like \\ has comment \\ has reply
+    object = db.Column(db.String(64), nullable=False)  # you \\ your posting \\ your comment
+    object_id = db.Column(db.Integer)  # posting
 
     is_read = db.Column(db.Boolean, default=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
     receiver_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     receiver = db.relationship('User', back_populates='notifications', lazy='joined')
+
+
+class Transaction(db.Model):
+    __tablename__ = 'transaction'
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+
+    item_name = db.Column(db.String(64), nullable=False)
+    item_describe = db.Column(db.Text, nullable=False)
+    link = db.Column(db.Text, nullable=False)
+    transaction_mode = db.Column(db.String(64), nullable=False)
+    is_sold = db.Column(db.Boolean, default=False)
+    seller_WeChat = db.Column(db.Text, nullable=False)
+
+    seller_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    seller = db.relationship('User', back_populates='transactions', lazy='joined')
+    collecter = db.relationship('Collect', back_populates='collected_transaction', lazy='dynamic', cascade='all')
+
+    def collect(self, user):
+        if not self.is_collected_by(user):
+            ll = Collect(collecter=user, collected_transaction=self)
+            db.session.add(ll)
+
+    def not_collect(self, user):
+        ll = self.collecter.filter_by(collecter_id=user.id).first()
+        if ll:
+            db.session.delete(ll)
+
+    def is_collected_by(self, user):
+        if user.id is None:
+            return False
+        return self.collecter.filter_by(
+            collecter_id=user.id).first() is not None
+
+
+class Activity(db.Model):
+    __tablename__ = 'Activity'
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+
+    activity_name = db.Column(db.String(256), nullable=False)
+    activity_time = db.Column(db.DateTime, nullable=False)
+    activity_place = db.Column(db.String(256), nullable=False)
+    activity_describe = db.Column(db.String(256), nullable=False)
+    Organizer = db.Column(db.String(256), nullable=False)
+    is_schoolAgree = db.Column(db.Boolean, nullable=False)
+    is_invalid = db.Column(db.Boolean, default=False)
+
+    announcer_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    announcer = db.relationship('User', back_populates='activities', lazy='joined')
+    wanter = db.relationship('Want', back_populates='wanted_Activity', lazy='dynamic', cascade='all')
+
+    def want(self, user):
+        if not self.is_wanted_by(user):
+            ll = Like(wanter=user, wanted_post=self)
+            db.session.add(ll)
+
+    def not_want(self, user):
+        ll = self.wanter.filter_by(wanter_id=user.id).first()
+        if ll:
+            db.session.delete(ll)
+
+    def is_wanted_by(self, user):
+        if user.id is None:
+            return False
+        return self.wanter.filter_by(
+            wanter_id=user.id).first() is not None

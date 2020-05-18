@@ -1,0 +1,38 @@
+.col-md-12 {
+    background-color: #fff;
+    margin: 20px auto;
+    border-radius: 4px;
+    box-shadow:0 0 10px 3px #ddd ;
+}
+
+/*
+左侧装饰区域样式
+ */
+.decorate-photo{
+    background-image: url("Image/new-transaction.jpg");
+    background-position: -20px 40px;
+    background-repeat: no-repeat;
+    background-size: 600px 600px;
+    height: 650px;
+    /*margin: 20px auto;*/
+}
+
+/*
+右侧表单区域样式
+ */
+.col-md-6 .form-group {
+    margin-top: 30px;
+}
+
+.form-group label{
+    text-align: left;
+}
+
+.form-group .describe {
+    resize: none;
+    color: #999999;
+}
+
+.trans-submit {
+    margin: 30px auto;
+}
