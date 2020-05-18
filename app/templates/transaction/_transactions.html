@@ -36,6 +36,18 @@
                 </span>
 
                 <span class="post-date">{{ moment(transaction.timestamp).fromNow() }}</span>
+            {#            喜欢#}
+                    {% if not current_user.is_collecting(transaction) %}
+                        <a class="icon-btn" style="float:right; margin-right: 15px" href="{{ url_for('.collect', transaction_id=transaction.id) }}#{{ transaction.id }}">
+                            <span class="glyphicon glyphicon-heart-empty"></span>
+                            <span>{{ transaction.collecter.count() }} collect</span>
+                        </a>
+                    {% else %}
+                        <a class="icon-btn" style="float:right; margin-right: 15px" href="{{ url_for('.not_collect', transaction_id=transaction.id) }}#{{ transaction.id }}">
+                            <span class="glyphicon glyphicon-heart"></span>
+                            <span>{{ transaction.collecter.count() }} collect</span>
+                        </a>
+                    {% endif %}
 
                 {#            喜欢#}
                 {% if not current_user.is_collecting(transaction) %}
