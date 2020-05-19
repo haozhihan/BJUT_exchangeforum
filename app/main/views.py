@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 from . import main
 from .forms import UploadPhotoForm, CommentForm, PostMdForm
 from .. import db
-from ..models import Permission, User, Post, Comment, Notification, Like, Transaction, Activity
+from ..models import Permission, User, Post, Comment, Notification, Like, Transaction, Activity, Collect, Want
 from ..decorators import permission_required
 
 
@@ -195,11 +195,13 @@ def user(username):
     page = request.args.get('page', 1, type=int)
     user = User.query.filter_by(username=username).first_or_404()
     liking = Like.query.filter_by(liker_id=user.id)
+    collecting = user.collected_transaction
+    wanting = user.wanted_Activity
 
     pagination1 = user.posts.order_by(Post.timestamp.desc()).paginate(
         page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
-    pagination2 = liking.order_by(Like.timestamp).paginate(
+    pagination2 = liking.order_by(Like.timestamp.desc()).paginate(
         page, per_page=current_app.config['FLASKY_LIKER_PER_PAGE'],
         error_out=False)
     pagination3 = user.transactions.order_by(Transaction.timestamp.desc()).paginate(
@@ -208,14 +210,23 @@ def user(username):
     pagination4 = user.activities.order_by(Activity.timestamp.desc()).paginate(
         page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
+    pagination5 = collecting.order_by(Collect.timestamp.desc()).paginate(
+        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+        error_out=False)
+    pagination6 = wanting.order_by(Want.timestamp.desc()).paginate(
+        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+        error_out=False)
 
     posts = pagination1.items
     liking_posts = [{'post': item.liked_post, 'timestamp': item.timestamp} for item in pagination2.items]
     transactions = pagination3.items
     activities = pagination4.items
-    return render_template('user.html', user=user, posts=posts, liking_posts=liking_posts,
-                           activities=activities, transactionsInProfile=transactions, pagination1=pagination1,
-                           pagination2=pagination2, pagination3=pagination3, pagination4=pagination4)
+    collects = pagination5.items
+    wants = pagination6.items
+    return render_template('user.html', user=user, posts=posts, liking_posts=liking_posts, activities=activities,
+                           transactionsInProfile=transactions, collects=collects, wants=wants,
+                           pagination1=pagination1, pagination2=pagination2, pagination3=pagination3,
+                           pagination4=pagination4, pagination5=pagination5, pagination6=pagination6)
 
 
 @main.route('/notification')
@@ -429,6 +440,7 @@ def like(post_id):
         return redirect(url_for('.post', id=post_id))
     current_user.like(post)
     post.like(current_user)
+    post.recent_activity = datetime.utcnow()
     db.session.commit()
     flash('You are now liking this post')
     return redirect(url_for('.index', id=post_id))

@@ -1,10 +1,10 @@
 from datetime import datetime
 from flask import render_template, redirect, url_for, flash, request
-from flask_login import current_user
+from flask_login import current_user, login_required
 from . import transaction
 from .. import db
 from ..decorators import permission_required
-from ..models import Transaction, Permission
+from ..models import Transaction, Permission, User
 
 
 @transaction.route('/new_transaction', methods=['GET', 'POST'])
@@ -44,6 +44,7 @@ def sold_item(item_id):
 
 
 @transaction.route('/collect/<transaction_id>')
+@login_required
 @permission_required(Permission.FOLLOW)
 def collect(transaction_id):
     transactions = Transaction.query.filter_by(id=transaction_id).first()
@@ -76,3 +77,17 @@ def not_collect(transaction_id):
     db.session.commit()
     flash('You are not collecting this post')
     return redirect(url_for('main.index', id=transaction_id))
+
+
+@transaction.route('/delete_transaction/<int:item_id>')
+@login_required
+def delete_transaction(item_id):
+    transaction=Transaction.query.get_or_404(item_id)
+    if current_user == transaction.seller:
+        db.session.delete(transaction)
+        db.session.commit()
+        flash('The second_transaction has been deleted.')
+        return redirect(url_for('main.user', username=transaction.seller.username))
+    else:
+        flash('你没有删评论权限')
+        return redirect(url_for('main.user', username=transaction.seller.username))

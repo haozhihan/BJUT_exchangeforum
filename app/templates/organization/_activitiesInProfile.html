@@ -34,10 +34,12 @@
                     <span class="post-date">{{ moment(avtivity.timestamp).fromNow() }}</span>
 
                 {#            删除#}
-                    <a class="icon-btn" href="#">
-                        <span class="glyphicon glyphicon-trash"></span>
-                        <span>delete</span>
-                    </a>
+                    {% if current_user == avtivity.announcer %}
+                            <a class="icon-btn" href="{{ url_for('organization.delete_activity', activity_id=avtivity.id)}}">
+                                <span class="glyphicon glyphicon-trash"></span>
+                                <span>delete</span>
+                            </a>
+                    {% endif %}
                 </div>
             </div>
         </div>

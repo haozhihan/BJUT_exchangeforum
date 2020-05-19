@@ -36,7 +36,7 @@
 
                     {#            删除#}
                     {% if current_user == transaction.seller %}
-                            <a class="icon-btn" href="{{ url_for('transaction.sold_item', item_id=transaction.id)}}">
+                            <a class="icon-btn" href="{{ url_for('transaction.delete_transaction', item_id=transaction.id)}}">
                                 <span class="glyphicon glyphicon-trash"></span>
                                 <span>delete</span>
                             </a>

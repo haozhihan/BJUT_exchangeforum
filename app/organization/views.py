@@ -140,3 +140,17 @@ def not_want(activity_id):
     db.session.commit()
     flash('You are not wanting this post')
     return redirect(url_for('main.index', id=activity_id))
+
+
+@organization.route('/delete_transaction/<int:activity_id>')
+@login_required
+def delete_activity(activity_id):
+    activity = Activity.query.get_or_404(activity_id)
+    if current_user == activity.announcer:
+        db.session.delete(activity)
+        db.session.commit()
+        flash('The activity has been deleted.')
+        return redirect(url_for('main.user', username=activity.announcer.username))
+    else:
+        flash('你没有删评论权限')
+        return redirect(url_for('main.user', username=activity.announcer.username))
