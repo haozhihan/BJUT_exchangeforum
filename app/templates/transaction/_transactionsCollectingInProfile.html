@@ -35,19 +35,11 @@
                     <a href="{{ url_for('.user', username=collect.collected_transaction.seller.username) }}"> {{ collect.collected_transaction.seller.username }} </a>
                 </span>
 
-                <span class="post-date">{{ moment(collect.collected_transaction.timestamp).fromNow() }}</span>
-                {#            喜欢#}
-                {% if not current_user.is_collecting(collect.collected_transaction) %}
-                    <a class="icon-btn" style="float:right; margin-right: 15px" href="{{ url_for('transaction.collect', transaction_id=collect.collected_transaction.id) }}#{{ collect.collected_transaction.id }}">
-                        <span class="glyphicon glyphicon-heart-empty"></span>
-                        <span>{{ collect.collected_transaction.collecter.count() }} Collect</span>
-                    </a>
-                {% else %}
-                    <a class="icon-btn" style="float:right; margin-right: 15px" href="{{ url_for('transaction.not_collect', transaction_id=collect.collected_transaction.id) }}#{{ collect.collected_transaction.id }}">
-                        <span class="glyphicon glyphicon-heart"></span>
-                        <span>{{ collect.collected_transaction.collecter.count() }} Collect</span>
-                    </a>
-                {% endif %}
+
+                <span class="date" style="float: right">
+                    <span class="glyphicon glyphicon-time"></span>
+                    {{ moment(collect.collected_transaction.timestamp).fromNow() }}
+                </span>
             </div>
         </div>
     </li>
