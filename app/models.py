@@ -377,6 +377,12 @@ class AnonymousUser(AnonymousUserMixin):
     def is_liking(self, post):
         return False
 
+    def is_collecting(self, transaction):
+        return False
+
+    def is_wanting(self, activity):
+        return False
+
 
 login_manager.anonymous_user = AnonymousUser
 
