@@ -90,7 +90,7 @@ def organization_activity():
             is_Agree = False
         string = request.form["activity_time"]
         time_str = string
-        time = datetime.strptime(time_str, '%Y-%m-%d')
+        time = datetime.strptime(time_str, '%Y-%m-%d %H:%M:%S')
         acti = Activity(activity_name=request.form["activity_name"],
                         activity_time=time,
                         activity_place=request.form["activity_place"],

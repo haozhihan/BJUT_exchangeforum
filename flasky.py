@@ -15,3 +15,5 @@ def make_shell_context():
     return dict(db=db, User=User, Role=Role, Students=Students, Permission=Permission, Post=Post,
                 Comment=Comment, Like=Like, Notification=Notification, Transaction=Transaction)
 
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0')
