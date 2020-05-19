@@ -4,7 +4,7 @@
 .outer {
     position: fixed;
     left: 50%;
-    top: 180px;
+    top: 80px;
 }
 .inner1 {
     width: 350px;
@@ -28,6 +28,7 @@
  */
 .inner2 {
     width: 350px;
+    margin-bottom: 20px;
     position: relative;
     background-color: #fff;
     border-radius: 4px;
@@ -45,4 +46,24 @@
     margin-top: -10px;
     font-size: 12px;
     text-align: center;
+}
+
+/*
+热度排行样式
+ */
+.inner3 {
+    width: 350px;
+    position: relative;
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 0 10px 3px #ddd;
+    font-size: 18px;
+}
+.inner3 .hot-post {
+    margin: 10px auto;
+    font-size: 75%;
+    line-height: 1;
+}
+.inner3 .hot-post a {
+    color: #0077e6;
 }

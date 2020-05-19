@@ -283,38 +283,41 @@
                           </div>
                       </div>
 
-                      <div class="col-sm-12">
-                          <h5>Hottest Posts</h5>
+                      <div class="col-sm-12 inner3">
+                          <h4>Hottest Posts</h4>
                           <ul class="posts list-unstyled">
-                              <li><a href="{{ url_for('.post', id=posts5[0].id) }}"><h4>
-                                  <small>{{ posts5[0].title }}</small>
-                              </h4></a></li>
-                              <li><a href="{{ url_for('.post', id=posts5[1].id) }}"><h4>
-                                  <small>{{ posts5[1].title }}</small>
-                              </h4></a></li>
-                              <li><a href="{{ url_for('.post', id=posts5[2].id) }}"><h4>
-                                  <small>{{ posts5[2].title }}</small>
-                              </h4></a></li>
+                              <li class="hot-post"><a href="{{ url_for('.post', id=posts5[0].id) }}">
+                                  <span class="glyphicon glyphicon-fire"></span>
+                                  <span>{{ posts5[0].title }}</span>
+                              </a></li>
+                              <li class="hot-post"><a href="{{ url_for('.post', id=posts5[1].id) }}">
+                                  <span class="glyphicon glyphicon-fire"></span>
+                                  <span>{{ posts5[1].title }}</span>
+                              </a></li>
+                              <li class="hot-post"><a href="{{ url_for('.post', id=posts5[2].id) }}">
+                                  <span class="glyphicon glyphicon-fire"></span>
+                                  <span>{{ posts5[2].title }}</span>
+                              </a></li>
                               <li><a href="{{ url_for('.post', id=posts5[3].id) }}"><h4>
-                                  <small>{{ posts5[3].title }}</small>
+                                  <small>4. {{ posts5[3].title }}</small>
                               </h4></a></li>
                               <li><a href="{{ url_for('.post', id=posts5[4].id) }}"><h4>
-                                  <small>{{ posts5[4].title }}</small>
+                                  <small>5. {{ posts5[4].title }}</small>
                               </h4></a></li>
                               <li><a href="{{ url_for('.post', id=posts5[5].id) }}"><h4>
-                                  <small>{{ posts5[5].title }}</small>
+                                  <small>6. {{ posts5[5].title }}</small>
                               </h4></a></li>
                               <li><a href="{{ url_for('.post', id=posts5[6].id) }}"><h4>
-                                  <small>{{ posts5[6].title }}</small>
+                                  <small>7. {{ posts5[6].title }}</small>
                               </h4></a></li>
                               <li><a href="{{ url_for('.post', id=posts5[7].id) }}"><h4>
-                                  <small>{{ posts5[7].title }}</small>
+                                  <small>8. {{ posts5[7].title }}</small>
                               </h4></a></li>
                               <li><a href="{{ url_for('.post', id=posts5[8].id) }}"><h4>
-                                  <small>{{ posts5[8].title }}</small>
+                                  <small>9. {{ posts5[8].title }}</small>
                               </h4></a></li>
                               <li><a href="{{ url_for('.post', id=posts5[9].id) }}"><h4>
-                                  <small>{{ posts5[9].title }}</small>
+                                  <small>10. {{ posts5[9].title }}</small>
                               </h4></a></li>
                           </ul>
                         </ul>
