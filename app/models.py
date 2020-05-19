@@ -130,11 +130,10 @@ class User(UserMixin, db.Model):
     transactions = db.relationship('Transaction', back_populates='seller', lazy='dynamic')
     # Activity
     activities = db.relationship('Activity', back_populates='announcer', lazy='dynamic')
-    #want
+    # want
     wanted_Activity = db.relationship('Want', back_populates='wanter', lazy='dynamic', cascade='all')
-    #collect
+    # collect
     collected_transaction = db.relationship('Collect', back_populates='collecter', lazy='dynamic', cascade='all')
-
 
     @staticmethod
     def add_self_follows():
@@ -331,7 +330,7 @@ class User(UserMixin, db.Model):
         if activity.id is None:
             return False
         return self.wanted_Activity.filter_by(
-           wanted_Activity_id=activity.id).first() is not None
+            wanted_Activity_id=activity.id).first() is not None
 
     def is_followed_by(self, user):
         if user.id is None:
@@ -375,6 +374,12 @@ class AnonymousUser(AnonymousUserMixin):
         return False
 
     def is_liking(self, post):
+        return False
+
+    def is_collecting(self, transaction):
+        return False
+
+    def is_wanting(self, activity):
         return False
 
 

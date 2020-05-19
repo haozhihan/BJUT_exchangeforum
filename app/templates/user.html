@@ -93,6 +93,7 @@
 					<li id="btn-2">
 						 <a href="#panel-2" data-toggle="tab">Likes</a>
 					</li>
+
                     {% if current_user.can(Permission.ACTIVITY) %}
                         <li id="btn-4">
                             <a href="#panel-4" data-toggle="tab">Announcements</a>
@@ -101,20 +102,32 @@
                         <li id="btn-3">
                             <a href="#panel-3" data-toggle="tab">Transactions</a>
                         </li>
+                        <li id="btn-6">
+                         <a href="#panel-6" data-toggle="tab">ShoppingCart</a>
+                        </li>
                     {% endif %}
+
+                    <li id="btn-5">
+                        <a href="#panel-5" data-toggle="tab">WantTo</a>
+                    </li>
 				</ul>
 
 				<div class="tab-content">
 					<div class="tab-pane active" id="panel-1">
-						{% include 'Posts/_postsInprofile.html' %}
+                        <ul class="posts list-unstyled">
+						    {% include 'Posts/_postsInprofile.html' %}
+                        </ul>
                         {% if pagination1 %}
                             <div class="pagination">
                                 {{ macros.pagination_widget(pagination1, '.user', username=user.username) }}
                             </div>
                         {% endif %}
 					</div>
+
 					<div class="tab-pane" id="panel-2">
-                        {% include 'Posts/_postsLikingInProfile.html' %}
+                        <ul class="like_posts list-unstyled">
+						    {% include 'Posts/_postsLikingInProfile.html' %}
+                        </ul>
                         {% if pagination2 %}
                             <div class="pagination">
                                 {{ macros.pagination_widget(pagination2, '.user', username=user.username) }}
@@ -122,9 +135,12 @@
                         {% endif %}
 					</div>
 
+
                     {% if current_user.can(Permission.ACTIVITY) %}
                         <div class="tab-pane" id="panel-4">
-                            {% include 'organization/_activitiesInProfile.html' %}
+                            <ul class="_activity list-unstyled">
+                                {% include 'organization/_activitiesInProfile.html' %}
+                            </ul>
                             {% if pagination4 %}
                                 <div class="pagination">
                                     {{ macros.pagination_widget(pagination4, '.user', username=user.username) }}
@@ -133,14 +149,42 @@
                         </div>
                     {% else %}
                         <div class="tab-pane" id="panel-3">
-                            {% include 'transaction/_transactionsInProfile.html' %}
+                            <ul class="_transaction list-unstyled">
+                                {% include 'transaction/_transactionsInProfile.html' %}
+                            </ul>
                             {% if pagination3 %}
                                 <div class="pagination">
                                     {{ macros.pagination_widget(pagination3, '.user', username=user.username) }}
                                 </div>
                             {% endif %}
                         </div>
+                        <div class="tab-pane" id="panel-6">
+                            <ul class="transaction list-unstyled">
+                                {% for collect in collects %}
+                                    {% include 'transaction/_transactionsCollectingInProfile.html' %}
+                                {% endfor %}
+                            </ul>
+                            {% if pagination5 %}
+                                <div class="pagination">
+                                    {{ macros.pagination_widget(pagination5, '.user', username=user.username) }}
+                                </div>
+                            {% endif %}
+                        </div>
                     {% endif %}
+
+                    <div class="tab-pane" id="panel-5">
+                        <ul class="activity list-unstyled">
+                            {% for want in wants %}
+                                {% include 'organization/_activitiesWantingInProfile.html' %}
+                            {% endfor %}
+                        </ul>
+                        {% if pagination6 %}
+                            <div class="pagination">
+                                {{ macros.pagination_widget(pagination6, '.user', username=user.username) }}
+                            </div>
+                        {% endif %}
+                    </div>
+
 				</div>
 			</div>
 
@@ -152,10 +196,14 @@
         var l2 = document.getElementById('btn-2')
         var l3 = document.getElementById('btn-3')
         var l4 = document.getElementById('btn-4')
+        var l5 = document.getElementById('btn-5')
+        var l6 = document.getElementById('btn-6')
         var content1 = document.getElementById('panel-1')
         var content2 = document.getElementById('panel-2')
         var content3 = document.getElementById('panel-3')
         var content4 = document.getElementById('panel-4')
+        var content5 = document.getElementById('panel-5')
+        var content6 = document.getElementById('panel-6')
 
         l1.onclick = function () {
             this.className = 'active'
@@ -163,6 +211,8 @@
 
             l2.className = ''
             content2.className = 'tab-pane'
+            l5.className = ''
+            content5.className = 'tab-pane'
 
             {% if current_user.can(Permission.ACTIVITY) %}
                 l4.className = ''
@@ -170,7 +220,10 @@
             {% else %}
                 l3.className = ''
                 content3.className = 'tab-pane'
+                l6.className = ''
+                content6.className = 'tab-pane'
             {% endif %}
+
         }
 
         l2.onclick = function () {
@@ -179,14 +232,40 @@
 
             l1.className = ''
             content1.className = 'tab-pane'
+            l5.className = ''
+            content5.className = 'tab-pane'
+
             {% if current_user.can(Permission.ACTIVITY) %}
                 l4.className = ''
                 content4.className = 'tab-pane'
             {% else %}
                 l3.className = ''
                 content3.className = 'tab-pane'
+                l6.className = ''
+                content6.className = 'tab-pane'
             {% endif %}
         }
+
+        l5.onclick = function () {
+            this.className = 'active'
+            content5.className = 'active'
+
+            l1.className = ''
+            content1.className = 'tab-pane'
+            l2.className = ''
+            content2.className = 'tab-pane'
+           {% if current_user.can(Permission.ACTIVITY) %}
+                l4.className = ''
+                content4.className = 'tab-pane'
+            {% else %}
+                l3.className = ''
+                content3.className = 'tab-pane'
+                l6.className = ''
+                content6.className = 'tab-pane'
+            {% endif %}
+        }
+
+
         {% if current_user.can(Permission.ACTIVITY) %}
             l4.onclick = function () {
                 this.className = 'active'
@@ -196,18 +275,49 @@
                 content1.className = 'tab-pane'
                 l2.className = ''
                 content2.className = 'tab-pane'
+                l5.className = ''
+                content5.className = 'tab-pane'
             }
+
         {% else %}
             l3.onclick = function () {
-            this.className = 'active'
-            content3.className = 'active'
+                this.className = 'active'
+                content3.className = 'active'
 
-            l1.className = ''
-            content1.className = 'tab-pane'
-            l2.className = ''
-            content2.className = 'tab-pane'
-        }
+                l1.className = ''
+                content1.className = 'tab-pane'
+                l2.className = ''
+                content2.className = 'tab-pane'
+                l5.className = ''
+                content5.className = 'tab-pane'
+                l6.className = ''
+                content6.className = 'tab-pane'
+            }
+
+            l6.onclick = function () {
+                this.className = 'active'
+                content6.className = 'active'
+
+                l1.className = 'tab-pane'
+                content1.className = 'tab-pane'
+                l2.className = 'tab-pane'
+                content2.className = 'tab-pane'
+                l3.className = ''
+                content3.className = 'tab-pane'
+                l5.className = ''
+                content5.className = 'tab-pane'
+            }
         {% endif %}
+
+
+
+
+
+
+
+
+
+
     </script>
 
     <script>

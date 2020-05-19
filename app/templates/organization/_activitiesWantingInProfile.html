@@ -1,0 +1,51 @@
+<li class="avtivity" id="{{  want.wanted_Activity.id }}">
+    <div class="panel panel-warning">
+        <!-- Default panel contents -->
+        <div class="panel-heading">
+            <h3 class="item-name" style="display: inline">
+                {{ want.wanted_Activity.activity_name }}
+            </h3>
+            {% if want.wanted_Activity.is_invalid %}
+                <h2 style="display: inline; float: right">The event has expired!</h2>
+            {% endif %}
+        </div>
+        <div class="panel-body">
+            <p><strong>Details:</strong>{{ want.wanted_Activity.activity_describe }}
+                Some default panel content here. Nulla vitae elit libero, a pharetra augue.
+                Aenean lacinia bibendum nulla sed consectetur. Aenean eu leo quam.
+                Pellentesque ornare sem lacinia quam venenatis vestibulum.
+                Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+        </div>
+        <!-- List group -->
+        <ul class="list-group">
+            <li class="list-group-item"><strong>Time</strong> {{ want.wanted_Activity.activity_time }}</li>
+            <li class="list-group-item"><strong>Place</strong> {{ want.wanted_Activity.activity_place }}</li>
+            <li class="list-group-item"><strong>Organizer:</strong> {{ want.wanted_Activity.Organizer }}</li>
+            <li class="list-group-item"><strong>Whether it is approved by the school:</strong>
+                {% if want.wanted_Activity.is_schoolAgree %}
+                    Yes!
+                {% else %}
+                    No
+                {% endif %}
+            </li>
+        </ul>
+
+        <div class="panel-footer">
+             <a class="head-photo" href="{{ url_for('.user', username=want.wanted_Activity.announcer.username) }}">
+                 {% if want.wanted_Activity.announcer.avatar_img %}
+                     <img class="img-rounded profile-thumbnail" src="{{ want.wanted_Activity.announcer.avatar_img }}" alt="avatar"  style="width: 25px; height: 25px">
+                 {% else %}
+                     <img class="img-rounded profile-thumbnail" src="{{ want.wanted_Activity.announcer.gravatar(size=25) }}" alt="avatar">
+                 {% endif %}
+            </a>
+            <span class="post-author">
+                <a href="{{ url_for('.user', username=want.wanted_Activity.announcer.username) }}"> {{ want.wanted_Activity.announcer.username }} </a>
+            </span>
+
+            <span class="date" style="float: right">
+                <span class="glyphicon glyphicon-time"></span>
+                {{ moment(want.wanted_Activity.timestamp).fromNow() }}
+            </span>
+        </div>
+    </div>
+</li>

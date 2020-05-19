@@ -39,4 +39,7 @@ def create_app(config_name):
     from .organization import organization as organization_blueprint
     app.register_blueprint(organization_blueprint, url_prefix='/organization')
 
+    from .second_transaction import transaction as transaction_blueprint
+    app.register_blueprint(transaction_blueprint, url_prefix='/transaction')
+
     return app

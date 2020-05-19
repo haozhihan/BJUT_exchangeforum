@@ -31,21 +31,15 @@
                 </ul>
 
                 <div class="panel-footer">
-{#                     <a class="head-photo" href="{{ url_for('.user', username=avtivity.announcer.username) }}">#}
-{#                         {% if avtivity.announcer.avatar_img %}#}
-{#                             <img class="img-rounded profile-thumbnail" src="{{ avtivity.announcer.avatar_img }}" alt="avatar"  style="width: 25px; height: 25px">#}
-{#                         {% else %}#}
-{#                             <img class="img-rounded profile-thumbnail" src="{{ avtivity.announcer.gravatar(size=25) }}" alt="avatar">#}
-{#                         {% endif %}#}
-{#                    </a>#}
-{#                    <span class="post-author">#}
-{#                        <a href="{{ url_for('.user', username=avtivity.announcer.username) }}"> {{ avtivity.announcer.username }} </a>#}
-{#                    </span>#}
                     <span class="post-date">{{ moment(avtivity.timestamp).fromNow() }}</span>
 
-                    <a href="#" style="float: right">
-                        <span>WantToGo</span>
-                    </a>
+                {#            删除#}
+                    {% if current_user == avtivity.announcer %}
+                            <a class="icon-btn" href="{{ url_for('organization.delete_activity', activity_id=avtivity.id)}}">
+                                <span class="glyphicon glyphicon-trash"></span>
+                                <span>delete</span>
+                            </a>
+                    {% endif %}
                 </div>
             </div>
         </div>

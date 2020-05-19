@@ -18,12 +18,6 @@ class EditProfileForm(FlaskForm):
     submit = SubmitField('Submit')
 
 
-class PostForm(FlaskForm):
-    title = TextAreaField("Title", validators=[DataRequired()])
-    body = PageDownField("What's on your mind?", validators=[DataRequired()])
-    submit = SubmitField('Submit')
-
-
 class PostMdForm(FlaskForm):
     body = TextAreaField("Body", validators=[DataRequired()])
     body_html = HiddenField()

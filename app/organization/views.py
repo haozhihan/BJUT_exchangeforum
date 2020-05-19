@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from flask import render_template, redirect, url_for, flash, request, current_app
 from flask_login import current_user, login_required
 from datetime import datetime
@@ -107,6 +106,7 @@ def organization_activity():
         flash('Your Activity Announcement has been released!')
         return redirect(url_for('main.index'))
 
+
 @organization.route('/want/<activity_id>')
 @login_required
 @permission_required(Permission.FOLLOW)
@@ -124,8 +124,8 @@ def want(activity_id):
     flash('You are now wanting this post')
     return redirect(url_for('main.index'))
 
+
 @organization.route('/not_want/<activity_id>')
-@login_required
 @permission_required(Permission.FOLLOW)
 def not_want(activity_id):
     activity = Activity.query.filter_by(id=activity_id).first()
@@ -140,3 +140,17 @@ def not_want(activity_id):
     db.session.commit()
     flash('You are not wanting this post')
     return redirect(url_for('main.index', id=activity_id))
+
+
+@organization.route('/delete_transaction/<int:activity_id>')
+@login_required
+def delete_activity(activity_id):
+    activity = Activity.query.get_or_404(activity_id)
+    if current_user == activity.announcer:
+        db.session.delete(activity)
+        db.session.commit()
+        flash('The activity has been deleted.')
+        return redirect(url_for('main.user', username=activity.announcer.username))
+    else:
+        flash('你没有删评论权限')
+        return redirect(url_for('main.user', username=activity.announcer.username))

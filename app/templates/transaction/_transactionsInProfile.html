@@ -33,8 +33,18 @@
                         <span class="glyphicon glyphicon-time"></span>
                         {{ moment(transaction.timestamp).fromNow() }}
                     </span>
+
+                    {#            删除#}
+                    {% if current_user == transaction.seller %}
+                            <a class="icon-btn" href="{{ url_for('transaction.delete_transaction', item_id=transaction.id)}}">
+                                <span class="glyphicon glyphicon-trash"></span>
+                                <span>delete</span>
+                            </a>
+                    {% endif %}
+                    {#            已经卖出#}
                     {% if current_user == transaction.seller and not transaction.is_sold  %}
-                        <a href="{{ url_for('main.sold_item', item_id=transaction.id)}}" style="float: right">
+                        <a class="icon-btn" href="{{ url_for('transaction.sold_item', item_id=transaction.id)}}">
+                            <span class="glyphicon glyphicon-usd"></span>
                             <span>Already Sold</span>
                         </a>
                     {% endif %}

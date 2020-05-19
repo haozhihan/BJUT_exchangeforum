@@ -7,9 +7,9 @@ from flask_login import login_required, current_user
 from sqlalchemy.sql.functions import func
 from werkzeug.utils import secure_filename
 from . import main
-from .forms import PostForm, UploadPhotoForm, CommentForm, PostMdForm
+from .forms import UploadPhotoForm, CommentForm, PostMdForm
 from .. import db
-from ..models import Permission, User, Post, Comment, Notification, Like, Transaction, Activity
+from ..models import Permission, User, Post, Comment, Notification, Like, Transaction, Activity, Collect, Want
 from ..decorators import permission_required
 
 
@@ -195,11 +195,13 @@ def user(username):
     page = request.args.get('page', 1, type=int)
     user = User.query.filter_by(username=username).first_or_404()
     liking = Like.query.filter_by(liker_id=user.id)
+    collecting = user.collected_transaction
+    wanting = user.wanted_Activity
 
     pagination1 = user.posts.order_by(Post.timestamp.desc()).paginate(
         page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
-    pagination2 = liking.order_by(Like.timestamp).paginate(
+    pagination2 = liking.order_by(Like.timestamp.desc()).paginate(
         page, per_page=current_app.config['FLASKY_LIKER_PER_PAGE'],
         error_out=False)
     pagination3 = user.transactions.order_by(Transaction.timestamp.desc()).paginate(
@@ -208,14 +210,23 @@ def user(username):
     pagination4 = user.activities.order_by(Activity.timestamp.desc()).paginate(
         page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
+    pagination5 = collecting.order_by(Collect.timestamp.desc()).paginate(
+        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+        error_out=False)
+    pagination6 = wanting.order_by(Want.timestamp.desc()).paginate(
+        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+        error_out=False)
 
     posts = pagination1.items
     liking_posts = [{'post': item.liked_post, 'timestamp': item.timestamp} for item in pagination2.items]
     transactions = pagination3.items
     activities = pagination4.items
-    return render_template('user.html', user=user, posts=posts, liking_posts=liking_posts,
-                           activities=activities, transactionsInProfile=transactions, pagination1=pagination1,
-                           pagination2=pagination2, pagination3=pagination3, pagination4=pagination4)
+    collects = pagination5.items
+    wants = pagination6.items
+    return render_template('user.html', user=user, posts=posts, liking_posts=liking_posts, activities=activities,
+                           transactionsInProfile=transactions, collects=collects, wants=wants,
+                           pagination1=pagination1, pagination2=pagination2, pagination3=pagination3,
+                           pagination4=pagination4, pagination5=pagination5, pagination6=pagination6)
 
 
 @main.route('/notification')
@@ -287,7 +298,6 @@ def edit_profile():
 def post(id):
     post = Post.query.get_or_404(id)
     form = CommentForm()
-
     page = request.args.get('page', 1, type=int)
     if page == -1:
         page = (post.comments.count('*') - 1) // \
@@ -315,7 +325,6 @@ def post(id):
             replied = Comment.query.get_or_404(comment.replied_id)
             comment.replied = replied
             action1 = " has replied<" + comment.body + "> to your comment<" + comment.replied.body + "> in the posting "
-
             n1 = Notification(receiver_id=comment.replied.author_id, timestamp=datetime.utcnow(),
                               username=username, action=action1,
                               object=post.title, object_id=post.id)
@@ -335,7 +344,6 @@ def post(id):
                              object=post.title, object_id=post.id)
             db.session.add(n)
             db.session.commit()
-
         db.session.add(comment)
         db.session.commit()
         if comment.is_anonymous:
@@ -343,8 +351,7 @@ def post(id):
         else:
             flash('Comment published successfully')
         return redirect(url_for('.post', id=post.id))
-    return render_template('post.html', posts=[post], form=form,
-                           comments=comments, pagination=pagination)
+    return render_template('post.html', posts=[post], form=form, comments=comments, pagination=pagination)
 
 
 @main.route('/reply/comment/<int:comment_id>')
@@ -376,43 +383,14 @@ def delete_comment(id):
         return redirect(url_for('.post', id=posts.id))
 
 
-@main.route('/delete_post/<int:id>')
+@main.route('/delete_post_profile/<post_id>')
 @login_required
-def delete_post(id):
-    posts = Post.query.filter_by(id=id).first()
-    db.session.delete(posts)
-    db.session.commit()
-    flash('The posting has been deleted.')
-    page = request.args.get('page', 1, type=int)
-    show_followed = False
-    if current_user.is_authenticated:
-        show_followed = bool(request.cookies.get('show_followed', ''))
-    if show_followed:
-        query = current_user.followed_posts
-    else:
-        query = Post.query
-    pagination = query.order_by(Post.timestamp.desc()).paginate(
-        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-        error_out=False)
-    posts = pagination.items
-    form = PostForm()
-    return render_template('index.html', posts=posts, form=form, show_followed=show_followed, pagination=pagination)
-
-
-@main.route('/delete_post_profile/<int:id>')
-@login_required
-def delete_post_inProfile(id):
-    post = Post.query.filter_by(id=id).first()
-    user = User.query.filter_by(id=post.author_id).first_or_404()
+def delete_post_inProfile(post_id):
+    post = Post.query.filter_by(id=post_id).first()
     db.session.delete(post)
     db.session.commit()
     flash('The posting has been deleted.')
-    page = request.args.get('page', 1, type=int)
-    pagination = user.posts.order_by(Post.timestamp.desc()).paginate(
-        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-        error_out=False)
-    posts = pagination.items
-    return render_template('user.html', user=user, posts=posts, pagination=pagination)
+    return redirect(url_for('.user', username=current_user.username))
 
 
 @main.route('/follow/<username>')
@@ -462,6 +440,7 @@ def like(post_id):
         return redirect(url_for('.post', id=post_id))
     current_user.like(post)
     post.like(current_user)
+    post.recent_activity = datetime.utcnow()
     db.session.commit()
     flash('You are now liking this post')
     return redirect(url_for('.index', id=post_id))
@@ -485,43 +464,7 @@ def dislike(post_id):
     return redirect(url_for('.index', id=post_id))
 
 
-@main.route('/collect/<transaction_id>')
-@login_required
-@permission_required(Permission.FOLLOW)
-def collect(transaction_id):
-    transaction = Transaction.query.filter_by(id=transaction_id).first()
-    if transaction is None:
-        flash('Invalid transaction.')
-        return redirect(url_for('.index'))
-    if current_user.is_collecting(transaction):
-        flash('You are already collecting this post.')
-        return redirect(url_for('.index', id=transaction_id))
-    current_user.collect(transaction)
-    transaction.collect(current_user)
-    transaction.recent_activity = datetime.utcnow()
-    db.session.commit()
-    flash('You are now collecting this post')
-    return redirect(url_for('.index', id=transaction_id))
-
-
-@main.route('/not_collect/<transaction_id>')
-@login_required
-@permission_required(Permission.FOLLOW)
-def not_collect(transaction_id):
-    transaction = Transaction.query.filter_by(id=transaction_id).first()
-    if transaction is None:
-        flash('Invalid transaction.')
-        return redirect(url_for('.index'))
-    if not current_user.is_collecting(transaction):
-        flash('You are not collecting this post.')
-        return redirect(url_for('.transaction', id=transaction_id))
-    current_user.not_collect(transaction)
-    transaction.not_collect(current_user)
-    db.session.commit()
-    flash('You are not collecting this post')
-    return redirect(url_for('.index', id=transaction_id))
-
-
+# 显示所有followers的人
 @main.route('/followers/<username>')
 def followers(username):
     user = User.query.filter_by(username=username).first()
@@ -539,6 +482,7 @@ def followers(username):
                            follows=follows)
 
 
+# 显示所有followed的人
 @main.route('/followed_by/<username>')
 def followed_by(username):
     user = User.query.filter_by(username=username).first()
@@ -556,6 +500,7 @@ def followed_by(username):
                            follows=follows)
 
 
+# 显示所有喜欢这个post的人
 @main.route('/liked_by/<post_id>')
 def liked_by(post_id):
     post = Post.query.filter_by(id=post_id).first()
@@ -571,46 +516,6 @@ def liked_by(post_id):
     return render_template('table/liker.html', post=post, title="The liker of",
                            endpoint='.liked_by', pagination=pagination,
                            liker=liker)
-
-
-@main.route('/all')
-@login_required
-def show_all():
-    resp = make_response(redirect(url_for('.index')))
-    resp.set_cookie('show_followed', '', max_age=30 * 24 * 60 * 60)
-    return resp
-
-
-@main.route('/followed')
-@login_required
-def show_followed():
-    resp = make_response(redirect(url_for('.index')))
-    resp.set_cookie('show_followed', '1', max_age=30 * 24 * 60 * 60)
-    return resp
-
-
-@main.route('/new_post', methods=['GET', 'POST'])
-@login_required
-def new_post():
-    if request.method == 'POST':
-        title = request.form.get('title')
-        text = request.form.get('text1')
-        is_anonymous = request.form.get('')
-        if title == "":
-            flash("Title cannot be None!")
-            return render_template('new_posting/new_post.html')
-        if text == "" or text == "<p><br></p>":
-            flash("Post cannot be None")
-            return render_template('new_posting/new_post.html')
-        post = Post(title=title,
-                    body=text,
-                    author=current_user._get_current_object())
-        post.recent_activity = datetime.utcnow()
-        db.session.add(post)
-        db.session.commit()
-        flash("You have just posted a posting", 'success')
-        return redirect(url_for('.index'))
-    return render_template('new_posting/new_post.html')
 
 
 @main.route('/new_post_md', methods=['GET', 'POST'])
@@ -642,78 +547,3 @@ def new_post_md():
             flash("You have just posted a posting", 'success')
         return redirect(url_for('.index'))
     return render_template('new_posting/new_mdpost.html', form=form)
-
-
-@main.route('/moderate')
-@login_required
-@permission_required(Permission.MODERATE)
-def moderate():
-    page = request.args.get('page', 1, type=int)
-    pagination = Comment.query.order_by(Comment.timestamp.desc()).paginate(
-        page, per_page=current_app.config['FLASKY_COMMENTS_PER_PAGE'],
-        error_out=False)
-    comments = pagination.items
-    return render_template('moderate.html', comments=comments,
-                           pagination=pagination, page=page)
-
-
-@main.route('/moderate/enable/<int:id>')
-@login_required
-@permission_required(Permission.MODERATE)
-def moderate_enable(id):
-    comment = Comment.query.get_or_404(id)
-    comment.disabled = False
-    db.session.add(comment)
-    db.session.commit()
-    return redirect(url_for('.moderate',
-                            page=request.args.get('page', 1, type=int)))
-
-
-@main.route('/moderate/disable/<int:id>')
-@login_required
-@permission_required(Permission.MODERATE)
-def moderate_disable(id):
-    comment = Comment.query.get_or_404(id)
-    comment.disabled = True
-    db.session.add(comment)
-    db.session.commit()
-    return redirect(url_for('.moderate',
-                            page=request.args.get('page', 1, type=int)))
-
-
-@main.route('/transaction', methods=['GET', 'POST'])
-@login_required
-def transaction():
-    if request.method == 'GET':
-        return render_template('transaction/new_transaction.html')
-    if request.method == 'POST':
-        name = request.form["item_name"]
-        describe = request.form["item_describe"]
-        link = request.form["link"]
-        mode = request.form["transaction_mode"]
-        wechat = request.form["seller_WeChat"]
-        if name == "" or describe == "" or link == "" or mode == "" or wechat == "":
-            flash("Item information cannot be empty")
-            return render_template('transaction/new_transaction.html')
-        trans = Transaction(item_name=name,
-                            item_describe=describe,
-                            link=link,
-                            transaction_mode=mode,
-                            seller_WeChat=wechat,
-                            seller_id=current_user.id,
-                            seller=current_user
-                            )
-        db.session.add(trans)
-        db.session.commit()
-        flash('Your transaction request has been sent!')
-        return redirect(url_for('.index'))
-
-
-@main.route('/sold/<item_id>')
-@login_required
-def sold_item(item_id):
-    transaction = Transaction.query.filter_by(id=item_id).first()
-    transaction.is_sold = True
-    db.session.add(transaction)
-    db.session.commit()
-    return redirect(url_for('.index'))

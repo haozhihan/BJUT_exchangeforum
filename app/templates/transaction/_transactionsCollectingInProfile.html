@@ -1,0 +1,45 @@
+<li class="transaction" id="{{ collect.collected_transaction.id }}">
+        <div class="panel panel-warning">
+            <!-- Default panel contents -->
+            <div class="panel-heading">
+                <h3 class="item-name" style="display: inline">
+                    <strong>Item Name:</strong> {{ collect.collected_transaction.item_name }}
+                </h3>
+                {% if collect.collected_transaction.is_sold %}
+                        <h2 style="display: inline; float: right">Already Sold!</h2>
+                {% endif %}
+            </div>
+            <div class="panel-body">
+                <p><strong>Item Describe:</strong>{{ collect.collected_transaction.item_describe }}
+                    Some default panel content here. Nulla vitae elit libero, a pharetra augue.
+                    Aenean lacinia bibendum nulla sed consectetur. Aenean eu leo quam.
+                    Pellentesque ornare sem lacinia quam venenatis vestibulum.
+                    Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+            </div>
+          <!-- List group -->
+            <ul class="list-group">
+                <li class="list-group-item"><strong>Transaction Link:</strong> {{ collect.collected_transaction.link }}</li>
+                <li class="list-group-item"><strong>Transaction Mode:</strong> {{ collect.collected_transaction.transaction_mode }}</li>
+                <li class="list-group-item"><strong>Seller WeChat:</strong> {{ collect.collected_transaction.seller_WeChat }}</li>
+            </ul>
+
+            <div class="panel-footer">
+                 <a class="head-photo" href="{{ url_for('.user', username=collect.collected_transaction.seller.username) }}">
+                     {% if collect.collected_transaction.seller.avatar_img %}
+                         <img class="img-rounded profile-thumbnail" src="{{ collect.collected_transaction.seller.avatar_img }}" alt="avatar"  style="width: 25px; height: 25px">
+                     {% else %}
+                         <img class="img-rounded profile-thumbnail" src="{{ collect.collected_transaction.seller.gravatar(size=25) }}" alt="avatar">
+                     {% endif %}
+                </a>
+                <span class="post-author">
+                    <a href="{{ url_for('.user', username=collect.collected_transaction.seller.username) }}"> {{ collect.collected_transaction.seller.username }} </a>
+                </span>
+
+
+                <span class="date" style="float: right">
+                    <span class="glyphicon glyphicon-time"></span>
+                    {{ moment(collect.collected_transaction.timestamp).fromNow() }}
+                </span>
+            </div>
+        </div>
+    </li>
