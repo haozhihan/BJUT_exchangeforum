@@ -28,10 +28,13 @@
  */
 .inner2 {
     width: 350px;
+    margin-bottom: 20px;
+    padding: 5px;
     position: relative;
     background-color: #fff;
     border-radius: 4px;
     box-shadow: 0 0 10px 3px #ddd;
+    margin-bottom: 20px;
  }
 
 .new-post {
@@ -52,6 +55,8 @@
  */
 .inner3 {
     width: 350px;
+    padding-top: 5px;
+    padding-bottom: 5px;
     position: relative;
     background-color: #fff;
     border-radius: 4px;

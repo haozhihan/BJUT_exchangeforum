@@ -16,7 +16,9 @@ from ..decorators import permission_required
 @main.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'GET':
-        page = request.args.get('page', 1, type=int)
+        page1 = request.args.get('page', 1, type=int)
+        page2 = request.args.get('page', 1, type=int)
+        page3 = request.args.get('page', 1, type=int)
         query1 = Post.query
         query2 = Transaction.query
         query3 = Activity.query
@@ -26,13 +28,13 @@ def index():
                 db.session.add(activity)
                 db.session.commit()
         pagination1 = query1.order_by(Post.recent_activity.desc()).paginate(
-            page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+            page1, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
             error_out=False)
         pagination2 = query2.order_by(Transaction.timestamp.desc()).paginate(
-            page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+            page2, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
             error_out=False)
         pagination3 = query3.order_by(Activity.timestamp.desc()).paginate(
-            page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+            page3, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
             error_out=False)
         posts1 = pagination1.items
         transactions = pagination2.items
@@ -42,20 +44,18 @@ def index():
             com_num = db.session.query(func.count(Comment.id)).filter_by(post_id=item.id).scalar()
             li_num = db.session.query(func.count(Like.liker_id)).filter_by(liked_post_id=item.id).scalar()
             item.important = 7 * com_num + 3 * li_num
-        pagination5 = query1.order_by(Post.important.desc()).paginate(
-            page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-            error_out=False)
-        posts5 = pagination5.items
+        posts5 = query1.order_by(Post.important.desc())
         if current_user.is_authenticated:
+            page4 = request.args.get('page4', 1, type=int)
             query4 = current_user.followed_posts
             pagination4 = query4.order_by(Post.recent_activity.desc()).paginate(
-                page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+                page4, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
                 error_out=False)
             posts4 = pagination4.items
             return render_template('index.html', posts1=posts1, transactions=transactions, activities=activities,
                                    posts4=posts4, posts5=posts5,
                                    pagination1=pagination1, pagination2=pagination2, pagination3=pagination3,
-                                   pagination4=pagination4, pagination5=pagination5)
+                                   pagination4=pagination4)
         else:
             return render_template('index.html', posts1=posts1, transactions=transactions, activities=activities,
                                    pagination1=pagination1, pagination2=pagination2, pagination3=pagination3)
@@ -187,36 +187,39 @@ def query_user():
             page, per_page=current_app.config['FLASKY_FOLLOWERS_PER_PAGE'],
             error_out=False)
         query = pagination.items
-        return render_template('queryuser.html', query=query, title="Result of query", pagination=pagination)
+        return render_template('queryuser.html', query=query, title="Result of query", pagination=pagination, inf = inf)
 
 
 @main.route('/user/<username>')
 def user(username):
-    page = request.args.get('page', 1, type=int)
+    page1 = request.args.get('page', 1, type=int)
+    page2 = request.args.get('page', 1, type=int)
+    page3 = request.args.get('page', 1, type=int)
+    page4 = request.args.get('page', 1, type=int)
+    page5 = request.args.get('page', 1, type=int)
+    page6 = request.args.get('page', 1, type=int)
     user = User.query.filter_by(username=username).first_or_404()
     liking = Like.query.filter_by(liker_id=user.id)
     collecting = user.collected_transaction
     wanting = user.wanted_Activity
-
     pagination1 = user.posts.order_by(Post.timestamp.desc()).paginate(
-        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+        page1, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
     pagination2 = liking.order_by(Like.timestamp.desc()).paginate(
-        page, per_page=current_app.config['FLASKY_LIKER_PER_PAGE'],
+        page2, per_page=current_app.config['FLASKY_LIKER_PER_PAGE'],
         error_out=False)
     pagination3 = user.transactions.order_by(Transaction.timestamp.desc()).paginate(
-        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+        page3, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
     pagination4 = user.activities.order_by(Activity.timestamp.desc()).paginate(
-        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+        page4, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
     pagination5 = collecting.order_by(Collect.timestamp.desc()).paginate(
-        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+        page5, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
     pagination6 = wanting.order_by(Want.timestamp.desc()).paginate(
-        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+        page6, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
         error_out=False)
-
     posts = pagination1.items
     liking_posts = [{'post': item.liked_post, 'timestamp': item.timestamp} for item in pagination2.items]
     transactions = pagination3.items
