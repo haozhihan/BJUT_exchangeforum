@@ -1,14 +1,49 @@
 /*
+文章样式
+ */
+.post-content {
+    margin-top: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px 3px #ddd;
+    border-radius: 4px;
+}
+.post-title {
+    padding-bottom: 5px;
+    border-bottom: 1px solid #ddd;
+}
+.post-title a:hover{
+    text-decoration: none;
+}
+/*
 作者界面样式
  */
-
-
+.post-author {
+    padding: 0;
+    margin-top: 30px;
+    box-shadow: 0 0 10px 3px #ddd;
+    border-radius: 4px;
+}
+.post-author .panel {
+    margin: 0;
+}
 
 /*
 评论区样式
  */
 .comment-cont{
+    margin-top: 20px;
     background-color: #fff;
+    box-shadow: 0 0 10px 3px #ddd;
+    border-radius: 4px;
+}
+.comment-cont .alert{
+    margin: 20px auto 0 auto;
+}
+.comment-box {
+    padding: 0;
+}
+.submit {
+    padding: 0;
 }
 .submit .checkbox {
     display: inline-block;
