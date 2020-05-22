@@ -31,15 +31,20 @@
     margin-bottom: 20px;
     padding: 5px;
     position: relative;
-    background-color: #fff;
-    border-radius: 4px;
-    box-shadow: 0 0 10px 3px #ddd;
-    margin-bottom: 20px;
  }
-
-.new-post {
-    padding: 0;
+.inner2-left {
+    margin-left: 70px;
     background-color: #fff;
+    box-shadow: 0 0 10px 3px #ddd;
+    border-radius: 4px;
+    float: left;
+}
+.inner2-right {
+    margin-right: 70px;
+    background-color: #fff;
+    box-shadow: 0 0 10px 3px #ddd;
+    border-radius: 4px;
+    float: right;
 }
 .icon {
     margin: 5px;
