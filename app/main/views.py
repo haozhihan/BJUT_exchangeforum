@@ -17,51 +17,93 @@ from ..decorators import permission_required
 def index():
     if request.method == 'GET':
         page1 = request.args.get('page', 1, type=int)
-        page2 = request.args.get('page', 1, type=int)
-        page3 = request.args.get('page', 1, type=int)
         query1 = Post.query
+        pagination1 = query1.order_by(Post.recent_activity.desc()).paginate(
+            page1, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+            error_out=False)
+        posts1 = pagination1.items
+        # hot
+        for item in query1:
+            item.important = 0
+            com_num = db.session.query(func.count(Comment.id)).filter_by(post_id=item.id).scalar()
+            li_num = db.session.query(func.count(Like.liker_id)).filter_by(liked_post_id=item.id).scalar()
+            item.important = 7 * com_num + 3 * li_num
+        hot = query1.order_by(Post.important.desc())
+        return render_template('index/index_posts.html', posts1=posts1, posts5=hot, pagination1=pagination1)
+    else:
+        inf = request.form["search"]
+        return redirect(url_for('.query', content=inf))
+
+
+@main.route('/trans', methods=['GET', 'POST'])
+def index_transaction():
+    if request.method == 'GET':
+        page2 = request.args.get('page', 1, type=int)
         query2 = Transaction.query
+        pagination2 = query2.order_by(Transaction.timestamp.desc()).paginate(
+            page2, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+            error_out=False)
+        transactions = pagination2.items
+        # hot
+        query1 = Post.query
+        for item in query1:
+            item.important = 0
+            com_num = db.session.query(func.count(Comment.id)).filter_by(post_id=item.id).scalar()
+            li_num = db.session.query(func.count(Like.liker_id)).filter_by(liked_post_id=item.id).scalar()
+            item.important = 7 * com_num + 3 * li_num
+        hot = query1.order_by(Post.important.desc())
+        return render_template('index/index_transactions.html', transactions=transactions, posts5=hot, pagination2=pagination2)
+    else:
+        inf = request.form["search"]
+        return redirect(url_for('.query', content=inf))
+
+
+@main.route('/act', methods=['GET', 'POST'])
+def index_activity():
+    if request.method == 'GET':
+        page3 = request.args.get('page', 1, type=int)
         query3 = Activity.query
         for activity in query3:
             if activity.activity_time < datetime.utcnow():
                 activity.is_invalid = True
                 db.session.add(activity)
                 db.session.commit()
-        pagination1 = query1.order_by(Post.recent_activity.desc()).paginate(
-            page1, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-            error_out=False)
-        pagination2 = query2.order_by(Transaction.timestamp.desc()).paginate(
-            page2, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-            error_out=False)
         pagination3 = query3.order_by(Activity.timestamp.desc()).paginate(
             page3, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
             error_out=False)
-        posts1 = pagination1.items
-        transactions = pagination2.items
         activities = pagination3.items
+        #hot
+        query1 = Post.query
         for item in query1:
             item.important = 0
             com_num = db.session.query(func.count(Comment.id)).filter_by(post_id=item.id).scalar()
             li_num = db.session.query(func.count(Like.liker_id)).filter_by(liked_post_id=item.id).scalar()
             item.important = 7 * com_num + 3 * li_num
-        posts5 = query1.order_by(Post.important.desc())
-        if current_user.is_authenticated:
-            page4 = request.args.get('page4', 1, type=int)
-            query4 = current_user.followed_posts
-            pagination4 = query4.order_by(Post.recent_activity.desc()).paginate(
-                page4, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-                error_out=False)
-            posts4 = pagination4.items
-            return render_template('index.html', posts1=posts1, transactions=transactions, activities=activities,
-                                   posts4=posts4, posts5=posts5,
-                                   pagination1=pagination1, pagination2=pagination2, pagination3=pagination3,
-                                   pagination4=pagination4)
-        else:
-            return render_template('index.html', posts1=posts1, transactions=transactions, activities=activities,
-                                   pagination1=pagination1, pagination2=pagination2, pagination3=pagination3)
+        hot = query1.order_by(Post.important.desc())
+        return render_template('index/index_activities.html', activities=activities,  posts5=hot, pagination3=pagination3)
+    else:
+        inf = request.form["search"]
+        return redirect(url_for('.query', content=inf))
 
 
-
+@main.route('/foll', methods=['GET', 'POST'])
+def index_follow():
+    if request.method == 'GET':
+        # hot
+        query1 = Post.query
+        for item in query1:
+            item.important = 0
+            com_num = db.session.query(func.count(Comment.id)).filter_by(post_id=item.id).scalar()
+            li_num = db.session.query(func.count(Like.liker_id)).filter_by(liked_post_id=item.id).scalar()
+            item.important = 7 * com_num + 3 * li_num
+        hot = query1.order_by(Post.important.desc())
+        page4 = request.args.get('page4', 1, type=int)
+        query4 = current_user.followed_posts
+        pagination4 = query4.order_by(Post.recent_activity.desc()).paginate(
+            page4, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+            error_out=False)
+        posts4 = pagination4.items
+        return render_template('index/index_follows.html', posts4=posts4, posts5=hot, pagination4=pagination4)
     else:
         inf = request.form["search"]
         return redirect(url_for('.query', content=inf))
@@ -187,7 +229,7 @@ def query_user():
             page, per_page=current_app.config['FLASKY_FOLLOWERS_PER_PAGE'],
             error_out=False)
         query = pagination.items
-        return render_template('queryuser.html', query=query, title="Result of query", pagination=pagination, inf = inf)
+        return render_template('queryuser.html', query=query, title="Result of query", pagination=pagination, inf=inf)
 
 
 @main.route('/user/<username>')
