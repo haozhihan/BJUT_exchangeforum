@@ -40,7 +40,6 @@
                         <a href="{{ url_for('.followers', username=user.username) }}">Followers: <span class="badge">{{ user.followers.count() - 1 }}</span></a>&nbsp;
                         <a href="{{ url_for('.followed_by', username=user.username) }}">Following: <span class="badge">{{ user.following.count() - 1 }}</span></a>
                 </div>
-
             </div>
         </div>
 
@@ -89,9 +88,7 @@
     </div>
 
     <div class="container col-sm-12 info">
-
         <div class="tabbable">
-
 				<ul class="nav post-nav">
 					<li class="active" id="btn-1">
 						 <a href="#panel-1" data-toggle="tab">Posts</a>
@@ -99,7 +96,6 @@
 					<li id="btn-2">
 						 <a href="#panel-2" data-toggle="tab">Likes</a>
 					</li>
-
                     {% if current_user.can(Permission.ACTIVITY) %}
                         <li id="btn-4">
                             <a href="#panel-4" data-toggle="tab">Announcements</a>
@@ -112,7 +108,6 @@
                          <a href="#panel-6" data-toggle="tab">ShoppingCart</a>
                         </li>
                     {% endif %}
-
                     <li id="btn-5">
                         <a href="#panel-5" data-toggle="tab">WantTo</a>
                     </li>
@@ -123,46 +118,23 @@
                         <ul class="posts list-unstyled">
 						    {% include 'Posts/_postsInProfile.html' %}
                         </ul>
-                        {% if pagination1 %}
-                            <div class="pagination">
-                                {{ macros.pagination_widget(pagination1, '.user', username=user.username) }}
-                            </div>
-                        {% endif %}
 					</div>
-
 					<div class="tab-pane" id="panel-2">
                         <ul class="like_posts list-unstyled">
 						    {% include 'Posts/_postsLikingInProfile.html' %}
                         </ul>
-                        {% if pagination2 %}
-                            <div class="pagination">
-                                {{ macros.pagination_widget(pagination2, '.user', username=user.username) }}
-                            </div>
-                        {% endif %}
 					</div>
-
-
                     {% if current_user.can(Permission.ACTIVITY) %}
                         <div class="tab-pane" id="panel-4">
                             <ul class="_activity list-unstyled">
                                 {% include 'organization/_activitiesInProfile.html' %}
                             </ul>
-                            {% if pagination4 %}
-                                <div class="pagination">
-                                    {{ macros.pagination_widget(pagination4, '.user', username=user.username) }}
-                                </div>
-                            {% endif %}
                         </div>
                     {% else %}
                         <div class="tab-pane" id="panel-3">
                             <ul class="_transaction list-unstyled">
                                 {% include 'transaction/_transactionsInProfile.html' %}
                             </ul>
-                            {% if pagination3 %}
-                                <div class="pagination">
-                                    {{ macros.pagination_widget(pagination3, '.user', username=user.username) }}
-                                </div>
-                            {% endif %}
                         </div>
                         <div class="tab-pane" id="panel-6">
                             <ul class="transaction list-unstyled">
@@ -170,29 +142,17 @@
                                     {% include 'transaction/_transactionsCollectingInProfile.html' %}
                                 {% endfor %}
                             </ul>
-                            {% if pagination5 %}
-                                <div class="pagination">
-                                    {{ macros.pagination_widget(pagination5, '.user', username=user.username) }}
-                                </div>
-                            {% endif %}
                         </div>
                     {% endif %}
-
                     <div class="tab-pane" id="panel-5">
                         <ul class="activity list-unstyled">
                             {% for want in wants %}
                                 {% include 'organization/_activitiesWantingInProfile.html' %}
                             {% endfor %}
                         </ul>
-                        {% if pagination6 %}
-                            <div class="pagination">
-                                {{ macros.pagination_widget(pagination6, '.user', username=user.username) }}
-                            </div>
-                        {% endif %}
                     </div>
-
 				</div>
-			</div>
+        </div>
 
     </div>
 </div>

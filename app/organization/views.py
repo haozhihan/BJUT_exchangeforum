@@ -89,22 +89,27 @@ def organization_activity():
         else:
             is_Agree = False
         string = request.form["activity_time"]
+        name = request.form["activity_name"]
+        place = request.form["activity_place"]
+        describe = request.form["activity_describe"]
+        organizer = request.form["organizer"]
+        if name == "" or place == "" or string == "" or describe == "" or organizer == "":
+            flash("Activity information cannot be empty")
+            return render_template('organization/new_activity.html')
         time_str = string
         time = datetime.strptime(time_str, '%Y-%m-%dT%H:%M')
-        acti = Activity(activity_name=request.form["activity_name"],
+        acti = Activity(activity_name=name,
                         activity_time=time,
-                        activity_place=request.form["activity_place"],
-                        activity_describe=request.form["activity_describe"],
-                        Organizer=request.form["organizer"],
+                        activity_place=place,
+                        activity_describe=describe,
+                        Organizer=organizer,
                         is_schoolAgree=is_Agree,
                         announcer_id=current_user.id
                         )
-        print("1")
         db.session.add(acti)
         db.session.commit()
-        print("2")
         flash('Your Activity Announcement has been released!')
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.index_activity'))
 
 
 @organization.route('/want/<activity_id>')
@@ -114,15 +119,15 @@ def want(activity_id):
     activity = Activity.query.filter_by(id=activity_id).first()
     if activity is None:
         flash('Invalid activity.')
-        return redirect(url_for('.index'))
+        return redirect(url_for('main.index_activity'))
     if current_user.is_wanting(activity):
         flash('You are already wanting this post.')
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.index_activity'))
     current_user.want(activity)
     activity.want(current_user)
     db.session.commit()
     flash('You are now wanting this post')
-    return redirect(url_for('main.index'))
+    return redirect(url_for('main.index_activity'))
 
 
 @organization.route('/not_want/<activity_id>')
@@ -132,15 +137,15 @@ def not_want(activity_id):
     activity = Activity.query.filter_by(id=activity_id).first()
     if activity is None:
         flash('Invalid activity.')
-        return redirect(url_for('.index'))
+        return redirect(url_for('main.index_activity'))
     if not current_user.is_wanting(activity):
         flash('You are not wanting this post.')
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.index_activity'))
     current_user.not_want(activity)
     activity.not_want(current_user)
     db.session.commit()
     flash('You are not wanting this post')
-    return redirect(url_for('main.index', id=activity_id))
+    return redirect(url_for('main.index_activity'))
 
 
 @organization.route('/delete_transaction/<int:activity_id>')

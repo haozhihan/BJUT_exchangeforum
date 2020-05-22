@@ -234,44 +234,19 @@ def query_user():
 
 @main.route('/user/<username>')
 def user(username):
-    page1 = request.args.get('page', 1, type=int)
-    page2 = request.args.get('page', 1, type=int)
-    page3 = request.args.get('page', 1, type=int)
-    page4 = request.args.get('page', 1, type=int)
-    page5 = request.args.get('page', 1, type=int)
-    page6 = request.args.get('page', 1, type=int)
     user = User.query.filter_by(username=username).first_or_404()
     liking = Like.query.filter_by(liker_id=user.id)
     collecting = user.collected_transaction
     wanting = user.wanted_Activity
-    pagination1 = user.posts.order_by(Post.timestamp.desc()).paginate(
-        page1, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-        error_out=False)
-    pagination2 = liking.order_by(Like.timestamp.desc()).paginate(
-        page2, per_page=current_app.config['FLASKY_LIKER_PER_PAGE'],
-        error_out=False)
-    pagination3 = user.transactions.order_by(Transaction.timestamp.desc()).paginate(
-        page3, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-        error_out=False)
-    pagination4 = user.activities.order_by(Activity.timestamp.desc()).paginate(
-        page4, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-        error_out=False)
-    pagination5 = collecting.order_by(Collect.timestamp.desc()).paginate(
-        page5, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-        error_out=False)
-    pagination6 = wanting.order_by(Want.timestamp.desc()).paginate(
-        page6, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-        error_out=False)
-    posts = pagination1.items
-    liking_posts = [{'post': item.liked_post, 'timestamp': item.timestamp} for item in pagination2.items]
-    transactions = pagination3.items
-    activities = pagination4.items
-    collects = pagination5.items
-    wants = pagination6.items
+
+    posts = user.posts.order_by(Post.timestamp.desc())
+    liking_posts = [{'post': item.liked_post, 'timestamp': item.timestamp} for item in liking.order_by(Like.timestamp.desc())]
+    transactions = user.transactions.order_by(Transaction.timestamp.desc())
+    activities = user.activities.order_by(Activity.timestamp.desc())
+    collects = collecting.order_by(Collect.timestamp.desc())
+    wants = wanting.order_by(Want.timestamp.desc())
     return render_template('user.html', user=user, posts=posts, liking_posts=liking_posts, activities=activities,
-                           transactionsInProfile=transactions, collects=collects, wants=wants,
-                           pagination1=pagination1, pagination2=pagination2, pagination3=pagination3,
-                           pagination4=pagination4, pagination5=pagination5, pagination6=pagination6)
+                           transactionsInProfile=transactions, collects=collects, wants=wants,)
 
 
 @main.route('/notification')
@@ -522,7 +497,7 @@ def followers(username):
         error_out=False)
     follows = [{'user': item.follower, 'timestamp': item.timestamp}
                for item in pagination.items]
-    return render_template('table/followers.html', user=user, title="Followers of",
+    return render_template('table/../templates/followers.html', user=user, title="Followers of",
                            endpoint='.followers', pagination=pagination,
                            follows=follows)
 
@@ -540,7 +515,7 @@ def followed_by(username):
         error_out=False)
     follows = [{'user': item.followed, 'timestamp': item.timestamp}
                for item in pagination.items]
-    return render_template('table/followers.html', user=user, title="Followed by",
+    return render_template('table/../templates/followers.html', user=user, title="Followed by",
                            endpoint='.followed_by', pagination=pagination,
                            follows=follows)
 

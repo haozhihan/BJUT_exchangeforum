@@ -4,7 +4,7 @@ from flask_login import current_user, login_required
 from . import transaction
 from .. import db
 from ..decorators import permission_required
-from ..models import Transaction, Permission, User
+from ..models import Transaction, Permission
 
 
 @transaction.route('/new_transaction', methods=['GET', 'POST'])
@@ -31,7 +31,7 @@ def new_transaction():
         db.session.add(trans)
         db.session.commit()
         flash('Your transaction request has been sent!')
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.index_transaction'))
 
 
 @transaction.route('/sold/<item_id>')
@@ -50,16 +50,16 @@ def collect(transaction_id):
     transactions = Transaction.query.filter_by(id=transaction_id).first()
     if transactions is None:
         flash('Invalid transaction.')
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.index_transaction'))
     if current_user.is_collecting(transactions):
         flash('You are already collecting this post.')
-        return redirect(url_for('main.index', id=transaction_id))
+        return redirect(url_for('main.index_transaction'))
     current_user.collect(transactions)
     transactions.collect(current_user)
     transactions.recent_activity = datetime.utcnow()
     db.session.commit()
     flash('You are now collecting this post')
-    return redirect(url_for('main.index', id=transaction_id))
+    return redirect(url_for('main.index_transaction'))
 
 
 @transaction.route('/not_collect/<transaction_id>')
@@ -68,15 +68,15 @@ def not_collect(transaction_id):
     transactions = Transaction.query.filter_by(id=transaction_id).first()
     if transactions is None:
         flash('Invalid transaction.')
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.index_transaction'))
     if not current_user.is_collecting(transactions):
         flash('You are not collecting this post.')
-        return redirect(url_for('main.index', id=transaction_id))
+        return redirect(url_for('main.index_transaction'))
     current_user.not_collect(transactions)
     transactions.not_collect(current_user)
     db.session.commit()
     flash('You are not collecting this post')
-    return redirect(url_for('main.index', id=transaction_id))
+    return redirect(url_for('main.index_transaction'))
 
 
 @transaction.route('/delete_transaction/<int:item_id>')
