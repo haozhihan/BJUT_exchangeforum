@@ -47,7 +47,11 @@
         <div class="col-sm-offset-2 col-md-6" style="margin-top: 35px;margin-left: 80px;">
             <ul class="list-group">
                 <li class="list-group-item info-box">
-                    <h3 style="display: inline;">{{ user.username }}</h3>
+                    <h3 style="display: inline;">{{ user.username }}
+                        {% if current_user.can(Permission.ACTIVITY) %}
+                        <span class="glyphicon glyphicon-tag"></span>
+                        {% endif %}
+                    </h3>
                      {% if current_user.can(Permission.FOLLOW) and user != current_user %}
                             {% if not current_user.is_following(user) %}
                             <a href="{{ url_for('.follow', username=user.username) }}" class="btn btn-follow">Follow</a>
