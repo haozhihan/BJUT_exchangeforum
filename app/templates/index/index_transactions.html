@@ -1,0 +1,324 @@
+{% extends "base.html" %}
+{% import "_macros.html" as macros %}
+
+{% block title %}Student Exchange Forum of BJUT{% endblock %}
+
+{% block head %}
+{{ super() }}
+<!--     Custom styles for this template -->
+    <link href="{{ url_for('static',filename='home.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static',filename='posts.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static',filename='interact.css') }}" rel="stylesheet">
+{% endblock %}
+
+{#主导航#}
+{% block navbar %}
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{{ url_for('main.index') }}">Student Exchange Forum of BJUT</a>
+            </div>
+
+            <div class="navbar-collapse collapse">
+
+                <ul class="nav navbar-nav">
+                    <li><a href="{{ url_for('main.index') }}">Home</a></li>
+
+                    <form class="navbar-form navbar-left" role="search" method="post">
+                      <div class="form-group">
+                          <input name="search" style="width: 420px;margin-left: 20px;" type="text" class="form-control" placeholder="Search">
+                      </div>
+                      <button type="submit" class="btn btn-default" >Submit</button>
+                    </form>
+
+                </ul>
+
+                <ul class="nav navbar-nav navbar-right">
+
+                    {% if current_user.is_authenticated %}
+{#                            通知#}
+                        <li>
+                            <a href="{{ url_for('main.notification') }}" >
+                                <svg viewBox="0 0 1024 1024" width="20" height="20">
+                                    <defs><style type="text/css"></style></defs>
+                                    <path d="M892.343 738.743c7.314 0 21.943 0 29.257 7.314-29.257-21.943-51.2-58.514-51.2-95.086V424.23c0-168.229-117.029-307.2-285.257-343.772v-7.314C585.143 36.57 548.57 0 512 0s-80.457 36.571-80.457 73.143v7.314C270.629 117.03 153.6 256 153.6 424.23V650.97c0 36.572-21.943 73.143-51.2 95.086 7.314-7.314 14.629-7.314 29.257-7.314-29.257 0-51.2 21.943-51.2 51.2s21.943 51.2 51.2 51.2h768c29.257 0 51.2-21.943 51.2-51.2-7.314-21.943-29.257-43.886-58.514-51.2zM512 1024c73.143 0 131.657-58.514 131.657-131.657H380.343C380.343 965.486 438.857 1024 512 1024z" fill="#3BA9F6" p-id="1699">
+                                    </path>
+                                </svg>
+                                <span class="badge" style="margin-bottom: 10px"></span>
+                            </a>
+                        </li>
+{#                            下拉菜单#}
+                        <li class="dropdown">
+                            <a href="{{ url_for('main.notification') }}" class="dropdown-toggle" data-toggle="dropdown">Account<b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ url_for('main.user', username=current_user.username) }}">MY Profile</a></li>
+                                <li><a href="{{ url_for('auth.change_password') }}">MY Account</a></li>
+                                <li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
+                            </ul>
+                        </li>
+
+                    {% else %}
+                        <li><a href="{{ url_for('auth.login') }}">Log In</a></li>
+                    {% endif %}
+
+                    </ul>
+                </div>
+            </div>
+        </nav>
+{% endblock %}
+
+
+{% block page_content %}
+
+{#    轮播图#}
+    <div class="col-md-8 my-carousel">
+        <div id="carousel-example-generic" class="carousel slide" data-ride="carousel" style="height: 300px">
+          <!-- Indicators -->
+            <ol class="carousel-indicators">
+                <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+                <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+                <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+                <li data-target="#carousel-example-generic" data-slide-to="3"></li>
+                <li data-target="#carousel-example-generic" data-slide-to="4"></li>
+            </ol>
+
+          <!-- Wrapper for slides -->
+            <div class="carousel-inner" role="listbox">
+                <div class="item active">
+                    <img src="../static/Image/BJUT.jpeg" style="height: 300px; width: 1200px" alt="...">
+                    <div class="carousel-caption">
+{#                        {% if activities[0] %}#}
+{#                            <h3>{{ activities[0].activity_name }}</h3>#}
+{#                            <p>Time: {{ activities[0].activity_time }}; Place: {{ activities[0].activity_place }}</p>#}
+{#                            <p>{{ activities[0].activity_describe }}</p>#}
+{#                        {% endif %}#}
+                    </div>
+                </div>
+                <div class="item">
+                    <img src="../static/Image/Library.jpeg" style="height: 300px; width: 1200px" alt="...">
+                    <div class="carousel-caption">
+{#                        {% if activities[1] %}#}
+{#                            <h3>{{ activities[1].activity_name }}</h3>#}
+{#                            <p>Time: {{ activities[1].activity_time }}; Place: {{ activities[1].activity_place }}</p>#}
+{#                            <p>{{ activities[1].activity_describe }}</p>#}
+{#                        {% endif %}#}
+                    </div>
+                </div>
+                <div class="item">
+                    <img src="../static/Image/bg.jpeg" style="height: 300px; width: 1200px" alt="...">
+                    <div class="carousel-caption">
+{#                        {% if activities[2] %}#}
+{#                            <h3>{{ activities[2].activity_name }}</h3>#}
+{#                            <p>Time: {{ activities[2].activity_time }}; Place: {{ activities[2].activity_place }}</p>#}
+{#                            <p>{{ activities[2].activity_describe }}</p>#}
+{#                        {% endif %}#}
+                    </div>
+                </div>
+                <div class="item">
+                    <img src="../static/Image/bg-profile.jpg" style="height: 300px; width: 1200px" alt="...">
+                    <div class="carousel-caption">
+{#                        {% if activities[3] %}#}
+{#                            <h3>{{ activities[3].activity_name }}</h3>#}
+{#                            <p>Time: {{ activities[3].activity_time }}; Place: {{ activities[3].activity_place }}</p>#}
+{#                            <p>{{ activities[3].activity_describe }}</p>#}
+{#                        {% endif %}#}
+                    </div>
+                </div>
+                <div class="item">
+                    <img src="..." alt="...">
+                    <div class="carousel-caption">
+{#                        {% if activities[4] %}#}
+{#                            <h3>{{ activities[4].activity_name }}</h3>#}
+{#                            <p>Time: {{ activities[4].activity_time }}; Place: {{ activities[4].activity_place }}</p>#}
+{#                            <p>{{ activities[4].activity_describe }}</p>#}
+{#                        {% endif %}#}
+                    </div>
+                </div>
+            </div>
+
+          <!-- Controls -->
+            <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+                <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+    </div>
+
+<!--        帖子浏览界面        -->
+    <div class="col-md-8">
+
+        <div class="col-md-12 content">
+            <div class="tabbable">
+                <ul class="nav post-nav">
+                    <li class="active" id="btn-1">
+                          <a href="{{ url_for('.index') }}">Posts</a>
+                    </li>
+                    <li id="btn-2">
+                        <a>Transactions</a>
+                    </li>
+                    <li id="btn-3">
+                        <a href="{{ url_for('.index_activity') }}">Announcements</a>
+                    </li>
+
+                    {% if current_user.is_authenticated %}
+                    <li id="btn-4">
+                         <a href="{{ url_for('.index_follow') }}">Follows</a>
+                    </li>
+                    {% endif %}
+                </ul>
+
+                <div class="tab-content">
+
+                    <div class="tab-pane active" id="panel-2">
+                        <ul class="posts list-unstyled">
+                            {% for transaction in transactions %}
+                                {% include 'transaction/_transactions.html' %}
+                            {% endfor %}
+                        </ul>
+                        {% if pagination2 %}
+                            <div class="pagination">
+                                {{ macros.pagination_widget(pagination2, '.index') }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+
+{#    登录用户的个人资料卡及互动功能#}
+            {% if current_user.is_authenticated %}
+                  <div class="col-md-offset-2 outer">
+{#                  个人资料卡#}
+                      <div class="thumbnail inner1 col-sm-12">
+                          <div class="col-sm-3">
+                            {% if current_user.avatar_img %}
+                                <img class="img-rounded profile-thumbnail head" src="{{ current_user.avatar_img }}" alt="avatar"  style="width: 50px; height: 50px">
+                            {% else %}
+                                <img class="img-rounded profile-thumbnail head" src="{{ current_user.gravatar(size=50) }}" alt="avatar">
+                            {% endif %}
+                          </div>
+
+                          <div class="col-sm-8 caption">
+                                <a href="{{ url_for('main.user', username=current_user.username) }}">
+                                    <h4>{{ current_user.username }}</h4>
+                                </a>
+                                <p class="info"> {{ current_user.about_me }}</p>
+                          </div>
+
+                          <div class="follow btn-group btn-group-justified" role="group">
+                              <a href="{{ url_for('.followers', username=current_user.username) }}" class="btn left-btn" role="button">{{ current_user.followers.count() - 1 }} Followers</a>
+                              <a href="{{ url_for('.followed_by', username=current_user.username) }}" class="btn" role="button">{{ current_user.following.count() - 1 }} Following</a>
+                          </div>
+
+                      </div>
+{#                  发布按钮#}
+                      <div class="inner2  col-sm-12">
+                      <!--                  发表新帖-->
+                          <div class="inner2-left col-sm-3">
+                              <div class="new-posts">
+                                  <div>
+                                      <a href="{{ url_for('.new_post_md')}}">
+                                          <svg class="icon" viewBox="0 0 1024 1024" version="1.1" width="40" height="40">
+                                            <defs><style type="text/css"></style></defs>
+                                            <path d="M824 921H184c-52.9 0-96-43.1-96-96V185c0-52.9 43.1-96 96-96h640c52.9 0 96 43.1 96 96v640c0 52.9-43.1 96-96 96zM184 153c-17.6 0-32 14.4-32 32v640c0 17.6 14.4 32 32 32h640c17.6 0 32-14.4 32-32V185c0-17.6-14.4-32-32-32H184z" fill="#3688FF" p-id="1446"></path>
+                                            <path d="M285.9 750.9c-8.4 0-16.5-3.3-22.6-9.4-8.4-8.4-11.5-20.8-7.9-32.2l49.3-157.1c1.5-4.9 4.3-9.4 7.9-13l328.8-328.8c6-6 14.1-9.4 22.6-9.4s16.6 3.4 22.6 9.4l107.8 107.8c12.5 12.5 12.5 32.8 0 45.3L465.6 692.2c-3.6 3.6-8.1 6.4-13 7.9l-157.1 49.3c-3.2 1-6.4 1.5-9.6 1.5z m77.5-172L334.8 670l91.2-28.6 300.6-300.6-62.6-62.5-300.6 300.6z" fill="#3688FF" p-id="1447"></path>
+                                            <path d="M486.4 640.3c-8.2 0-16.4-3.1-22.6-9.4L374 541.1c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l89.8 89.8c12.5 12.5 12.5 32.8 0 45.3-6.4 6.3-14.5 9.4-22.7 9.4z" fill="#3688FF" p-id="1448"></path>
+                                        </svg>
+                                      </a>
+                                  </div>
+                                  <div class="icon-word">new post</div>
+                              </div>
+                          </div>
+                          {% if current_user.can(Permission.ACTIVITY) %}
+                      <!--                  发布活动-->
+                              <div class="inner2-right col-sm-3">
+                                  <div class="new-activity">
+                                      <div>
+                                          <a href="{{ url_for('organization.organization_activity')}}">
+                                              <svg class="icon" viewBox="0 0 1024 1024" version="1.1" width="40" height="40">
+                                                <defs><style type="text/css"></style></defs>
+                                                <path d="M509.952 484.864h4.096c89.088-1.024 160.768-72.192 160.768-159.232V272.384C674.816 184.32 602.112 112.64 512 112.64S349.184 184.32 349.184 272.384v53.248c0 87.552 71.68 158.208 160.768 159.232z m316.416 23.552c57.856 0 104.96-44.544 104.96-99.84v-33.28c0-55.296-47.104-99.84-104.96-99.84s-104.96 44.544-104.96 99.84v33.28c0 54.784 47.104 99.84 104.96 99.84z m-628.736 0c57.856 0 104.96-44.544 104.96-99.84v-33.28c0-55.296-47.104-99.84-104.96-99.84s-104.96 44.544-104.96 99.84v33.28c0.512 54.784 47.104 99.84 104.96 99.84zM46.592 609.792c-27.648 13.824-46.592 45.568-46.592 81.92v40.96c0 27.136 15.872 49.664 37.376 57.344 33.28 8.704 67.584 14.336 102.4 17.92v-72.192c0-64.512 23.552-121.344 58.88-157.184h-1.024c-52.736-0.512-103.936 10.752-151.04 31.232z m930.816 0c-47.104-20.48-97.792-31.744-151.552-31.744h-1.024c35.84 35.84 58.88 92.672 58.88 157.184v72.704c34.816-3.072 69.12-9.216 102.4-17.92 21.504-7.168 37.376-30.208 37.376-57.344v-40.448c0.512-36.864-18.432-68.096-46.08-82.432z m-233.984-4.096c-72.192-33.28-150.016-51.2-231.424-51.2-81.408 0-159.232 17.92-230.912 50.688-41.984 22.016-71.68 72.704-71.68 131.072v65.536c0 43.52 24.064 79.872 56.832 91.648 79.36 21.504 161.28 33.28 245.76 33.28s166.4-11.776 245.248-33.28c32.768-11.776 56.832-48.128 56.832-91.648v-65.536c0.512-57.856-28.672-108.032-70.656-130.56z m0 0" p-id="1343" fill="#3688FF"></path>
+                                              </svg>
+                                          </a>
+                                      </div>
+                                      <div class="icon-word">activity</div>
+                                   </div>
+                              </div>
+                          {% else %}
+                      <!--                发布二手交易帖子-->
+                              <div class="inner2-right col-sm-3">
+                                  <div class="new-transaction">
+                                      <div>
+                                          <a href="{{ url_for('transaction.new_transaction')}}">
+                                              <svg class="icon" viewBox="0 0 1024 1024" version="1.1" width="40" height="40">
+                                                <defs><style type="text/css"></style></defs>
+                                                <path d="M504 953c-60.5 0-119.1-11.8-174.4-35.2-53.4-22.6-101.3-54.9-142.4-96-41.1-41.1-73.4-89-96-142.4C67.8 624.1 56 565.5 56 505s11.8-119.1 35.2-174.4c22.6-53.4 54.9-101.3 96-142.4 41.1-41.1 89-73.4 142.4-96C384.9 68.8 443.5 57 504 57s119.1 11.8 174.4 35.2c53.4 22.6 101.3 54.9 142.4 96 41.1 41.1 73.4 89 96 142.4C940.2 385.9 952 444.5 952 505s-11.8 119.1-35.2 174.4c-22.6 53.4-54.9 101.3-96 142.4-41.1 41.1-89 73.4-142.4 96C623.1 941.2 564.5 953 504 953z m0-832c-211.7 0-384 172.3-384 384s172.3 384 384 384 384-172.3 384-384-172.3-384-384-384z" fill="#3688FF" p-id="1448"></path>
+                                                <path d="M639.2 467.7H368.8c-17.7 0-32-14.3-32-32s14.3-32 32-32h270.4c17.7 0 32 14.3 32 32s-14.3 32-32 32zM605.4 606.3H402.6c-17.7 0-32-14.3-32-32s14.3-32 32-32h202.8c17.7 0 32 14.3 32 32s-14.3 32-32 32z" fill="#3688FF" p-id="1449"></path>
+                                                <path d="M504 745c-17.7 0-32-14.3-32-32V435.7c0-17.7 14.3-32 32-32s32 14.3 32 32V713c0 17.7-14.3 32-32 32z" fill="#3688FF" p-id="1450"></path>
+                                                <path d="M504 451.9c-9.2 0-18.4-4-24.7-11.6L377.9 317.4c-11.2-13.6-9.3-33.8 4.3-45 13.6-11.2 33.8-9.3 45 4.3l101.4 122.9c11.2 13.6 9.3 33.8-4.3 45-5.9 4.9-13.1 7.3-20.3 7.3z" fill="#3688FF" p-id="1451"></path>
+                                                <path d="M504 451.9c-7.2 0-14.4-2.4-20.3-7.3-13.6-11.2-15.6-31.4-4.3-45l101.4-122.9c11.2-13.6 31.4-15.6 45-4.3 13.6 11.2 15.6 31.4 4.3 45L528.7 440.3c-6.3 7.6-15.5 11.6-24.7 11.6z" fill="#3688FF" p-id="1452"></path>
+                                            </svg>
+                                          </a>
+                                      </div>
+                                      <div class="icon-word">transaction</div>
+                                  </div>
+                              </div>
+                          {% endif %}
+                      </div>
+{#                  hottest #}
+                      <div class="col-sm-12 inner3">
+                          <h4>Hottest Posts</h4>
+                          <ul class="posts list-unstyled">
+                              <li class="hot-post"><a href="{{ url_for('.post', id=posts5[0].id) }}">
+                                  <span class="glyphicon glyphicon-fire"></span>
+                                  <span>{{ posts5[0].title }}</span>
+                              </a></li>
+                              <li class="hot-post"><a href="{{ url_for('.post', id=posts5[1].id) }}">
+                                  <span class="glyphicon glyphicon-fire"></span>
+                                  <span>{{ posts5[1].title }}</span>
+                              </a></li>
+                              <li class="hot-post"><a href="{{ url_for('.post', id=posts5[2].id) }}">
+                                  <span class="glyphicon glyphicon-fire"></span>
+                                  <span>{{ posts5[2].title }}</span>
+                              </a></li>
+                              <li><a href="{{ url_for('.post', id=posts5[3].id) }}"><h4>
+                                  <small>4. {{ posts5[3].title }}</small>
+                              </h4></a></li>
+                              <li><a href="{{ url_for('.post', id=posts5[4].id) }}"><h4>
+                                  <small>5. {{ posts5[4].title }}</small>
+                              </h4></a></li>
+                              <li><a href="{{ url_for('.post', id=posts5[5].id) }}"><h4>
+                                  <small>6. {{ posts5[5].title }}</small>
+                              </h4></a></li>
+                              <li><a href="{{ url_for('.post', id=posts5[6].id) }}"><h4>
+                                  <small>7. {{ posts5[6].title }}</small>
+                              </h4></a></li>
+                              <li><a href="{{ url_for('.post', id=posts5[7].id) }}"><h4>
+                                  <small>8. {{ posts5[7].title }}</small>
+                              </h4></a></li>
+                              <li><a href="{{ url_for('.post', id=posts5[8].id) }}"><h4>
+                                  <small>9. {{ posts5[8].title }}</small>
+                              </h4></a></li>
+                              <li><a href="{{ url_for('.post', id=posts5[9].id) }}"><h4>
+                                  <small>10. {{ posts5[9].title }}</small>
+                              </h4></a></li>
+                          </ul>
+                        </ul>
+                      </div>
+                  </div>
+            {% endif %}
+{% endblock %}

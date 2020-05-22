@@ -11,6 +11,7 @@
     <link href="{{ url_for('static',filename='interact.css') }}" rel="stylesheet">
 {% endblock %}
 
+{#主导航#}
 {% block navbar %}
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container">
@@ -76,6 +77,7 @@
 
 {% block page_content %}
 
+{#    轮播图#}
     <div class="col-md-8 my-carousel">
         <div id="carousel-example-generic" class="carousel slide" data-ride="carousel" style="height: 300px">
           <!-- Indicators -->
@@ -92,51 +94,51 @@
                 <div class="item active">
                     <img src="../static/Image/BJUT.jpeg" style="height: 300px; width: 1200px" alt="...">
                     <div class="carousel-caption">
-                        {% if activities[0] %}
-                            <h3>{{ activities[0].activity_name }}</h3>
-                            <p>Time: {{ activities[0].activity_time }}; Place: {{ activities[0].activity_place }}</p>
-                            <p>{{ activities[0].activity_describe }}</p>
-                        {% endif %}
+{#                        {% if activities[0] %}#}
+{#                            <h3>{{ activities[0].activity_name }}</h3>#}
+{#                            <p>Time: {{ activities[0].activity_time }}; Place: {{ activities[0].activity_place }}</p>#}
+{#                            <p>{{ activities[0].activity_describe }}</p>#}
+{#                        {% endif %}#}
                     </div>
                 </div>
                 <div class="item">
                     <img src="../static/Image/Library.jpeg" style="height: 300px; width: 1200px" alt="...">
                     <div class="carousel-caption">
-                        {% if activities[1] %}
-                            <h3>{{ activities[1].activity_name }}</h3>
-                            <p>Time: {{ activities[1].activity_time }}; Place: {{ activities[1].activity_place }}</p>
-                            <p>{{ activities[1].activity_describe }}</p>
-                        {% endif %}
+{#                        {% if activities[1] %}#}
+{#                            <h3>{{ activities[1].activity_name }}</h3>#}
+{#                            <p>Time: {{ activities[1].activity_time }}; Place: {{ activities[1].activity_place }}</p>#}
+{#                            <p>{{ activities[1].activity_describe }}</p>#}
+{#                        {% endif %}#}
                     </div>
                 </div>
                 <div class="item">
                     <img src="../static/Image/bg.jpeg" style="height: 300px; width: 1200px" alt="...">
                     <div class="carousel-caption">
-                        {% if activities[2] %}
-                            <h3>{{ activities[2].activity_name }}</h3>
-                            <p>Time: {{ activities[2].activity_time }}; Place: {{ activities[2].activity_place }}</p>
-                            <p>{{ activities[2].activity_describe }}</p>
-                        {% endif %}
+{#                        {% if activities[2] %}#}
+{#                            <h3>{{ activities[2].activity_name }}</h3>#}
+{#                            <p>Time: {{ activities[2].activity_time }}; Place: {{ activities[2].activity_place }}</p>#}
+{#                            <p>{{ activities[2].activity_describe }}</p>#}
+{#                        {% endif %}#}
                     </div>
                 </div>
                 <div class="item">
                     <img src="../static/Image/bg-profile.jpg" style="height: 300px; width: 1200px" alt="...">
                     <div class="carousel-caption">
-                        {% if activities[3] %}
-                            <h3>{{ activities[3].activity_name }}</h3>
-                            <p>Time: {{ activities[3].activity_time }}; Place: {{ activities[3].activity_place }}</p>
-                            <p>{{ activities[3].activity_describe }}</p>
-                        {% endif %}
+{#                        {% if activities[3] %}#}
+{#                            <h3>{{ activities[3].activity_name }}</h3>#}
+{#                            <p>Time: {{ activities[3].activity_time }}; Place: {{ activities[3].activity_place }}</p>#}
+{#                            <p>{{ activities[3].activity_describe }}</p>#}
+{#                        {% endif %}#}
                     </div>
                 </div>
                 <div class="item">
                     <img src="..." alt="...">
                     <div class="carousel-caption">
-                        {% if activities[4] %}
-                            <h3>{{ activities[4].activity_name }}</h3>
-                            <p>Time: {{ activities[4].activity_time }}; Place: {{ activities[4].activity_place }}</p>
-                            <p>{{ activities[4].activity_describe }}</p>
-                        {% endif %}
+{#                        {% if activities[4] %}#}
+{#                            <h3>{{ activities[4].activity_name }}</h3>#}
+{#                            <p>Time: {{ activities[4].activity_time }}; Place: {{ activities[4].activity_place }}</p>#}
+{#                            <p>{{ activities[4].activity_describe }}</p>#}
+{#                        {% endif %}#}
                     </div>
                 </div>
             </div>
@@ -155,28 +157,29 @@
 
     <!--        帖子浏览界面        -->
     <div class="col-md-8">
-
         <div class="col-md-12 content">
             <div class="tabbable">
+{#            导航栏#}
                 <ul class="nav post-nav">
                     <li class="active" id="btn-1">
-                         <a href="#panel-1" data-toggle="tab">Posts</a>
+                         <a>Posts</a>
                     </li>
                     <li id="btn-2">
-                        <a href="#panel-2" data-toggle="tab">Transactions</a>
+                        <a href="{{ url_for('.index_transaction') }}">Transactions</a>
                     </li>
                     <li id="btn-3">
-                        <a href="#panel-3" data-toggle="tab">Announcements</a>
+                        <a href="{{ url_for('.index_activity') }}">Announcements</a>
                     </li>
 
                     {% if current_user.is_authenticated %}
                     <li id="btn-4">
-                         <a href="#panel-4" data-toggle="tab">Follows</a>
+                         <a href="{{ url_for('.index_follow') }}">Follows</a>
                     </li>
                     {% endif %}
                 </ul>
 
                 <div class="tab-content">
+
                     <div class="tab-pane active" id="panel-1">
                         <ul class="posts list-unstyled">
                             {% for post in posts1 %}
@@ -189,52 +192,18 @@
                             </div>
                         {% endif %}
                     </div>
-                    <div class="tab-pane" id="panel-2">
-                        <ul class="posts list-unstyled">
-                            {% for transaction in transactions %}
-                                {% include 'transaction/_transactions.html' %}
-                            {% endfor %}
-                        </ul>
-                        {% if pagination2 %}
-                            <div class="pagination">
-                                {{ macros.pagination_widget(pagination2, '.index') }}
-                            </div>
-                        {% endif %}
-                    </div>
-                    <div class="tab-pane" id="panel-3">
-                        <ul class="posts list-unstyled">
-                            {% for avtivity in activities %}
-                                {% include 'organization/_activities.html' %}
-                            {% endfor %}
-                        </ul>
-                        {% if pagination3 %}
-                            <div class="pagination">
-                                {{ macros.pagination_widget(pagination3, '.index') }}
-                            </div>
-                        {% endif %}
-                    </div>
-                    <div class="tab-pane" id="panel-4">
-                        <ul class="posts list-unstyled">
-                            {% for post in posts4 %}
-                                {% include 'Posts/_posts.html' %}
-                            {% endfor %}
-                        </ul>
-                        {% if pagination4 %}
-                            <div class="pagination">
-                                {{ macros.pagination_widget(pagination4, '.index') }}
-                            </div>
-                        {% endif %}
-                    </div>
+
                 </div>
             </div>
         </div>
+    </div>
 
 
 
-            {#    登录用户的个人资料卡及互动功能#}
+{#    登录用户的个人资料卡及互动功能#}
             {% if current_user.is_authenticated %}
                   <div class="col-md-offset-2 outer">
-
+{#                  个人资料卡#}
                       <div class="thumbnail inner1 col-sm-12">
                           <div class="col-sm-3">
                             {% if current_user.avatar_img %}
@@ -244,21 +213,23 @@
                             {% endif %}
                           </div>
 
-                            <div class="col-sm-8 caption">
+                          <div class="col-sm-8 caption">
                                 <a href="{{ url_for('main.user', username=current_user.username) }}">
                                     <h4>{{ current_user.username }}</h4>
                                 </a>
                                 <p class="info"> {{ current_user.about_me }}</p>
-                           </div>
+                          </div>
+
                           <div class="follow btn-group btn-group-justified" role="group">
                               <a href="{{ url_for('.followers', username=current_user.username) }}" class="btn left-btn" role="button">{{ current_user.followers.count() - 1 }} Followers</a>
                               <a href="{{ url_for('.followed_by', username=current_user.username) }}" class="btn" role="button">{{ current_user.following.count() - 1 }} Following</a>
                           </div>
-                      </div>
 
+                      </div>
+{#                  发布按钮#}
                       <div class="inner2  col-sm-12">
-                        <!--                  发表新帖-->
-                          <div class="inner2-left col-sm-3"">
+                      <!--                  发表新帖-->
+                          <div class="inner2-left col-sm-3">
                               <div class="new-posts">
                                   <div>
                                       <a href="{{ url_for('.new_post_md')}}">
@@ -273,11 +244,10 @@
                                   <div class="icon-word">new post</div>
                               </div>
                           </div>
-
-                          <div class="inner2-right col-sm-3">
-                              {% if current_user.can(Permission.ACTIVITY) %}
-                                   <!--                  发布活动-->
-                                   <div class="new-activity">
+                          {% if current_user.can(Permission.ACTIVITY) %}
+                      <!--                  发布活动-->
+                              <div class="inner2-right col-sm-3">
+                                  <div class="new-activity">
                                       <div>
                                           <a href="{{ url_for('organization.organization_activity')}}">
                                               <svg class="icon" viewBox="0 0 1024 1024" version="1.1" width="40" height="40">
@@ -288,8 +258,10 @@
                                       </div>
                                       <div class="icon-word">activity</div>
                                    </div>
-                              {% else %}
-                                  <!--                发布二手交易帖子-->
+                              </div>
+                          {% else %}
+                      <!--                发布二手交易帖子-->
+                              <div class="inner2-right col-sm-3">
                                   <div class="new-transaction">
                                       <div>
                                           <a href="{{ url_for('transaction.new_transaction')}}">
@@ -305,10 +277,10 @@
                                       </div>
                                       <div class="icon-word">transaction</div>
                                   </div>
-                              {% endif %}
-                          </div>
+                              </div>
+                          {% endif %}
                       </div>
-
+{#                  hottest #}
                       <div class="col-sm-12 inner3">
                           <h4>Hottest Posts</h4>
                           <ul class="posts list-unstyled">
@@ -348,75 +320,8 @@
                           </ul>
                         </ul>
                       </div>
-
-
                   </div>
-
             {% endif %}
-    </div>
+
 {% endblock %}
 
-{% block scripts %}
-{{ super() }}
-    <script>
-        var l1 = document.getElementById('btn-1')
-        var l2 = document.getElementById('btn-2')
-        var l3 = document.getElementById('btn-3')
-        var l4 = document.getElementById('btn-4')
-        var content1 = document.getElementById('panel-1')
-        var content2 = document.getElementById('panel-2')
-        var content3 = document.getElementById('panel-3')
-        var content4 = document.getElementById('panel-4')
-
-        l1.onclick = function () {
-            this.className = 'active'
-            content1.className = 'active'
-
-            l2.className = ''
-            content2.className = 'tab-pane'
-            l3.className = ''
-            content3.className = 'tab-pane'
-            l4.className = ''
-            content4.className = 'tab-pane'
-        }
-
-        l2.onclick = function () {
-            this.className = 'active'
-            content2.className = 'active'
-
-            l1.className = ''
-            content1.className = 'tab-pane'
-            l3.className = ''
-            content3.className = 'tab-pane'
-            l4.className = ''
-            content4.className = 'tab-pane'
-        }
-
-        l3.onclick = function () {
-            this.className = 'active'
-            content3.className = 'active'
-
-            l1.className = ''
-            content1.className = 'tab-pane'
-            l2.className = ''
-            content2.className = 'tab-pane'
-            l4.className = ''
-            content4.className = 'tab-pane'
-        }
-
-        l4.onclick = function () {
-            this.className = 'active'
-            content4.className = 'active'
-
-            l1.className = ''
-            content1.className = 'tab-pane'
-            l2.className = ''
-            content2.className = 'tab-pane'
-            l3.className = ''
-            content3.className = 'tab-pane'
-        }
-
-
-    </script>
-{{ pagedown.include_pagedown() }}
-{% endblock %}
