@@ -552,6 +552,7 @@ class Activity(db.Model):
     Organizer = db.Column(db.String(256), nullable=False)
     is_schoolAgree = db.Column(db.Boolean, nullable=False)
     is_invalid = db.Column(db.Boolean, default=False)
+    important = db.Column(db.INT, default=0)
 
     announcer_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     announcer = db.relationship('User', back_populates='activities', lazy='joined')

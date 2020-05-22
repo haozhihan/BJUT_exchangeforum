@@ -5,8 +5,9 @@ from .. import db
 from ..models import User, Students
 from ..email import send_email
 from .forms import PasswordResetRequestForm, PasswordResetForm
-# This file is to write the route and some response to the user in different conditions
 
+
+# This file is to write the route and some response to the user in different conditions
 
 
 # This method is used to update the last access time of the logged in user
@@ -24,23 +25,22 @@ def before_request():
             return redirect(url_for('auth.unconfirmed'))
 
 
-
 # 登录
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
         return render_template('auth/login.html')
     if request.method == 'POST':
-        #通过Ajax获取前端数据的方法
+        # 通过Ajax获取前端数据的方法
         # stuID = request.form.get('stuID')
         # pwd = request.form.get('password')
-        student_id= request.form["user"]
+        student_id = request.form["user"]
         password = request.form["pwd"]
         user = User.query.filter_by(student_id=student_id).first()
         if user is None:
             flash("您的学号还没有注册")
             return render_template('auth/login.html')
-        elif user.verify_password(password) is False :
+        elif user.verify_password(password) is False:
             flash("用户名或密码错误")
             return render_template('auth/login.html')
         if user is not None and user.verify_password(password):
@@ -52,7 +52,6 @@ def login():
         return render_template('auth/login.html')
 
 
-
 # 登出
 @auth.route('/logout')
 @login_required
@@ -62,7 +61,6 @@ def logout():
     return redirect(url_for('main.index'))
 
 
-
 # 注册
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
@@ -70,7 +68,7 @@ def register():
         return render_template('auth/register.html')
     if request.method == 'POST':
         # 读取前端的学号数据
-        isstudent = Students.query.filter_by(student_id = request.form["BJUT_id"]).first()#学号
+        isstudent = Students.query.filter_by(student_id=request.form["BJUT_id"]).first()  # 学号
         if isstudent is None:
             flash("Sorry, you are not a BJUT student and cannot sign up for this account.")
             return render_template('auth/register.html')
@@ -111,15 +109,12 @@ def register():
         return render_template('auth/register.html')
 
 
-
-
 # 没有确认邮件时， 登入
 @auth.route('/unconfirmed')
 def unconfirmed():
     if current_user.is_anonymous or current_user.confirmed:
         return redirect(url_for('main.index'))
     return render_template('auth/unconfirmed.html')
-
 
 
 # 确认邮箱（1）
@@ -137,7 +132,6 @@ def confirm(token):
     return redirect(url_for('main.index'))
 
 
-
 # 确认邮箱（2）
 # 再次发送邮件
 @auth.route('/confirm')
@@ -148,7 +142,6 @@ def resend_confirmation():
                'mail/confirm', user=current_user, token=token)
     flash('A new confirmation email has been sent to you by email.')
     return redirect(url_for('main.index'))
-
 
 
 # 重置密码（1）
@@ -171,7 +164,6 @@ def password_reset_request():
     return render_template('auth/reset_password.html', form=form)
 
 
-
 # 重置密码（2）
 # 忘记密码发送的邮件里面，的修改密码的网页。
 @auth.route('/reset/<token>', methods=['GET', 'POST'])
@@ -187,7 +179,6 @@ def password_reset(token):
         else:
             return redirect(url_for('main.index'))
     return render_template('auth/reset_password_inEmail.html', form=form)
-
 
 
 # 修改密码
@@ -240,8 +231,6 @@ def change_email_request():
         else:
             flash('Invalid email or password.')
             return render_template('auth/change_email.html')
-
-
 
 
 # 修改邮箱（2）

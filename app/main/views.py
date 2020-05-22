@@ -29,7 +29,14 @@ def index():
             li_num = db.session.query(func.count(Like.liker_id)).filter_by(liked_post_id=item.id).scalar()
             item.important = 7 * com_num + 3 * li_num
         hot = query1.order_by(Post.important.desc())
-        return render_template('index/index_posts.html', posts1=posts1, posts5=hot, pagination1=pagination1)
+        li = Activity.query.filter_by(is_invalid=False)
+        for item in li:
+            item.important = 0
+            li_num = db.session.query(func.count(Want.wanter_id)).filter_by(wanted_Activity_id=item.id).scalar()
+            item.important = li_num
+        hot_activity = li.order_by(Activity.important.desc())
+        return render_template('index/index_posts.html', posts1=posts1, posts5=hot,
+                               pagination1=pagination1, hot_activity=hot_activity)
     else:
         inf = request.form["search"]
         return redirect(url_for('.query', content=inf))
@@ -52,7 +59,14 @@ def index_transaction():
             li_num = db.session.query(func.count(Like.liker_id)).filter_by(liked_post_id=item.id).scalar()
             item.important = 7 * com_num + 3 * li_num
         hot = query1.order_by(Post.important.desc())
-        return render_template('index/index_transactions.html', transactions=transactions, posts5=hot, pagination2=pagination2)
+        li = Activity.query.filter_by(is_invalid=False)
+        for item in li:
+            item.important = 0
+            li_num = db.session.query(func.count(Want.wanter_id)).filter_by(wanted_Activity_id=item.id).scalar()
+            item.important = li_num
+        hot_activity = li.order_by(Activity.important.desc())
+        return render_template('index/index_transactions.html', transactions=transactions, posts5=hot,
+                               pagination2=pagination2, hot_activity=hot_activity)
     else:
         inf = request.form["search"]
         return redirect(url_for('.query', content=inf))
@@ -80,7 +94,14 @@ def index_activity():
             li_num = db.session.query(func.count(Like.liker_id)).filter_by(liked_post_id=item.id).scalar()
             item.important = 7 * com_num + 3 * li_num
         hot = query1.order_by(Post.important.desc())
-        return render_template('index/index_activities.html', activities=activities,  posts5=hot, pagination3=pagination3)
+        li = Activity.query.filter_by(is_invalid=False)
+        for item in li:
+            item.important = 0
+            li_num = db.session.query(func.count(Want.wanter_id)).filter_by(wanted_Activity_id=item.id).scalar()
+            item.important = li_num
+        hot_activity = li.order_by(Activity.important.desc())
+        return render_template('index/index_activities.html', activities=activities,  posts5=hot,
+                               pagination3=pagination3, hot_activity=hot_activity)
     else:
         inf = request.form["search"]
         return redirect(url_for('.query', content=inf))
@@ -103,7 +124,14 @@ def index_follow():
             page4, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
             error_out=False)
         posts4 = pagination4.items
-        return render_template('index/index_follows.html', posts4=posts4, posts5=hot, pagination4=pagination4)
+        li = Activity.query.filter_by(is_invalid=False)
+        for item in li:
+            item.important = 0
+            li_num = db.session.query(func.count(Want.wanter_id)).filter_by(wanted_Activity_id=item.id).scalar()
+            item.important = li_num
+        hot_activity = li.order_by(Activity.important.desc())
+        return render_template('index/index_follows.html', posts4=posts4, posts5=hot,
+                               pagination4=pagination4, hot_activity=hot_activity)
     else:
         inf = request.form["search"]
         return redirect(url_for('.query', content=inf))
