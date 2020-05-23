@@ -328,7 +328,7 @@ def edit_profile():
     if request.method == 'POST':
         # 读取前端数据
         usernamefind = User.query.filter_by(username=request.form["username"]).first()
-        if usernamefind is not None:
+        if usernamefind is not None and usernamefind != current_user:
             flash("Your new username already exists, please change your username")
             return render_template('edit_profile.html', form=form)
 
