@@ -161,7 +161,7 @@
         <div class="like-btn">
 <!--            点赞-->
             {% if not current_user.is_liking(post) %}
-                <a class="unlike" href="{{ url_for('.like', post_id=post.id) }}">
+                <a class="unlike" href="{{ url_for('.like_inpost', post_id=post.id) }}">
                     <svg viewBox="0 0 1024 1024" width="25" height="25">
                         <path d="M889.6 396.8 608 396.8C633.6 262.4 684.8 96 576 44.8 460.8-6.4 454.4 64 441.6 179.2c-12.8 121.6-192 249.6-192 249.6l0 563.2 608 0c83.2-38.4 134.4-377.6 160-499.2C1043.2 371.2 889.6 396.8 889.6 396.8z" fill="#868686"></path>
                         <path d="M0 428.8l179.2 0 0 569.6-179.2 0 0-569.6Z" fill="#868686"></path>
@@ -169,7 +169,7 @@
                     <div>{{ post.liker.count() }} likes</div>
                 </a>
             {% else %}
-                <a class="liked" href="{{ url_for('.dislike', post_id=post.id) }}">
+                <a class="liked" href="{{ url_for('.dislike_inpost', post_id=post.id) }}">
                     <svg viewBox="0 0 1024 1024" width="25" height="25">
                         <path d="M889.6 396.8 608 396.8C633.6 262.4 684.8 96 576 44.8 460.8-6.4 454.4 64 441.6 179.2c-12.8 121.6-192 249.6-192 249.6l0 563.2 608 0c83.2-38.4 134.4-377.6 160-499.2C1043.2 371.2 889.6 396.8 889.6 396.8z" fill="#3688FF"></path>
                         <path d="M0 428.8l179.2 0 0 569.6-179.2 0 0-569.6Z" fill="#3688FF"></path>
