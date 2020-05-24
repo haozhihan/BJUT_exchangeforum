@@ -79,7 +79,7 @@
 
 {#    轮播图#}
     <div class="col-md-8 my-carousel">
-        <div id="carousel-example-generic" class="carousel slide" data-ride="carousel" style="height: 300px">
+        <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
           <!-- Indicators -->
             <ol class="carousel-indicators">
                 <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
@@ -92,19 +92,18 @@
           <!-- Wrapper for slides -->
             <div class="carousel-inner" role="listbox">
                 <div class="item active">
-                    <img src="../static/Image/轮播图1.jpeg" style="height: 300px; width: 1200px" alt="...">
-                    <div class="carousel-caption">
+                    <img src="../static/Image/轮播图1.jpeg" alt="...">
+                    <div class="hot-activity1">
                         {% if hot_activity[0] %}
                             <h3>{{ hot_activity[0].activity_name }}</h3>
                             <p>Time: {{ hot_activity[0].activity_time }}; Place: {{ hot_activity[0].activity_place }}</p>
-                            <p>{{ hot_activity[0].activity_describe }}</p>
                             {% if not current_user.is_wanting(hot_activity[0]) %}
-                                <a class="icon-btn" style="float:right; margin-right: 15px" href="{{ url_for('organization.want', activity_id=hot_activity[0].id) }}#{{ hot_activity[0].id }}">
+                                <a class="icon-btn" href="{{ url_for('organization.want', activity_id=hot_activity[0].id) }}#{{ hot_activity[0].id }}">
                                     <span class="glyphicon glyphicon-heart-empty"></span>
                                     <span>{{ hot_activity[0].wanter.count() }} WantToGo</span>
                                 </a>
                             {% else %}
-                                <a class="icon-btn" style="float:right; margin-right: 15px" href="{{ url_for('organization.not_want', activity_id=hot_activity[0].id) }}#{{ hot_activity[0].id }}">
+                                <a class="icon-btn" href="{{ url_for('organization.not_want', activity_id=hot_activity[0].id) }}#{{ hot_activity[0].id }}">
                                     <span class="glyphicon glyphicon-heart"></span>
                                     <span>{{ hot_activity[0].wanter.count() }} WantToGo</span>
                                 </a>
@@ -113,19 +112,18 @@
                     </div>
                 </div>
                 <div class="item">
-                    <img src="../static/Image/轮播图3.jpeg" style="height: 300px; width: 1200px" alt="...">
-                    <div class="carousel-caption">
+                    <img src="../static/Image/轮播图3.jpeg" alt="...">
+                    <div class="hot-activity2">
                         {% if hot_activity[1] %}
                             <h3>{{ hot_activity[1].activity_name }}</h3>
                             <p>Time: {{ hot_activity[1].activity_time }}; Place: {{ hot_activity[1].activity_place }}</p>
-                            <p>{{ hot_activity[1].activity_describe }}</p>
                             {% if not current_user.is_wanting(hot_activity[1]) %}
-                                <a class="icon-btn" style="float:right; margin-right: 15px" href="{{ url_for('organization.want', activity_id=hot_activity[1].id) }}#{{ hot_activity[1].id }}">
+                                <a class="icon-btn" href="{{ url_for('organization.want', activity_id=hot_activity[1].id) }}#{{ hot_activity[1].id }}">
                                     <span class="glyphicon glyphicon-heart-empty"></span>
                                     <span>{{ hot_activity[1].wanter.count() }} WantToGo</span>
                                 </a>
                             {% else %}
-                                <a class="icon-btn" style="float:right; margin-right: 15px" href="{{ url_for('organization.not_want', activity_id=hot_activity[1].id) }}#{{ hot_activity[1].id }}">
+                                <a class="icon-btn" href="{{ url_for('organization.not_want', activity_id=hot_activity[1].id) }}#{{ hot_activity[1].id }}">
                                     <span class="glyphicon glyphicon-heart"></span>
                                     <span>{{ hot_activity[1].wanter.count() }} WantToGo</span>
                                 </a>
@@ -134,19 +132,18 @@
                     </div>
                 </div>
                 <div class="item">
-                    <img src="../static/Image/轮播图2.jpeg" style="height: 300px; width: 1200px" alt="...">
-                    <div class="carousel-caption">
+                    <img src="../static/Image/轮播图2.jpeg" alt="...">
+                    <div class="hot-activity3">
                         {% if hot_activity[2] %}
                             <h3>{{ hot_activity[2].activity_name }}</h3>
                             <p>Time: {{ hot_activity[2].activity_time }}; Place: {{ hot_activity[2].activity_place }}</p>
-                            <p>{{ hot_activity[2].activity_describe }}</p>
                             {% if not current_user.is_wanting(hot_activity[2]) %}
-                                <a class="icon-btn" style="float:right; margin-right: 15px" href="{{ url_for('organization.want', activity_id=hot_activity[2].id) }}#{{ hot_activity[2].id }}">
+                                <a class="icon-btn" href="{{ url_for('organization.want', activity_id=hot_activity[2].id) }}#{{ hot_activity[2].id }}">
                                     <span class="glyphicon glyphicon-heart-empty"></span>
                                     <span>{{ hot_activity[2].wanter.count() }} WantToGo</span>
                                 </a>
                             {% else %}
-                                <a class="icon-btn" style="float:right; margin-right: 15px" href="{{ url_for('organization.not_want', activity_id=hot_activity[2].id) }}#{{ hot_activity[2].id }}">
+                                <a class="icon-btn" href="{{ url_for('organization.not_want', activity_id=hot_activity[2].id) }}#{{ hot_activity[2].id }}">
                                     <span class="glyphicon glyphicon-heart"></span>
                                     <span>{{ hot_activity[2].wanter.count() }} WantToGo</span>
                                 </a>
@@ -155,19 +152,18 @@
                     </div>
                 </div>
                 <div class="item">
-                    <img src="../static/Image/轮播图4.jpeg" style="height: 300px; width: 1200px" alt="...">
-                    <div class="carousel-caption">
+                    <img src="../static/Image/轮播图4.jpeg" alt="...">
+                    <div class="hot-activity4">
                         {% if hot_activity[3] %}
                             <h3>{{ hot_activity[3].activity_name }}</h3>
                             <p>Time: {{ hot_activity[3].activity_time }}; Place: {{ hot_activity[3].activity_place }}</p>
-                            <p>{{ hot_activity[3].activity_describe }}</p>
                             {% if not current_user.is_wanting(hot_activity[3]) %}
-                                <a class="icon-btn" style="float:right; margin-right: 15px" href="{{ url_for('organization.want', activity_id=hot_activity[3].id) }}#{{ hot_activity[3].id }}">
+                                <a class="icon-btn" href="{{ url_for('organization.want', activity_id=hot_activity[3].id) }}#{{ hot_activity[3].id }}">
                                     <span class="glyphicon glyphicon-heart-empty"></span>
                                     <span>{{ hot_activity[3].wanter.count() }} WantToGo</span>
                                 </a>
                             {% else %}
-                                <a class="icon-btn" style="float:right; margin-right: 15px" href="{{ url_for('organization.not_want', activity_id=hot_activity[3].id) }}#{{ hot_activity[3].id }}">
+                                <a class="icon-btn" href="{{ url_for('organization.not_want', activity_id=hot_activity[3].id) }}#{{ hot_activity[3].id }}">
                                     <span class="glyphicon glyphicon-heart"></span>
                                     <span>{{ hot_activity[3].wanter.count() }} WantToGo</span>
                                 </a>
@@ -176,19 +172,18 @@
                     </div>
                 </div>
                 <div class="item">
-                    <img src="../static/Image/轮播图5.jpeg" style="height: 300px; width: 1200px" alt="...">
-                    <div class="carousel-caption">
+                    <img src="../static/Image/轮播图5.jpeg" alt="...">
+                    <div class="hot-activity5">
                         {% if hot_activity[4] %}
                             <h3>{{ hot_activity[4].activity_name }}</h3>
                             <p>Time: {{ hot_activity[4].activity_time }}; Place: {{ hot_activity[4].activity_place }}</p>
-                            <p>{{ hot_activity[4].activity_describe }}</p>
                             {% if not current_user.is_wanting(hot_activity[4]) %}
-                                <a class="icon-btn" style="float:right; margin-right: 15px" href="{{ url_for('organization.want', activity_id=hot_activity[4].id) }}#{{ hot_activity[4].id }}">
+                                <a class="icon-btn" href="{{ url_for('organization.want', activity_id=hot_activity[4].id) }}#{{ hot_activity[4].id }}">
                                     <span class="glyphicon glyphicon-heart-empty"></span>
                                     <span>{{ hot_activity[4].wanter.count() }} WantToGo</span>
                                 </a>
                             {% else %}
-                                <a class="icon-btn" style="float:right; margin-right: 15px" href="{{ url_for('organization.not_want', activity_id=hot_activity[4].id) }}#{{ hot_activity[4].id }}">
+                                <a class="icon-btn" href="{{ url_for('organization.not_want', activity_id=hot_activity[4].id) }}#{{ hot_activity[4].id }}">
                                     <span class="glyphicon glyphicon-heart"></span>
                                     <span>{{ hot_activity[4].wanter.count() }} WantToGo</span>
                                 </a>

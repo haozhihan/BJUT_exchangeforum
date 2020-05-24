@@ -31,19 +31,16 @@
     margin-bottom: 20px;
     padding: 5px;
     position: relative;
- }
-.inner2-left {
-    margin-left: 70px;
     background-color: #fff;
     box-shadow: 0 0 10px 3px #ddd;
     border-radius: 4px;
+ }
+.inner2-left {
+    margin-left: 45px;
     float: left;
 }
 .inner2-right {
-    margin-right: 70px;
-    background-color: #fff;
-    box-shadow: 0 0 10px 3px #ddd;
-    border-radius: 4px;
+    margin-right: 45px;
     float: right;
 }
 .icon {
