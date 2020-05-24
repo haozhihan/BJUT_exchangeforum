@@ -511,6 +511,25 @@ def like(post_id):
     return redirect(url_for('.index', id=post_id))
 
 
+@main.route('/likeinpost/<post_id>')
+@login_required
+@permission_required(Permission.FOLLOW)
+def like_inpost(post_id):
+    post = Post.query.filter_by(id=post_id).first()
+    if post is None:
+        flash('Invalid post.')
+        return redirect(url_for('.index'))
+    if current_user.is_liking(post):
+        flash('You are already liking this post.')
+        return redirect(url_for('.post', id=post_id))
+    current_user.like(post)
+    post.like(current_user)
+    post.recent_activity = datetime.utcnow()
+    db.session.commit()
+    flash('You are now liking this post')
+    return redirect(url_for('.post', id=post_id))
+
+
 @main.route('/dislike/<post_id>')
 @login_required
 @permission_required(Permission.FOLLOW)
@@ -527,6 +546,24 @@ def dislike(post_id):
     db.session.commit()
     flash('You are not liking this post')
     return redirect(url_for('.index', id=post_id))
+
+
+@main.route('/dislikeinpost/<post_id>')
+@login_required
+@permission_required(Permission.FOLLOW)
+def dislike_inpost(post_id):
+    post = Post.query.filter_by(id=post_id).first()
+    if post is None:
+        flash('Invalid post.')
+        return redirect(url_for('.index'))
+    if not current_user.is_liking(post):
+        flash('You are not liking this post.')
+        return redirect(url_for('.post', id=post_id))
+    current_user.dislike(post)
+    post.dislike(current_user)
+    db.session.commit()
+    flash('You are not liking this post')
+    return redirect(url_for('.post', id=post_id))
 
 
 # 显示所有followers的人
@@ -565,22 +602,22 @@ def followed_by(username):
                            follows=follows)
 
 
-# # 显示所有喜欢这个post的人
-# @main.route('/liked_by/<post_id>')
-# def liked_by(post_id):
-#     post = Post.query.filter_by(id=post_id).first()
-#     if post is None:
-#         flash('Invalid post.')
-#         return redirect(url_for('.index'))
-#     page = request.args.get('page', 1, type=int)
-#     pagination = post.liker.paginate(
-#         page, per_page=current_app.config['FLASKY_LIKER_PER_PAGE'],
-#         error_out=False)
-#     liker = [{'user': item.liker, 'timestamp': item.timestamp}
-#              for item in pagination.items]
-#     return render_template('table/liker.html', post=post, title="The liker of",
-#                            endpoint='.liked_by', pagination=pagination,
-#                            liker=liker)
+# 显示所有喜欢这个post的人
+@main.route('/liked_by/<post_id>')
+def liked_by(post_id):
+    post = Post.query.filter_by(id=post_id).first()
+    if post is None:
+        flash('Invalid post.')
+        return redirect(url_for('.index'))
+    page = request.args.get('page', 1, type=int)
+    pagination = post.liker.paginate(
+        page, per_page=current_app.config['FLASKY_LIKER_PER_PAGE'],
+        error_out=False)
+    liker = [{'user': item.liker, 'timestamp': item.timestamp}
+             for item in pagination.items]
+    return render_template('table/liker.html', post=post, title="The liker of",
+                           endpoint='.liked_by', pagination=pagination,
+                           liker=liker)
 
 
 @main.route('/new_post_md', methods=['GET', 'POST'])
