@@ -16,7 +16,7 @@ def before_request():
     # 首先先判断该用户是否登录
     if current_user.is_authenticated:
         # 如果用户提供的登录凭据有效，调用models的ping()方法来刷新用户最后访问时间
-        # current_user.ping()
+        current_user.ping()
         if not current_user.confirmed \
                 and request.endpoint \
                 and request.blueprint != 'auth' \
@@ -32,8 +32,6 @@ def login():
         return render_template('auth/login.html')
     if request.method == 'POST':
         # 通过Ajax获取前端数据的方法
-        # stuID = request.form.get('stuID')
-        # pwd = request.form.get('password')
         student_id = request.form["user"]
         password = request.form["pwd"]
         user = User.query.filter_by(student_id=student_id).first()
@@ -68,24 +66,24 @@ def register():
         return render_template('auth/register.html')
     if request.method == 'POST':
         # 读取前端的学号数据
-        isstudent = Students.query.filter_by(student_id=request.form["BJUT_id"]).first()  # 学号
-        if isstudent is None:
+        is_student = Students.query.filter_by(student_id=request.form["BJUT_id"]).first()  # 学号
+        if is_student is None:
             flash("Sorry, you are not a BJUT student and cannot sign up for this account.")
             return render_template('auth/register.html')
-        if isstudent.id_number != request.form["id_num"]:
+        if is_student.id_number != request.form["id_num"]:
             flash("Your student ID does not match your ID number, you cannot register for this account.")
             return render_template('auth/register.html')
-        if isstudent is not None and isstudent.id_number == request.form["id_num"]:
-            if isstudent.confirmed == True:
+        if is_student is not None and is_student.id_number == request.form["id_num"]:
+            if is_student.confirmed:
                 flash("Your student number has been registered, you cannot register for a second SOFB account")
                 return render_template('auth/register.html')
             else:
-                emailfind = User.query.filter_by(email=request.form["email"]).first()
-                if emailfind is not None:
+                email_find = User.query.filter_by(email=request.form["email"]).first()
+                if email_find is not None:
                     flash("Your email has been registered, please change your email")
                     return render_template('auth/register.html')
-                usernamefind = User.query.filter_by(username=request.form["user_name"]).first()
-                if usernamefind is not None:
+                username_find = User.query.filter_by(username=request.form["user_name"]).first()
+                if username_find is not None:
                     flash("Your username has been registered, please change your username")
                     return render_template('auth/register.html')
                 student = Students.query.filter_by(student_id=request.form["BJUT_id"]).first()
@@ -96,8 +94,8 @@ def register():
                             password=request.form["confirm_pwd"],
                             role_id=student.role_id
                             )
-                isstudent.confirmed = True
-                db.session.add(isstudent)
+                is_student.confirmed = True
+                db.session.add(is_student)
                 db.session.add(user)
                 db.session.commit()
                 # 注册时发送邮箱认证
@@ -213,9 +211,9 @@ def change_email_request():
         # 读取前端数据
         email = request.form["email"]
         password = request.form["pwd"]
-        emailfind = User.query.filter_by(email=email).first()
+        email_find = User.query.filter_by(email=email).first()
         # 验证新邮箱有没有被注册
-        if emailfind is not None:
+        if email_find is not None:
             flash("Your new email already exists, please change your new email")
             return render_template('auth/change_email.html')
 

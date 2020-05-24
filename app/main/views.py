@@ -86,7 +86,7 @@ def index_activity():
             page3, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
             error_out=False)
         activities = pagination3.items
-        #hot
+        # hot
         query1 = Post.query
         for item in query1:
             item.important = 0
@@ -260,6 +260,23 @@ def query_user():
         return render_template('queryuser.html', query=query, title="Result of query", pagination=pagination, inf=inf)
 
 
+@main.route('/query-transaction', methods=['GET', 'POST'])
+def query_transaction():
+    if request.method == 'GET':
+        return render_template('querytransaction.html')
+    if request.method == 'POST':
+        inf = request.form["transaction"]
+        search_result = "%" + inf + "%"
+        result = Transaction.query.filter(or_(Transaction.item_name.like(search_result),
+                                              Transaction.item_describe.like(search_result)))
+        page = request.args.get('page', 1, type=int)
+        pagination = result.order_by(Transaction.timestamp.desc()).paginate(
+            page, per_page=current_app.config['FLASKY_FOLLOWERS_PER_PAGE'],
+            error_out=False)
+        query = pagination.items
+        return render_template('querytransaction.html', query=query, title="Result of query", pagination=pagination, inf=inf)
+
+
 @main.route('/user/<username>')
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
@@ -327,8 +344,8 @@ def edit_profile():
         return render_template('edit_profile.html', form=form)
     if request.method == 'POST':
         # 读取前端数据
-        usernamefind = User.query.filter_by(username=request.form["username"]).first()
-        if usernamefind is not None and usernamefind != current_user:
+        username_find = User.query.filter_by(username=request.form["username"]).first()
+        if username_find is not None and username_find != current_user:
             flash("Your new username already exists, please change your username")
             return render_template('edit_profile.html', form=form)
 
@@ -548,22 +565,22 @@ def followed_by(username):
                            follows=follows)
 
 
-# 显示所有喜欢这个post的人
-@main.route('/liked_by/<post_id>')
-def liked_by(post_id):
-    post = Post.query.filter_by(id=post_id).first()
-    if post is None:
-        flash('Invalid post.')
-        return redirect(url_for('.index'))
-    page = request.args.get('page', 1, type=int)
-    pagination = post.liker.paginate(
-        page, per_page=current_app.config['FLASKY_LIKER_PER_PAGE'],
-        error_out=False)
-    liker = [{'user': item.liker, 'timestamp': item.timestamp}
-             for item in pagination.items]
-    return render_template('table/liker.html', post=post, title="The liker of",
-                           endpoint='.liked_by', pagination=pagination,
-                           liker=liker)
+# # 显示所有喜欢这个post的人
+# @main.route('/liked_by/<post_id>')
+# def liked_by(post_id):
+#     post = Post.query.filter_by(id=post_id).first()
+#     if post is None:
+#         flash('Invalid post.')
+#         return redirect(url_for('.index'))
+#     page = request.args.get('page', 1, type=int)
+#     pagination = post.liker.paginate(
+#         page, per_page=current_app.config['FLASKY_LIKER_PER_PAGE'],
+#         error_out=False)
+#     liker = [{'user': item.liker, 'timestamp': item.timestamp}
+#              for item in pagination.items]
+#     return render_template('table/liker.html', post=post, title="The liker of",
+#                            endpoint='.liked_by', pagination=pagination,
+#                            liker=liker)
 
 
 @main.route('/new_post_md', methods=['GET', 'POST'])
@@ -589,7 +606,7 @@ def new_post_md():
         post.recent_activity = datetime.utcnow()
         db.session.add(post)
         db.session.commit()
-        if post.is_anonymous == True:
+        if post.is_anonymous:
             flash("You have just posted a posting anonymously", 'success')
         else:
             flash("You have just posted a posting", 'success')

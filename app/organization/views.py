@@ -14,12 +14,12 @@ from .forms import RegisterOrganizationForm
 def register_organization():
     form = RegisterOrganizationForm()
     if form.validate_on_submit():
-        emailfind = User.query.filter_by(email=form.email.data).first()
-        if emailfind is not None:
+        email_find = User.query.filter_by(email=form.email.data).first()
+        if email_find is not None:
             flash("Your email has been registered, please change your email")
             return render_template('organization/register2.html', form=form)
-        usernamefind = User.query.filter_by(username=form.name.data).first()
-        if usernamefind is not None:
+        username_find = User.query.filter_by(username=form.name.data).first()
+        if username_find is not None:
             flash("Your organization name has been registered, please change your username")
             return render_template('organization/register2.html', form=form)
         organization = Organization(name=form.name.data,
