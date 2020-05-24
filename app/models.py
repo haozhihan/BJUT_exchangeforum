@@ -234,9 +234,6 @@ class User(UserMixin, db.Model):
     def can(self, perm):
         return self.role is not None and self.role.has_permission(perm)
 
-    def is_administrator(self):
-        return self.can(Permission.ADMIN)
-
     # 该方法可以刷新用户最后访问时间
     def ping(self):
         self.last_seen = datetime.utcnow()
@@ -427,7 +424,7 @@ class Post(db.Model):
             liker_id=user.id).first() is not None
 
     @staticmethod
-    def on_changed_body(target, value, oldvalue, initiator):
+    def on_changed_body(target, value):
         allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
                         'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
                         'h1', 'h2', 'h3', 'p', 'img', 'div', 'iframe',
