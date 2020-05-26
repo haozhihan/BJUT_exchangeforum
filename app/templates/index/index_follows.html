@@ -189,7 +189,8 @@
                     <div class="hot-activity5">
                         {% if hot_activity[4] %}
                             <h3>{{ hot_activity[4].activity_name }}</h3>
-                            <p style="margin-bottom: 0">{{ hot_activity[4].activity_place }} / {{ hot_activity[4].activity_time }}</p>
+                            <p style="margin-bottom: 0">{{ hot_activity[4].activity_place }}</p><br>
+                            <p style="margin-bottom: 0">{{ hot_activity[4].activity_time }}</p>
 
                             {% if not current_user.is_wanting(hot_activity[4]) %}
                                 <a class="icon-btn" href="{{ url_for('organization.want', activity_id=hot_activity[4].id) }}#{{ hot_activity[4].id }}">
