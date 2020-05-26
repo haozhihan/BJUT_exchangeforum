@@ -93,7 +93,7 @@
             var reg = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
             // 不符合规则的话
             if(!reg.test(e)){
-                ep.innerHTML = '请输入正确格式的email';
+                ep.innerHTML = 'Please enter the correct format of the email';
                 ep.className = 'text-danger';
                 submit.disabled=true;
             }

@@ -42,15 +42,11 @@ def index():
         return redirect(url_for('.query', content=inf))
 
 
-@main.route('/trans', methods=['GET', 'POST'])
+@main.route('/trans/', methods=['GET', 'POST'])
 def index_transaction():
     if request.method == 'GET':
-        page2 = request.args.get('page', 1, type=int)
         query2 = Transaction.query
-        pagination2 = query2.order_by(Transaction.timestamp.desc()).paginate(
-            page2, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-            error_out=False)
-        transactions = pagination2.items
+        transactions = query2.order_by(Transaction.timestamp.desc())
         # hot
         query1 = Post.query
         for item in query1:
@@ -65,27 +61,22 @@ def index_transaction():
             li_num = db.session.query(func.count(Want.wanter_id)).filter_by(wanted_Activity_id=item.id).scalar()
             item.important = li_num
         hot_activity = li.order_by(Activity.important.desc())
-        return render_template('index/index_transactions.html', transactions=transactions, posts5=hot,
-                               pagination2=pagination2, hot_activity=hot_activity)
+        return render_template('index/index_transactions.html', transactions=transactions, posts5=hot, hot_activity=hot_activity)
     else:
         inf = request.form["search"]
         return redirect(url_for('.query', content=inf))
 
 
-@main.route('/act', methods=['GET', 'POST'])
+@main.route('/act/', methods=['GET', 'POST'])
 def index_activity():
     if request.method == 'GET':
-        page3 = request.args.get('page', 1, type=int)
         query3 = Activity.query
         for activity in query3:
             if activity.activity_time < datetime.utcnow():
                 activity.is_invalid = True
                 db.session.add(activity)
                 db.session.commit()
-        pagination3 = query3.order_by(Activity.timestamp.desc()).paginate(
-            page3, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-            error_out=False)
-        activities = pagination3.items
+        activities = query3.order_by(Activity.timestamp.desc())
         # hot
         query1 = Post.query
         for item in query1:
@@ -100,14 +91,13 @@ def index_activity():
             li_num = db.session.query(func.count(Want.wanter_id)).filter_by(wanted_Activity_id=item.id).scalar()
             item.important = li_num
         hot_activity = li.order_by(Activity.important.desc())
-        return render_template('index/index_activities.html', activities=activities,  posts5=hot,
-                               pagination3=pagination3, hot_activity=hot_activity)
+        return render_template('index/index_activities.html', activities=activities,  posts5=hot, hot_activity=hot_activity)
     else:
         inf = request.form["search"]
         return redirect(url_for('.query', content=inf))
 
 
-@main.route('/foll', methods=['GET', 'POST'])
+@main.route('/foll/', methods=['GET', 'POST'])
 def index_follow():
     if request.method == 'GET':
         # hot
@@ -118,20 +108,15 @@ def index_follow():
             li_num = db.session.query(func.count(Like.liker_id)).filter_by(liked_post_id=item.id).scalar()
             item.important = 7 * com_num + 3 * li_num
         hot = query1.order_by(Post.important.desc())
-        page4 = request.args.get('page4', 1, type=int)
         query4 = current_user.followed_posts
-        pagination4 = query4.order_by(Post.recent_activity.desc()).paginate(
-            page4, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
-            error_out=False)
-        posts4 = pagination4.items
+        posts4 = query4.order_by(Post.recent_activity.desc())
         li = Activity.query.filter_by(is_invalid=False)
         for item in li:
             item.important = 0
             li_num = db.session.query(func.count(Want.wanter_id)).filter_by(wanted_Activity_id=item.id).scalar()
             item.important = li_num
         hot_activity = li.order_by(Activity.important.desc())
-        return render_template('index/index_follows.html', posts4=posts4, posts5=hot,
-                               pagination4=pagination4, hot_activity=hot_activity)
+        return render_template('index/index_follows.html', posts4=posts4, posts5=hot, hot_activity=hot_activity)
     else:
         inf = request.form["search"]
         return redirect(url_for('.query', content=inf))
