@@ -114,26 +114,31 @@ class User(UserMixin, db.Model):
     avatar_img = db.Column(db.String(120), nullable=True)
 
     # 发帖、评论与点赞
-    posts = db.relationship('Post', backref='author', lazy='dynamic')
-    comments = db.relationship('Comment', backref='author', lazy='dynamic')
+    posts = db.relationship('Post', backref='author', lazy='dynamic', cascade='all, delete-orphan')
+    comments = db.relationship('Comment', backref='author', lazy='dynamic', cascade='all, delete-orphan')
 
     # 关注
     following = db.relationship('Follow', foreign_keys=[Follow.follower_id], back_populates='follower',
-                                lazy='dynamic', cascade='all')
+                                lazy='dynamic', cascade='all, delete-orphan')
     followers = db.relationship('Follow', foreign_keys=[Follow.followed_id], back_populates='followed',
-                                lazy='dynamic', cascade='all')
+                                lazy='dynamic', cascade='all, delete-orphan')
     # 点赞
-    liked_post = db.relationship('Like', back_populates='liker', lazy='dynamic', cascade='all')
+    liked_post = db.relationship('Like', back_populates='liker', lazy='dynamic', cascade='all, delete-orphan')
     # 消息中心
-    notifications = db.relationship('Notification', back_populates='receiver', lazy='dynamic')
+    notifications = db.relationship('Notification', back_populates='receiver',
+                                    lazy='dynamic', cascade='all, delete-orphan')
     # 交易
-    transactions = db.relationship('Transaction', back_populates='seller', lazy='dynamic')
+    transactions = db.relationship('Transaction', back_populates='seller',
+                                   lazy='dynamic', cascade='all, delete-orphan')
     # Activity
-    activities = db.relationship('Activity', back_populates='announcer', lazy='dynamic')
+    activities = db.relationship('Activity', back_populates='announcer',
+                                 lazy='dynamic', cascade='all, delete-orphan')
     # want
-    wanted_Activity = db.relationship('Want', back_populates='wanter', lazy='dynamic', cascade='all')
+    wanted_Activity = db.relationship('Want', back_populates='wanter',
+                                      lazy='dynamic', cascade='all, delete-orphan')
     # collect
-    collected_transaction = db.relationship('Collect', back_populates='collecter', lazy='dynamic', cascade='all')
+    collected_transaction = db.relationship('Collect', back_populates='collecter',
+                                            lazy='dynamic', cascade='all, delete-orphan')
 
     @staticmethod
     def add_self_follows():
@@ -228,9 +233,6 @@ class User(UserMixin, db.Model):
 
     def can(self, perm):
         return self.role is not None and self.role.has_permission(perm)
-
-    def is_administrator(self):
-        return self.can(Permission.ADMIN)
 
     # 该方法可以刷新用户最后访问时间
     def ping(self):
@@ -515,7 +517,8 @@ class Transaction(db.Model):
 
     seller_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     seller = db.relationship('User', back_populates='transactions', lazy='joined')
-    collecter = db.relationship('Collect', back_populates='collected_transaction', lazy='dynamic', cascade='all')
+    collecter = db.relationship('Collect', back_populates='collected_transaction',
+                                lazy='dynamic', cascade='all, delete-orphan')
 
     def collect(self, user):
         if not self.is_collected_by(user):
@@ -546,10 +549,11 @@ class Activity(db.Model):
     Organizer = db.Column(db.String(256), nullable=False)
     is_schoolAgree = db.Column(db.Boolean, nullable=False)
     is_invalid = db.Column(db.Boolean, default=False)
+    important = db.Column(db.INT, default=0)
 
     announcer_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     announcer = db.relationship('User', back_populates='activities', lazy='joined')
-    wanter = db.relationship('Want', back_populates='wanted_Activity', lazy='dynamic', cascade='all')
+    wanter = db.relationship('Want', back_populates='wanted_Activity', lazy='dynamic', cascade='all, delete-orphan')
 
     def want(self, user):
         if not self.is_wanted_by(user):

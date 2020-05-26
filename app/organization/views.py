@@ -1,5 +1,4 @@
-from datetime import datetime
-from flask import render_template, redirect, url_for, flash, request, current_app
+from flask import render_template, redirect, url_for, flash, request
 from flask_login import current_user, login_required
 from datetime import datetime
 from . import organization
@@ -14,12 +13,12 @@ from .forms import RegisterOrganizationForm
 def register_organization():
     form = RegisterOrganizationForm()
     if form.validate_on_submit():
-        emailfind = User.query.filter_by(email=form.email.data).first()
-        if emailfind is not None:
+        email_find = User.query.filter_by(email=form.email.data).first()
+        if email_find is not None:
             flash("Your email has been registered, please change your email")
             return render_template('organization/register2.html', form=form)
-        usernamefind = User.query.filter_by(username=form.name.data).first()
-        if usernamefind is not None:
+        username_find = User.query.filter_by(username=form.name.data).first()
+        if username_find is not None:
             flash("Your organization name has been registered, please change your username")
             return render_template('organization/register2.html', form=form)
         organization = Organization(name=form.name.data,
@@ -32,7 +31,7 @@ def register_organization():
         db.session.add(organization)
         db.session.commit()
         token = organization.generate_confirmation_token()
-        send_email('13011090966@163.com', 'Register Organization',
+        send_email('sefbjut@163.com', 'Register Organization',
                    'mail_organization/To_administrator', organization=organization, token=token)
         flash('A register organization-account email has been sent to administrator.')
         return redirect(url_for('auth.login'))
@@ -89,22 +88,27 @@ def organization_activity():
         else:
             is_Agree = False
         string = request.form["activity_time"]
+        name = request.form["activity_name"]
+        place = request.form["activity_place"]
+        describe = request.form["activity_describe"]
+        organizer = request.form["organizer"]
+        if name == "" or place == "" or string == "" or describe == "" or organizer == "":
+            flash("Activity information cannot be empty")
+            return render_template('organization/new_activity.html')
         time_str = string
-        time = datetime.strptime(time_str, '%Y-%m-%d')
-        acti = Activity(activity_name=request.form["activity_name"],
+        time = datetime.strptime(time_str, '%Y-%m-%dT%H:%M')
+        acti = Activity(activity_name=name,
                         activity_time=time,
-                        activity_place=request.form["activity_place"],
-                        activity_describe=request.form["activity_describe"],
-                        Organizer=request.form["organizer"],
+                        activity_place=place,
+                        activity_describe=describe,
+                        Organizer=organizer,
                         is_schoolAgree=is_Agree,
                         announcer_id=current_user.id
                         )
-        print("1")
         db.session.add(acti)
         db.session.commit()
-        print("2")
         flash('Your Activity Announcement has been released!')
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.index_activity'))
 
 
 @organization.route('/want/<activity_id>')
@@ -114,32 +118,33 @@ def want(activity_id):
     activity = Activity.query.filter_by(id=activity_id).first()
     if activity is None:
         flash('Invalid activity.')
-        return redirect(url_for('.index'))
+        return redirect(url_for('main.index_activity'))
     if current_user.is_wanting(activity):
         flash('You are already wanting this post.')
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.index_activity'))
     current_user.want(activity)
     activity.want(current_user)
     db.session.commit()
     flash('You are now wanting this post')
-    return redirect(url_for('main.index'))
+    return redirect(url_for('main.index_activity'))
 
 
 @organization.route('/not_want/<activity_id>')
+@login_required
 @permission_required(Permission.FOLLOW)
 def not_want(activity_id):
     activity = Activity.query.filter_by(id=activity_id).first()
     if activity is None:
         flash('Invalid activity.')
-        return redirect(url_for('.index'))
+        return redirect(url_for('main.index_activity'))
     if not current_user.is_wanting(activity):
         flash('You are not wanting this post.')
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.index_activity'))
     current_user.not_want(activity)
     activity.not_want(current_user)
     db.session.commit()
     flash('You are not wanting this post')
-    return redirect(url_for('main.index', id=activity_id))
+    return redirect(url_for('main.index_activity'))
 
 
 @organization.route('/delete_transaction/<int:activity_id>')

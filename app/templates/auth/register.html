@@ -142,7 +142,7 @@
             var reg = /^\d{8}$/;
             // 不符合规则的话
             if(!reg.test(stuid)){
-                info.innerHTML = '请输入8位数字的学号';
+                info.innerHTML = 'Please enter the 8-digit StudentID';
                 info.className = 'text-danger';
                 document.getElementById("submit").disabled=true;
             }
@@ -169,7 +169,7 @@
             var reg = /^[1-9]([0-9]{16}|[0-9]{13})[xX0-9]$/;
             // 不符合规则的话
             if(!reg.test(id)){
-                IDinfo.innerHTML = '请输入15位或18位的ID';
+                IDinfo.innerHTML = 'Please enter your ID number';
                 IDinfo.className = 'text-danger';
                 document.getElementById("submit").disabled=true;
             }
@@ -194,7 +194,7 @@
         user.onblur = function () {
             var e = this.value;
             if(e == ''){
-                userinfo.innerHTML = '用户名不能为空';
+                userinfo.innerHTML = 'The username cannot be empty';
                 userinfo.className = 'text-danger';
                 document.getElementById("submit").disabled=true;
             }
@@ -222,7 +222,7 @@
             var reg = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
             // 不符合规则的话
             if(!reg.test(e)){
-                ep.innerHTML = '请输入正确格式的email';
+                ep.innerHTML = 'Please enter the correct format of the email';
                 ep.className = 'text-danger';
                 document.getElementById("submit").disabled=true;
             }
@@ -249,7 +249,7 @@
             var pwd2 = this.value;
             // 不符合规则的话
             if( pwd1 != pwd2 ){
-                pwdp.innerHTML = '请与第一次输入的密码一致';
+                pwdp.innerHTML = 'Please enter the same password';
                 pwdp.className = 'text-danger';
                 document.getElementById("submit").disabled=true;
             }

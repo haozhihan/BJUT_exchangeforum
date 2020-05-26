@@ -1,16 +1,88 @@
 /*
+文章样式
+ */
+.post-content {
+    margin-top: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px 3px #ddd;
+    border-radius: 4px;
+}
+.post-title {
+    padding-bottom: 5px;
+    border-bottom: 1px solid #ddd;
+}
+.post-title a:hover{
+    text-decoration: none;
+}
+/*
 作者界面样式
  */
-
-
+.post-author {
+    padding: 0;
+    margin-top: 30px;
+    box-shadow: 0 0 10px 3px #ddd;
+    border-radius: 4px;
+}
+.post-author .panel {
+    margin: 0;
+}
 
 /*
 评论区样式
  */
 .comment-cont{
+    margin-top: 20px;
     background-color: #fff;
+    box-shadow: 0 0 10px 3px #ddd;
+    border-radius: 4px;
+}
+.comment-cont .alert{
+    margin: 20px auto 0 auto;
+}
+.comment-box {
+    padding: 0;
+}
+.submit {
+    padding: 0;
 }
 .submit .checkbox {
     display: inline-block;
     margin:60px 0 10px 30px;
+}
+
+/*
+点赞区域样式
+ */
+.like-btn {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    margin-left: 600px;
+    height: 150px;
+    width: 80px;
+    background-color: #fff;
+    box-shadow: 0 0 10px 3px #ddd;
+    border-radius: 4px;
+}
+.like-btn .unlike {
+    display: block;
+    padding-left: 20px;
+    padding-right: 20px;
+
+}
+.like-btn .liked {
+    display: block;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+.like-btn svg {
+    margin: 15px 8px 0 8px;
+}
+.all-liker {
+    display: block;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.all-liker svg {
+    margin: 15px 15px 0 15px;
 }

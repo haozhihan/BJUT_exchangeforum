@@ -116,7 +116,7 @@
             {#var reg = /^\d{1，8}$/;#}
             // 不符合规则的话
             if(!reg.test(stuid)){
-                info.innerHTML = '请输入8位数字的学号或者1-8位的组织ID';
+                info.innerHTML = 'Please enter StudentID or OrganizationID';
                 info.className = 'text-danger';
                 document.getElementById("submit").disabled=true;
             }

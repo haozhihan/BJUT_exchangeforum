@@ -1,0 +1,18 @@
+.query-title {
+    margin-top: 15px;
+}
+
+.query-title .control-label {
+    padding-top: 7px;
+    margin-top: 0;
+}
+
+.query-title .btn-group .submit {
+    margin-left: 5px;
+}
+.query-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0 0 10px 3px #ddd
+}

@@ -4,7 +4,7 @@
 .outer {
     position: fixed;
     left: 50%;
-    top: 120px;
+    top: 80px;
 }
 .inner1 {
     width: 350px;
@@ -28,15 +28,20 @@
  */
 .inner2 {
     width: 350px;
+    margin-bottom: 20px;
+    padding: 5px;
     position: relative;
     background-color: #fff;
-    border-radius: 4px;
     box-shadow: 0 0 10px 3px #ddd;
+    border-radius: 4px;
  }
-
-.new-post {
-    padding: 0;
-    background-color: #fff;
+.inner2-left {
+    margin-left: 45px;
+    float: left;
+}
+.inner2-right {
+    margin-right: 45px;
+    float: right;
 }
 .icon {
     margin: 5px;
@@ -45,4 +50,26 @@
     margin-top: -10px;
     font-size: 12px;
     text-align: center;
+}
+
+/*
+热度排行样式
+ */
+.inner3 {
+    width: 350px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    position: relative;
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 0 10px 3px #ddd;
+    font-size: 18px;
+}
+.inner3 .hot-post {
+    margin: 10px auto;
+    font-size: 75%;
+    line-height: 1;
+}
+.inner3 .hot-post a {
+    color: #0077e6;
 }
