@@ -46,9 +46,11 @@
     <div class="col-md-12">
         <div class="container query-content">
             <table class="table">
-                {% for transaction in query %}
-                    {% include 'transaction/_transactions.html' %}
-                {% endfor %}
+                <ul class="posts list-unstyled">
+                    {% for transaction in query %}
+                        {% include 'transaction/_transactions.html' %}
+                    {% endfor %}
+                </ul>
             </table>
         </div>
     </div>

@@ -193,6 +193,9 @@ def query(content):
                                pagination2=pagination2, pagination3=pagination3, pagination4=pagination4)
     if request.method == 'POST':
         inf = request.form["inf"]
+        if inf == "":
+            flash("Search content cannot be empty.")
+            return render_template('querypost.html')
         search_result = "%" + inf + "%"
         result = Post.query.filter(or_(Post.title.like(search_result), Post.body.like(search_result)))
         for item in result:
@@ -250,6 +253,9 @@ def query_user():
         return render_template('queryuser.html')
     if request.method == 'POST':
         inf = request.form["user"]
+        if inf == "":
+            flash("Search content cannot be empty.")
+            return render_template('queryuser.html')
         search_result = "%" + inf + "%"
         result = User.query.filter(or_(User.username.like(search_result), User.student_id.like(search_result)))
         page = request.args.get('page', 1, type=int)
@@ -266,6 +272,9 @@ def query_transaction():
         return render_template('querytransaction.html')
     if request.method == 'POST':
         inf = request.form["transaction"]
+        if inf == "":
+            flash("Search content cannot be empty.")
+            return render_template('querytransaction.html')
         search_result = "%" + inf + "%"
         result = Transaction.query.filter(or_(Transaction.item_name.like(search_result),
                                               Transaction.item_describe.like(search_result)))

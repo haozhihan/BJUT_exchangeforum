@@ -2,7 +2,7 @@ from random import randint
 from sqlalchemy.exc import IntegrityError
 from faker import Faker
 from . import db
-from .models import User, Post, Comment, Transaction, Activity, Like, Collect, Want
+from .models import User, Post, Comment, Transaction, Activity
 
 
 def users(count=100):
@@ -13,6 +13,7 @@ def users(count=100):
              email=fake.email(),
              username="Student Union",
              password='password',
+             avatar_img='/static/Image/ico.jpeg',
              confirmed=True,
              grade="Sophomore",
              college="Beijing-Dublin International college",

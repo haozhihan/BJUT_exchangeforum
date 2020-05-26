@@ -1,5 +1,4 @@
-from datetime import datetime
-from flask import render_template, redirect, url_for, flash, request, current_app
+from flask import render_template, redirect, url_for, flash, request
 from flask_login import current_user, login_required
 from datetime import datetime
 from . import organization
@@ -32,7 +31,7 @@ def register_organization():
         db.session.add(organization)
         db.session.commit()
         token = organization.generate_confirmation_token()
-        send_email('13011090966@163.com', 'Register Organization',
+        send_email('sefbjut@163.com', 'Register Organization',
                    'mail_organization/To_administrator', organization=organization, token=token)
         flash('A register organization-account email has been sent to administrator.')
         return redirect(url_for('auth.login'))
