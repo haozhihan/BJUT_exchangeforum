@@ -248,14 +248,11 @@
                     <div class="tab-pane active" id="panel-2">
                         <ul class="posts list-unstyled">
                             {% for transaction in transactions %}
-                                {% include 'transaction/_transactions.html' %}
+                                {% if transaction.is_sold!=true %}
+                                    {% include 'transaction/_transactions.html' %}
+                                {% endif %}
                             {% endfor %}
                         </ul>
-                        {% if pagination2 %}
-                            <div class="pagination">
-                                {{ macros.pagination_widget(pagination2, '.index') }}
-                            </div>
-                        {% endif %}
                     </div>
 
                 </div>

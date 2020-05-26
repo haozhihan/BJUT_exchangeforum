@@ -248,14 +248,11 @@
                     <div class="tab-pane active" id="panel-3">
                         <ul class="posts list-unstyled">
                             {% for avtivity in activities %}
-                                {% include 'organization/_activities.html' %}
+                                {% if avtivity.is_invalid!=true %}
+                                    {% include 'organization/_activities.html' %}
+                                {% endif %}
                             {% endfor %}
                         </ul>
-                        {% if pagination3 %}
-                            <div class="pagination">
-                                {{ macros.pagination_widget(pagination3, '.index') }}
-                            </div>
-                        {% endif %}
                     </div>
 
                 </div>
