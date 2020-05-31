@@ -17,13 +17,13 @@ This project is a special forum for the communication of students, called **Stud
 * Download
 
 ```shell
-docker pull hanhaozhi/se_project_team16
+docker pull hanhaozhi/sep_team16
 ```
 
 * Run 
 
 ```shell
-docker run -d -p 5000:5000 hanhaozhi/se_project_team16
+docker run -d -p 5000:5000 hanhaozhi/sep_team16
 ```
 
 #### 2.1.2 Generate a new Docker Image
