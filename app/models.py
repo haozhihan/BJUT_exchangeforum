@@ -275,19 +275,11 @@ class User(UserMixin, db.Model):
     def collect(self, transaction):
         if not self.is_collecting(transaction):
             ll = Collect(collecter=self, collected_transaction=transaction)
-            n = Notification(receiver_id=transaction.seller_id, timestamp=datetime.utcnow(),
-                             username=self.username, action=" has collected your posting ",
-                             object=transaction.item_name, object_id=transaction.id)
-            db.session.add(n)
             db.session.add(ll)
 
     def want(self, activity):
         if not self.is_wanting(activity):
             ll = Want(wanter=self, wanted_Activity=activity)
-            n = Notification(receiver_id=activity.announcer_id, timestamp=datetime.utcnow(),
-                             username=self.username, action=" has wanted your posting ",
-                             object=activity.activity_name, object_id=activity.id)
-            db.session.add(n)
             db.session.add(ll)
 
     def unfollow(self, user):

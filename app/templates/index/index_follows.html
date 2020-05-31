@@ -249,7 +249,9 @@
                     <div class="tab-pane active" id="panel-4">
                         <ul class="posts list-unstyled">
                             {% for post in posts4 %}
-                                {% include 'Posts/_posts.html' %}
+                                {% if post.is_anonymous==False %}
+                                    {% include 'Posts/_posts.html' %}
+                                {% endif %}
                             {% endfor %}
                         </ul>
                         {% if pagination4 %}
